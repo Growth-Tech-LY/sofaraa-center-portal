@@ -1,4 +1,5 @@
 type Coures = {
+  id: string
   couresName: string
   techerName: string
   price: number

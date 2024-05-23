@@ -14,7 +14,7 @@
       ></v-text-field>
       <v-autocomplete
         v-model="courseServ"
-        class="w-5/6 col-span-2"
+        class="col-span-2"
         chips
         label="اسم القاعة"
         variant="outlined"
@@ -54,7 +54,7 @@
 
       <v-text-field
         v-model="monthPrice"
-        class=""
+        class="col-span-2 w-5/6"
         clearable
         label="سعر  الاسبوع"
         placeholder="ادخل سعر  الشهر ..."
@@ -62,17 +62,9 @@
         prefix="د.ل"
         type="number"
       ></v-text-field>
+
       <v-text-field
-        v-model="monthPrice"
-        class=""
-        clearable
-        label="سعر  الشهر"
-        placeholder="ادخل سعر  الشهر ..."
-        variant="outlined"
-        prefix="د.ل"
-        type="number"
-      ></v-text-field>
-      <v-text-field
+        class="col-start-3"
         :prepend-icon="mdiCalendarRange"
         label="التاريخ من"
         variant="outlined"
