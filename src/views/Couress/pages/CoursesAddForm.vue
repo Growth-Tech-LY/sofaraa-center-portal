@@ -34,6 +34,7 @@
       ></v-text-field>
 
       <v-text-field
+        v-model="FromTime"
         :prepend-icon="mdiTimerEditOutline"
         label="الساعة من"
         variant="outlined"
@@ -42,7 +43,7 @@
       >
       </v-text-field>
       <v-text-field
-        v-model="weekPrice"
+        v-modle="ToTime"
         :prepend-icon="mdiTimerEditOutline"
         clearable
         label="الساعة الى"
@@ -53,17 +54,18 @@
       ></v-text-field>
 
       <v-text-field
-        v-model="monthPrice"
+        v-model="Price"
         class="col-span-2 w-5/6"
         clearable
-        label="سعر  الاسبوع"
-        placeholder="ادخل سعر  الشهر ..."
+        label="سعر  "
+        placeholder="ادخل سعر   ..."
         variant="outlined"
         prefix="د.ل"
         type="number"
       ></v-text-field>
 
       <v-text-field
+        v-model="StartDate"
         class="col-start-3"
         :prepend-icon="mdiCalendarRange"
         label="التاريخ من"
@@ -73,7 +75,7 @@
       >
       </v-text-field>
       <v-text-field
-        v-model="weekPrice"
+        v-model="EndDate"
         :prepend-icon="mdiCalendarRange"
         clearable
         label="التاريخ الى"
@@ -103,12 +105,11 @@
 import { defineEmits, ref } from 'vue'
 import { mdiTimerEditOutline, mdiCalendarRange } from '@mdi/js'
 import { postCoures } from '../models/CoursesService'
-
 const teacherName = ref('')
 const courseName = ref('')
 const courseServ = ref()
-const weekPrice = ref<number>()
-const monthPrice = ref<number>()
+
+const Price = ref<number>()
 const ReservationId = ref('')
 const CouresManagementId = ref('')
 const TeacherManagementId = ref('')
