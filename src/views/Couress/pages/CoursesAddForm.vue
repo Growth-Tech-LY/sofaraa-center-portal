@@ -14,7 +14,7 @@
       ></v-text-field>
       <v-autocomplete
         v-model="courseServ"
-        class="w-5/6 col-span-2"
+        class="col-span-2"
         chips
         label="اسم القاعة"
         variant="outlined"
@@ -34,6 +34,7 @@
       ></v-text-field>
 
       <v-text-field
+        v-model="FromTime"
         :prepend-icon="mdiTimerEditOutline"
         label="الساعة من"
         variant="outlined"
@@ -42,7 +43,7 @@
       >
       </v-text-field>
       <v-text-field
-        v-model="weekPrice"
+        v-modle="ToTime"
         :prepend-icon="mdiTimerEditOutline"
         clearable
         label="الساعة الى"
@@ -53,26 +54,19 @@
       ></v-text-field>
 
       <v-text-field
-        v-model="monthPrice"
-        class=""
+        v-model="Price"
+        class="col-span-2 w-5/6"
         clearable
-        label="سعر  الاسبوع"
-        placeholder="ادخل سعر  الشهر ..."
+        label="سعر  "
+        placeholder="ادخل سعر   ..."
         variant="outlined"
         prefix="د.ل"
         type="number"
       ></v-text-field>
+
       <v-text-field
-        v-model="monthPrice"
-        class=""
-        clearable
-        label="سعر  الشهر"
-        placeholder="ادخل سعر  الشهر ..."
-        variant="outlined"
-        prefix="د.ل"
-        type="number"
-      ></v-text-field>
-      <v-text-field
+        v-model="StartDate"
+        class="col-start-3"
         :prepend-icon="mdiCalendarRange"
         label="التاريخ من"
         variant="outlined"
@@ -81,8 +75,7 @@
       >
       </v-text-field>
       <v-text-field
-        dir="rtl"
-        v-model="weekPrice"
+        v-model="EndDate"
         :prepend-icon="mdiCalendarRange"
         clearable
         label="التاريخ الى"
@@ -111,11 +104,22 @@
 <script setup lang="ts">
 import { defineEmits, ref } from 'vue'
 import { mdiTimerEditOutline, mdiCalendarRange } from '@mdi/js'
+import { postCoures } from '../models/CoursesService'
 const teacherName = ref('')
 const courseName = ref('')
 const courseServ = ref()
-const weekPrice = ref<number>()
-const monthPrice = ref<number>()
+
+const Price = ref<number>()
+const ReservationId = ref('')
+const CouresManagementId = ref('')
+const TeacherManagementId = ref('')
+const Hall_managementId = ref('')
+const ServiceManagementId = ref<string>('')
+const FromTime = ref<number>(0)
+const ToTime = ref<number>(0)
+const StartDate = ref<string>('')
+const EndDate = ref<string>('')
+
 const form = ref(false)
 const Rules = {
   Length: (v: string) => v.length >= 3 || ' يجب ان يكون اكبر من 3 حروف',
@@ -130,13 +134,19 @@ const closeModel = () => {
   emit('close')
 }
 
-const submitPackage = () => {
-  if (form.value) {
-    console.log(courseName.value)
-    console.log(teacherName.value)
-    console.log(courseServ.value)
-    console.log(weekPrice.value)
-    console.log(monthPrice.value)
-  } else console.log('some thing ')
+const submitPackage = async () => {
+  const body = {
+    reservationId: ReservationId,
+    couresManagementId: CouresManagementId,
+    teacherManagementId: TeacherManagementId,
+    hall_managementId: Hall_managementId,
+    serviceManagementId: ServiceManagementId,
+    fromTime: FromTime,
+    toTime: ToTime,
+    startDate: StartDate,
+    endDate: EndDate
+  }
+
+  postCoures(body)
 }
 </script>
