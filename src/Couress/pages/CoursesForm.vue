@@ -81,7 +81,6 @@
       >
       </v-text-field>
       <v-text-field
-        dir="rtl"
         v-model="weekPrice"
         :prepend-icon="mdiCalendarRange"
         clearable
