@@ -1,4 +1,11 @@
 <template>
+  <div>
+  <v-btn
+  color="red-darken-1"
+  :prepend-icon="mdiArrowRightTop"
+ to="/hall-list"
+  >الرجوع</v-btn>
+</div>
   <div class="mt-20 bg-white border-t-8 border-[#D81B60] mx-auto p-7 rounded-lg shadow-lg h-4/5">
     <p class="pr-8 text-lg">حجز قاعة</p>
     <v-form class="grid grid-cols-2 gap-3 p-4 items-center justify-center">
@@ -82,19 +89,24 @@
 
       <div class="flex item-center justify-center gap-8">
         <v-text-field
-          label=" التاريخ من "
-          item-title="label"
-          item-value="value"
-          placeholder="التاريخ من"
-          variant="outlined"
-        ></v-text-field>
-        <v-text-field
-          label="التاريخ إلي"
-          item-title="label"
-          item-value="value"
-          placeholder="التاريخ إلي"
-          variant="outlined"
-        ></v-text-field>
+        v-model="formData"
+        dir="rtl"
+        :prepend-icon="mdiCalendarRange"
+        clearable
+        label="التاريخ الى"
+        placeholder="ادخل التاريخ الى ..."
+        variant="outlined"
+        type="date"
+      ></v-text-field>
+      <v-text-field
+        dir="rtl"
+        :prepend-icon="mdiCalendarRange"
+        clearable
+        label="التاريخ الى"
+        placeholder="ادخل التاريخ الى ..."
+        variant="outlined"
+        type="date"
+      ></v-text-field>
       </div>
 
       <div class="flex item-center justify-center gap-8">
@@ -150,10 +162,10 @@
           type="number"
         ></v-text-field>
         <p class="ms-3 text-lg font-bold text-gray-900 text-center mt-4">
-          <span class="text-red-500">سعر الإجمالي : </span> {{ totalPayment }} د.ل
+          <span class="text-red-500">سعر الإجمالي : </span> {{ totalPayment }}د.ل
         </p>
         <p class="ms-3 text-lg font-bold text-gray-900 text-center mt-4">
-          <span class="text-red-500"> المتبقي : </span>{{ remainingPayment }} د.ل
+          <span class="text-red-500"> المتبقي : </span>{{ remainingPayment }}د.ل
         </p>
       </div>
 
@@ -179,7 +191,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { mdiPlus, mdiTimerOutline } from '@mdi/js'
+import { mdiPlus, mdiTimerOutline ,mdiCalendarRange ,mdiArrowRightTop } from '@mdi/js'
 import { defineEmits, ref, watchEffect } from 'vue'
 
 
@@ -216,6 +228,7 @@ const servicesNumber = ref<number>(1)
 const showMessage = ref(false)
 const fromTime = ref(0)
 const toTime = ref(0)
+const formData = ref()
 const totalPayment = ref(0)
 const paid = ref(0)
 const totalServicesPrice = ref(0)
@@ -334,12 +347,23 @@ const calculatePaymrnt = () => {
     totalServicesPrice.value = servicesPrice.value * servicesNumber.value
   }
 
+
+
+
+  if (packagePrice.value) {
+    totalPayment.value =  totalServicesPrice.value + packagePrice.value
+  }
+  
   console.log(totalServicesPrice.value )
   console.log(totalPayment.value )
 }
 
 watchEffect(() => {
   calculatePaymrnt()
+  console.log(formData.value);
+ remainingPayment.value = totalPayment.value - paid.value  
+ console.log( "سعر الخدمة الإجمالي",totalServicesPrice.value )
+  console.log( "سعر الإجمالي ",totalPayment.value )
 })
 
 //----------------------------------------------------------
