@@ -21,13 +21,14 @@
             <v-divider></v-divider>
 
             <v-list density="compact" nav>
-              <RouterLink to="/ReserveHall">
+              <RouterLink to="/hall-list">
                 <v-list-item
                   :prepend-icon="mdiHomeCityOutline"
-                  title="حجز قاعة"
+                  title="حجوزات القاعات "
                   value="halls"
                 ></v-list-item>
               </RouterLink>
+             
 
               <RouterLink to="/courses">
                 <v-list-item
