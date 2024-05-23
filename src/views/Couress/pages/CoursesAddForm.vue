@@ -102,11 +102,23 @@
 <script setup lang="ts">
 import { defineEmits, ref } from 'vue'
 import { mdiTimerEditOutline, mdiCalendarRange } from '@mdi/js'
+import { postCoures } from '../models/CoursesService'
+
 const teacherName = ref('')
 const courseName = ref('')
 const courseServ = ref()
 const weekPrice = ref<number>()
 const monthPrice = ref<number>()
+const ReservationId = ref('')
+const CouresManagementId = ref('')
+const TeacherManagementId = ref('')
+const Hall_managementId = ref('')
+const ServiceManagementId = ref<string>('')
+const FromTime = ref<number>(0)
+const ToTime = ref<number>(0)
+const StartDate = ref<string>('')
+const EndDate = ref<string>('')
+
 const form = ref(false)
 const Rules = {
   Length: (v: string) => v.length >= 3 || ' يجب ان يكون اكبر من 3 حروف',
@@ -121,13 +133,19 @@ const closeModel = () => {
   emit('close')
 }
 
-const submitPackage = () => {
-  if (form.value) {
-    console.log(courseName.value)
-    console.log(teacherName.value)
-    console.log(courseServ.value)
-    console.log(weekPrice.value)
-    console.log(monthPrice.value)
-  } else console.log('some thing ')
+const submitPackage = async () => {
+  const body = {
+    reservationId: ReservationId,
+    couresManagementId: CouresManagementId,
+    teacherManagementId: TeacherManagementId,
+    hall_managementId: Hall_managementId,
+    serviceManagementId: ServiceManagementId,
+    fromTime: FromTime,
+    toTime: ToTime,
+    startDate: StartDate,
+    endDate: EndDate
+  }
+
+  postCoures(body)
 }
 </script>
