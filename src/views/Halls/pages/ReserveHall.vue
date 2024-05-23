@@ -12,21 +12,22 @@
       <div>
         <v-autocomplete
           v-model="hallName"
-          :items="hallNames"
+          :items="hallData"
           label="إسم القاعة"
-          item-title="label"
-          item-value="value"
+          item-title="name"
+          item-value="name"
           placeholder="إسم القاعة"
           variant="outlined"
+          :return-object="true"
         ></v-autocomplete>
       </div>
       <div class="flex items-center justify-center">
         <v-autocomplete
           v-model="customer"
-          :items="customers"
+          :items="customerData"
           label="إسم الزبون"
-          item-title="label"
-          item-value="value"
+          item-title="name"
+          item-value="name"
           placeholder="إسم الزبون"
           variant="outlined"
         ></v-autocomplete>
@@ -40,7 +41,7 @@
       <div class="flex item-center justify-center gap-8">
         <v-autocomplete
           v-model="packagePrice"
-          :items="packages"
+          :items="paymentMethods"
           label="نوع الباقة"
           item-title="label"
           item-value="value"
@@ -64,10 +65,10 @@
       <div class="flex item-center justify-center gap-8">
         <v-autocomplete
           v-model="servicesPrice"
-          :items="services"
+          :items="ServicesData"
           label="نوع الخدمة"
-          item-title="label"
-          item-value="value"
+          item-title="name"
+          item-value="servicePrice"
           placeholder="نوع الخدمة"
           variant="outlined"
         ></v-autocomplete>
@@ -111,6 +112,7 @@
 
       <div class="flex item-center justify-center gap-8">
         <v-text-field
+        v-model="fromTime"
           :prepend-icon="mdiTimerOutline"
           label="الوقيت من"
           item-title="label"
@@ -120,6 +122,7 @@
           :rules="[Rules.time]"
         ></v-text-field>
         <v-text-field
+        v-model="toTime"
           label="الوقيت إلي"
           item-title="label"
           item-value="value"
@@ -192,7 +195,9 @@
 </template>
 <script setup lang="ts">
 import { mdiPlus, mdiTimerOutline ,mdiCalendarRange ,mdiArrowRightTop } from '@mdi/js'
-import { defineEmits, ref, watchEffect } from 'vue'
+import { defineEmits, onMounted, ref, watchEffect } from 'vue'
+import { getHalls ,getCustomers  ,getServices} from '../hallReserve-services';
+import type { Hall ,Customer ,Service  } from '../models/reserveModels';
 
 
 const form =ref(false)
@@ -216,11 +221,14 @@ const reload = () => {
 // const updateModel = () => {
 //   emit('update');
 // };
-const hallName = ref('')
+const hallName = ref<Hall>()
+const hallData = ref<Hall[]>([])
+const customerData = ref<Customer[]>([])
+const ServicesData = ref<Service[]>([])
 const customer = ref('')
 const PaymentMethod = ref('')
 const reserveType = ref('')
-const hallType = ref()
+
 const subscription = ref(1)
 const packagePrice = ref<number | undefined>(undefined)
 const servicesPrice = ref<number | undefined>(undefined)
@@ -228,39 +236,16 @@ const servicesNumber = ref<number>(1)
 const showMessage = ref(false)
 const fromTime = ref(0)
 const toTime = ref(0)
+const totalTime = ref(0)
 const formData = ref()
 const totalPayment = ref(0)
 const paid = ref(0)
 const totalServicesPrice = ref(0)
 const remainingPayment = ref(0)
 
-const prices = ref<{
-  hour: number
-  halfDay: number
-  day: number
-  week: number
-  month: number
-}>({
-  hour: 0,
-  halfDay: 0,
-  day: 0,
-  week: 0,
-  month: 0
-})
 
 //the Test data to try the logic
-const hallNames = [
-  {
-    label: 'ابن الهيثم',
-    value: 'ابن الهيثم',
-    index: 1
-  },
-  {
-    label: 'ابن بطوطة',
-    value: 'ابن بطوطة',
-    index: 2
-  }
-] as const
+
 
 const customers = [
   {
@@ -347,6 +332,10 @@ const calculatePaymrnt = () => {
     totalServicesPrice.value = servicesPrice.value * servicesNumber.value
   }
 
+  // if (false) {
+  //   totalTime.value = toTime.value -fromTime.value
+  // }
+
 
 
 
@@ -366,6 +355,32 @@ watchEffect(() => {
   console.log( "سعر الإجمالي ",totalPayment.value )
 })
 
+const onGetData = () => {
+getHalls()
+.then( (response) => {
+console.log(response)
+hallData.value=response
+}) 
+
+getCustomers()
+.then( (response) => {
+console.log(response)
+customerData.value=response
+}) 
+
+getServices()
+.then( (response) => {
+console.log(response)
+ServicesData.value=response
+}) 
+
+}
+
+onMounted(() => {
+onGetData()
+})
+
+
 //----------------------------------------------------------
 
 const submitHallData = () => {
@@ -373,47 +388,38 @@ const submitHallData = () => {
   if (!form){
       
   }
-  // const response = await apiClient.post('Hall_management', {
-  //   name: hallName.value,
-  //   hallTypeId: hallType.value,
-  //   vipId: subscription.value,
-  //   hourPrice: prices.value.hour,
-  //   halfDayPrice: prices.value.halfDay,
-  //   weekPrice: prices.value.week,
-  //   monthPrice: prices.value.month
-  // })
-  // console.log(response.data)
-  // console.log(response.data.token)
-  // localStorage.setItem('token', response.data.token)\
-  // const body = {
-  //   name: hallName.value,
-  //   hallTypeId: hallType.value,
-  //   vipId: subscription.value,
-  //   hourPrice: prices.value.hour,
-  //   halfDayPrice: prices.value.halfDay,
-  //   weekPrice: prices.value.week,
-  //   monthPrice: prices.value.month
-  // }
-
-  // postHall(body)
-  //   .then(() => {
-  //     showMessage.value = true
-  //     console.log(body)
-  //     // updateModel();
-  //   })
-  //   .catch((error: any) => {
-  //     console.log(error)
-  //   })
-  //   .finally(() => {
-  //     reload()
-  //     hallName.value = ''
-  //     hallType.value = 1
-  //     subscription.value = 1
-  //     prices.value.day = 0
-  //     prices.value.halfDay = 0
-  //     prices.value.hour = 0
-  //     prices.value.month = 0
-  //     prices.value.week = 0
-  //   })
+  
 }
+
+type PaymentMethod = {
+  label: string;
+  value: number;
+}
+
+const paymentMethods = ref<PaymentMethod[]>([])
+
+watchEffect(() => {
+  if (hallName.value) {
+    paymentMethods.value = [
+      {
+        label: "ساعة",
+        value: hallName.value.hourPrice
+      },
+      {
+        label: "نصف يوم",
+        value: hallName.value.halfDayPrice
+      },
+      {
+        label: "أسبوع",
+        value: hallName.value.weekPrice
+      },
+      {
+        label: "شهر",
+        value: hallName.value.monthPrice
+      },
+    ]
+  }
+  
+})
+
 </script>
