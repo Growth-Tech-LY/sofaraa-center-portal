@@ -43,4 +43,24 @@ endDate: string,
  
 }
 
-export type { Hall, Service , Customer , packages }
+type PostReservationHalls = {
+
+  hall_ManagementId: string,
+  packageManagementId: string,
+  serviceManagementId: string,
+  totalPrice: number,
+  payedPrice: number,
+restPrice: number,
+  fromTime: number,
+  toTime: number,
+  startDate: string,
+  endDate: string,
+  reservationsTypeId: number,
+  paymentMethodId: number,
+  numberOfRquiredHours: number,
+  numberOfIndividuals: number,
+  customerManegentId: string
+}
+
+
+export type { Hall, Service , Customer , packages , PostReservationHalls}

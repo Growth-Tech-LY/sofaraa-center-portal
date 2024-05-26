@@ -45,19 +45,20 @@
           label="نوع الباقة"
           item-title="label"
           item-value="value"
+          :return-object="true"
           placeholder="نوع الباقة"
           variant="outlined"
         ></v-autocomplete>
 
         <p class="ms-3 text-lg font-bold text-gray-900 text-center mt-4">
-          <span class="text-red-500">سعر الباقة : </span>{{ packagePrice }} د.ل
+          <span class="text-red-500">سعر الباقة : </span>{{ packagePrice?.value }} د.ل
         </p>
       </div>
 
       <div class="mb-2">
         <v-text-field
           variant="outlined"
-          label=" عدد الساعات المطلوبة"
+          :label="placeHolderNumber"
           hide-details
           type="number"
         ></v-text-field>
@@ -230,7 +231,7 @@ const PaymentMethod = ref('')
 const reserveType = ref('')
 
 const subscription = ref(1)
-const packagePrice = ref<number | undefined>(undefined)
+const packagePrice = ref<PaymentMethod | null>(null)
 const servicesPrice = ref<number | undefined>(undefined)
 const servicesNumber = ref<number>(1)
 const showMessage = ref(false)
@@ -242,6 +243,7 @@ const totalPayment = ref(0)
 const paid = ref(0)
 const totalServicesPrice = ref(0)
 const remainingPayment = ref(0)
+const placeHolderNumber = ref('')
 
 
 //the Test data to try the logic
@@ -304,25 +306,30 @@ const services = [
 const PaymentMethods = [
   {
     label: 'نقدا',
-    value: 'نقدا',
+    value: 1,
     index: 1
   },
   {
     label: ' بطاقة مصرفية',
-    value: ' بطاقة مصرفية',
+    value: 2,
     index: 2
+  } ,
+  {
+    label: 'شيك',
+    value: 3,
+    index: 3
   }
 ] as const
 
 const reserveTypes = [
   {
     label: 'مبدئ',
-    value: 'مبدئ',
+    value: 1,
     index: 1
   },
   {
     label: 'نهائي',
-    value: 'نهائي',
+    value: 2,
     index: 2
   }
 ] as const
@@ -339,38 +346,29 @@ const calculatePaymrnt = () => {
 
 
 
-  if (packagePrice.value) {
-    totalPayment.value =  totalServicesPrice.value + packagePrice.value
-  }
-  
-  console.log(totalServicesPrice.value )
-  console.log(totalPayment.value )
+  // if (packagePrice.value) {
+  //   totalPayment.value =  totalServicesPrice.value + packagePrice.value
+  // }
 }
 
 watchEffect(() => {
   calculatePaymrnt()
-  console.log(formData.value);
- remainingPayment.value = totalPayment.value - paid.value  
- console.log( "سعر الخدمة الإجمالي",totalServicesPrice.value )
-  console.log( "سعر الإجمالي ",totalPayment.value )
+ remainingPayment.value = totalPayment.value - paid.value 
 })
 
 const onGetData = () => {
 getHalls()
 .then( (response) => {
-console.log(response)
 hallData.value=response
 }) 
 
 getCustomers()
 .then( (response) => {
-console.log(response)
 customerData.value=response
 }) 
 
 getServices()
 .then( (response) => {
-console.log(response)
 ServicesData.value=response
 }) 
 
@@ -420,6 +418,30 @@ watchEffect(() => {
     ]
   }
   
+})
+
+watchEffect(() => {
+  console.log('Selected Package Price:', packagePrice.value);
+  // const selectedMethod = paymentMethods.value.find(method => method.value === packagePrice.value);
+  // console.log('Selected Method:', selectedMethod);
+  // if (selectedMethod) {
+  //   switch (selectedMethod.label) {
+  //     case "نصف يوم":
+  //       placeHolderNumber.value = "عدد الساعات المطلوبة";
+  //       break;
+  //     case "أسبوع":
+  //       placeHolderNumber.value = "عدد الأسابيع المطلوبة";
+  //       break;
+  //     case "شهر":
+  //       placeHolderNumber.value = "عدد الأشهر المطلوبة";
+  //       break;
+  //     default:
+  //       placeHolderNumber.value = "";
+  //   }
+  //   console.log('Placeholder:', placeHolderNumber.value);
+  // } else {
+  //   placeHolderNumber.value = '';
+  // }
 })
 
 </script>
