@@ -104,17 +104,21 @@
 <script setup lang="ts">
 import { defineEmits, onMounted, ref, watchEffect } from 'vue'
 import { mdiTimerEditOutline, mdiCalendarRange } from '@mdi/js'
-import { getCouresManagement, postCoures } from '../models/CoursesService'
+import { postCoures } from '../models/CoursesService'
+import { getCouresesFromMang } from '@/core/services/mainServices'
+import type { Coures } from '@/core/models/Mainmodels'
 const teacherName = ref('')
 const courseName = ref('')
 const courseServ = ref()
 
 const Price = ref<number>()
 const ReservationId = ref('')
-const CouresManagementId = ref('')
-const TeacherManagementId = ref('')
-const Hall_managementId = ref('')
-const ServiceManagementId = ref('')
+const couresManagementId = ref('')
+const AllCoureses = ref<Coures[]>()
+
+// const TeacherManagementId = ref('')
+// const Hall_managementId = ref('')
+// const ServiceManagementId = ref('')
 const FromTime = ref(0)
 const ToTime = ref(0)
 const StartDate = ref('')
@@ -134,17 +138,15 @@ const closeModel = () => {
   emit('close')
 }
 
-const getCouresID = () => {
-  getCouresManagement().then((response) => {
-    CouresManagementId.value = response
-  })
+const getAllData = () => {
+  getCouresesFromMang()
 }
 
 onMounted(async () => {
-  getCouresID()
+  getAllData()
 })
 watchEffect(() => {})
-console.log(CouresManagementId)
+
 // const submitPackage = async () => {
 //   const body = {
 //     reservationId: ReservationId,

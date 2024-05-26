@@ -1,14 +1,8 @@
 import apiClient from '@/axios'
 import type { PostCoures, Coures } from './courses'
-
+import type { Customer, Service } from '@/core/models/Mainmodels'
 const postCoures = (body: PostCoures) => {
   return apiClient.post<PostCoures>('TrainingCouresReservations', body)
-}
-
-const getCouresManagement = () => {
-  return apiClient.get(' GetAllHSCP/GetAllGetCouresManagement').then((response) => {
-    return response.data
-  })
 }
 
 const getCourses = () => {
@@ -17,4 +11,4 @@ const getCourses = () => {
   })
 }
 
-export { postCoures, getCourses, getCouresManagement }
+export { postCoures, getCourses }
