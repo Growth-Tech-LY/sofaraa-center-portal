@@ -9,15 +9,17 @@ type Coures = {
   dateTo: Date
 }
 type PostCoures = {
-  reservationId: string
-  couresManagementId: string
-  teacherManagementId: string
-  hall_managementId: string
-  serviceManagementId: string
-  fromTime: number
-  toTime: number
-  startDate: string
-  endDate: string
+  couresManagementId: string | undefined
+  teacherManagementId: string | undefined
+  hall_managementId: string | undefined
+  serviceManagementId: string | undefined
+  totalPrice: number | undefined
+  payedPrice: number | undefined
+  restPrice: number | undefined
+  fromTime: number | undefined
+  toTime: number | undefined
+  startDate: string | undefined
+  endDate: string | undefined
 }
 
 export type { Coures, PostCoures }
