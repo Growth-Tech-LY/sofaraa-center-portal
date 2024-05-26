@@ -1,5 +1,5 @@
 import apiClient from '@/axios'
-import type { Hall , Service , Customer , packages } from './models/reserveModels'
+import type { Hall , Service , Customer , packages , PostReservationHalls } from './models/reserveModels'
 
 import type { PaginationParamas } from '@/core/models/pagination-params'
 
@@ -27,6 +27,9 @@ const getCustomers = () => {
       })
   }
 
+  const Postreservation = (body: PostReservationHalls) => {
+  return apiClient.post<Hall>('GetAllHSCP/GetAllServicesManagement', body)
+}
 
 
 
