@@ -1,27 +1,4 @@
 
-type Hall = {
-  id: string
-  name: string
-  hourPrice: number
-  halfDayPrice: number
-  weekPrice: number
-  monthPrice: number
-}
-
-
-type Service = {
-  id: string,
-  name: string,
-  servicePrice: number,
-  
-}
-
-type Customer = {
-  id: string,
-  name: string,
-  phoneNumber:string ,
-  emai: string
-}
 
 
 type packages = {
@@ -63,4 +40,4 @@ restPrice: number,
 }
 
 
-export type { Hall, Service , Customer , packages , PostReservationHalls}
+export type {  packages , PostReservationHalls}
