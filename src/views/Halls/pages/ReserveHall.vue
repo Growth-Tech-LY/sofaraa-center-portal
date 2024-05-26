@@ -15,7 +15,7 @@
           :items="hallData"
           label="إسم القاعة"
           item-title="name"
-          item-value="name"
+          item-value="value"
           placeholder="إسم القاعة"
           variant="outlined"
           :return-object="true"
@@ -23,11 +23,11 @@
       </div>
       <div class="flex items-center justify-center">
         <v-autocomplete
-          v-model="customer"
+          v-model="customerId"
           :items="customerData"
           label="إسم الزبون"
           item-title="name"
-          item-value="name"
+          item-value="id"
           placeholder="إسم الزبون"
           variant="outlined"
         ></v-autocomplete>
@@ -57,6 +57,7 @@
 
       <div class="mb-2">
         <v-text-field
+        v-model="countOfrequiedTime"
           variant="outlined"
           :label="placeHolderNumber"
           hide-details
@@ -68,20 +69,23 @@
           v-model="servicesPrice"
           :items="ServicesData"
           label="نوع الخدمة"
+          multiple
+          chips
           item-title="name"
           item-value="servicePrice"
           placeholder="نوع الخدمة"
+          :return-object="true"
           variant="outlined"
         ></v-autocomplete>
 
         <p class="ms-3 text-lg font-bold text-gray-900 text-center mt-4">
-          <span class="text-red-500">سعر الخدمة :</span> {{ servicesPrice }} د.ل
+          <span class="text-red-500">سعر الخدمة :</span> {{selectedServicesPrice }} د.ل
         </p>
       </div>
 
       <div class="mb-2">
         <v-text-field
-        v-model="servicesNumber"
+        v-model="individualNumber"
           variant="outlined"
           label=" عدد الأفراد "
           hide-details
@@ -91,7 +95,7 @@
 
       <div class="flex item-center justify-center gap-8">
         <v-text-field
-        v-model="formData"
+        v-model="formDate"
         dir="rtl"
         :prepend-icon="mdiCalendarRange"
         clearable
@@ -101,6 +105,7 @@
         type="date"
       ></v-text-field>
       <v-text-field
+      v-model="toDate"
         dir="rtl"
         :prepend-icon="mdiCalendarRange"
         clearable
@@ -136,7 +141,7 @@
 
       <div class="flex item-center justify-center gap-8">
         <v-autocomplete
-          v-model="PaymentMethod"
+          v-model="Payment"
           :items="PaymentMethods"
           label="طريقة الدفع  "
           item-title="label"
@@ -197,8 +202,8 @@
 <script setup lang="ts">
 import { mdiPlus, mdiTimerOutline ,mdiCalendarRange ,mdiArrowRightTop } from '@mdi/js'
 import { defineEmits, onMounted, ref, watchEffect } from 'vue'
-import { getHalls ,getCustomers  ,getServices} from '../hallReserve-services';
-import type { Hall ,Customer ,Service  } from '../models/reserveModels';
+import { getHalls , getCustomers  ,getServices } from '@/core/services/mainServices';
+import type { Hall ,Service , Customer } from '@/core/models/Mainmodels';
 
 
 const form =ref(false)
@@ -226,25 +231,31 @@ const hallName = ref<Hall>()
 const hallData = ref<Hall[]>([])
 const customerData = ref<Customer[]>([])
 const ServicesData = ref<Service[]>([])
-const customer = ref('')
-const PaymentMethod = ref('')
+const customerId = ref('')
+const Payment = ref('')
 const reserveType = ref('')
 
 const subscription = ref(1)
 const packagePrice = ref<PaymentMethod | null>(null)
-const servicesPrice = ref<number | undefined>(undefined)
-const servicesNumber = ref<number>(1)
+
+const individualNumber = ref<number>(1)
 const showMessage = ref(false)
-const fromTime = ref(0)
+const fromTime = ref(0)   
 const toTime = ref(0)
 const totalTime = ref(0)
-const formData = ref()
+const formDate = ref('')
+const toDate = ref('')
+const placeHolderNumber = ref('')
+//variables for the calculation of the total 
+const servicesPrice = ref<Service[]>([])
+const selectedServicesPrice=ref(0)
 const totalPayment = ref(0)
 const paid = ref(0)
 const totalServicesPrice = ref(0)
 const remainingPayment = ref(0)
-const placeHolderNumber = ref('')
-
+const totalPackagePrice = ref(0)
+const countOfrequiedTime = ref<number | undefined>(undefined)
+//------------------------------------
 
 //the Test data to try the logic
 
@@ -336,25 +347,41 @@ const reserveTypes = [
 
 const calculatePaymrnt = () => {
   if (servicesPrice.value) {
-    totalServicesPrice.value = servicesPrice.value * servicesNumber.value
+    totalServicesPrice.value = selectedServicesPrice.value * individualNumber.value
   }
 
-  // if (false) {
-  //   totalTime.value = toTime.value -fromTime.value
-  // }
+ 
 
 
-
-
-  // if (packagePrice.value) {
-  //   totalPayment.value =  totalServicesPrice.value + packagePrice.value
-  // }
+  if (packagePrice.value && countOfrequiedTime.value) {
+    totalPackagePrice.value=packagePrice.value.value * countOfrequiedTime.value
+    totalPayment.value =  totalServicesPrice.value + totalPackagePrice.value
+  }
 }
 
 watchEffect(() => {
   calculatePaymrnt()
  remainingPayment.value = totalPayment.value - paid.value 
+ console.log(hallName.value );
+ 
 })
+
+watchEffect(() => {
+ 
+  selectedServicesPrice.value =0;
+    for (let i = 0; i < servicesPrice.value.length; i++) {
+     selectedServicesPrice.value = selectedServicesPrice.value + servicesPrice.value[i].servicePrice;
+  } 
+ 
+
+})
+
+watchEffect(() => {
+
+ console.log('the hallname value is ',hallName.value );
+ 
+})
+
 
 const onGetData = () => {
 getHalls()
@@ -383,9 +410,26 @@ onGetData()
 
 const submitHallData = () => {
 
-  if (!form){
-      
+  const body = {
+    hall_ManagementId:hallName.value?.id ,
+  // packageManagementId: ,
+  // serviceManagementId: servicesPrice.value?.id,
+  totalPrice: totalPayment.value,
+  payedPrice: paid.value,
+restPrice: remainingPayment.value,
+  fromTime: fromTime.value,
+  toTime: toTime.value,
+  startDate: formDate.value,
+  endDate: toDate.value,
+  reservationsTypeId: reserveType.value,
+  paymentMethodId: Payment.value,
+  numberOfRquiredHours: countOfrequiedTime.value,
+  numberOfIndividuals: individualNumber.value,
+  customerManegentId: customerId.value
   }
+//   if (!form){
+      
+//   }
   
 }
 
@@ -421,27 +465,28 @@ watchEffect(() => {
 })
 
 watchEffect(() => {
+  console.log('Payment Methods:', paymentMethods.value);
   console.log('Selected Package Price:', packagePrice.value);
-  // const selectedMethod = paymentMethods.value.find(method => method.value === packagePrice.value);
-  // console.log('Selected Method:', selectedMethod);
-  // if (selectedMethod) {
-  //   switch (selectedMethod.label) {
-  //     case "نصف يوم":
-  //       placeHolderNumber.value = "عدد الساعات المطلوبة";
-  //       break;
-  //     case "أسبوع":
-  //       placeHolderNumber.value = "عدد الأسابيع المطلوبة";
-  //       break;
-  //     case "شهر":
-  //       placeHolderNumber.value = "عدد الأشهر المطلوبة";
-  //       break;
-  //     default:
-  //       placeHolderNumber.value = "";
-  //   }
-  //   console.log('Placeholder:', placeHolderNumber.value);
-  // } else {
-  //   placeHolderNumber.value = '';
-  // }
-})
+
+  if (packagePrice.value) {
+    switch (packagePrice.value.label) {
+      case "ساعة":
+      case "نصف يوم":
+        placeHolderNumber.value = "عدد الساعات المطلوبة";
+        break;
+      case "أسبوع":
+        placeHolderNumber.value = "عدد الأسابيع المطلوبة";
+        break;
+      case "شهر":
+        placeHolderNumber.value = "عدد الأشهر المطلوبة";
+        break;
+      default:
+        placeHolderNumber.value = "";
+    }
+    console.log('Placeholder:', placeHolderNumber.value);
+  } else {
+    placeHolderNumber.value = '';
+  }
+});
 
 </script>
