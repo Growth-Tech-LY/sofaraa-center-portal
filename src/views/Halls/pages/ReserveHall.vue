@@ -57,6 +57,7 @@
 
       <div class="mb-2">
         <v-text-field
+        v-model="countOfrequiedTime"
           variant="outlined"
           :label="placeHolderNumber"
           hide-details
@@ -136,7 +137,7 @@
 
       <div class="flex item-center justify-center gap-8">
         <v-autocomplete
-          v-model="PaymentMethod"
+          v-model="Payment"
           :items="PaymentMethods"
           label="طريقة الدفع  "
           item-title="label"
@@ -227,24 +228,28 @@ const hallData = ref<Hall[]>([])
 const customerData = ref<Customer[]>([])
 const ServicesData = ref<Service[]>([])
 const customer = ref('')
-const PaymentMethod = ref('')
+const Payment = ref('')
 const reserveType = ref('')
 
 const subscription = ref(1)
 const packagePrice = ref<PaymentMethod | null>(null)
 const servicesPrice = ref<number | undefined>(undefined)
+
 const servicesNumber = ref<number>(1)
 const showMessage = ref(false)
 const fromTime = ref(0)
 const toTime = ref(0)
 const totalTime = ref(0)
 const formData = ref()
+const placeHolderNumber = ref('')
+//variables for the calculation of the total 
 const totalPayment = ref(0)
 const paid = ref(0)
 const totalServicesPrice = ref(0)
 const remainingPayment = ref(0)
-const placeHolderNumber = ref('')
-
+const totalPackagePrice = ref(0)
+const countOfrequiedTime = ref<number | undefined>(undefined)
+//------------------------------------
 
 //the Test data to try the logic
 
@@ -339,16 +344,13 @@ const calculatePaymrnt = () => {
     totalServicesPrice.value = servicesPrice.value * servicesNumber.value
   }
 
-  // if (false) {
-  //   totalTime.value = toTime.value -fromTime.value
-  // }
+ 
 
 
-
-
-  // if (packagePrice.value) {
-  //   totalPayment.value =  totalServicesPrice.value + packagePrice.value
-  // }
+  if (packagePrice.value && countOfrequiedTime.value) {
+    totalPackagePrice.value=packagePrice.value.value * countOfrequiedTime.value
+    totalPayment.value =  totalServicesPrice.value + totalPackagePrice.value
+  }
 }
 
 watchEffect(() => {
@@ -421,27 +423,28 @@ watchEffect(() => {
 })
 
 watchEffect(() => {
+  console.log('Payment Methods:', paymentMethods.value);
   console.log('Selected Package Price:', packagePrice.value);
-  // const selectedMethod = paymentMethods.value.find(method => method.value === packagePrice.value);
-  // console.log('Selected Method:', selectedMethod);
-  // if (selectedMethod) {
-  //   switch (selectedMethod.label) {
-  //     case "نصف يوم":
-  //       placeHolderNumber.value = "عدد الساعات المطلوبة";
-  //       break;
-  //     case "أسبوع":
-  //       placeHolderNumber.value = "عدد الأسابيع المطلوبة";
-  //       break;
-  //     case "شهر":
-  //       placeHolderNumber.value = "عدد الأشهر المطلوبة";
-  //       break;
-  //     default:
-  //       placeHolderNumber.value = "";
-  //   }
-  //   console.log('Placeholder:', placeHolderNumber.value);
-  // } else {
-  //   placeHolderNumber.value = '';
-  // }
-})
+
+  if (packagePrice.value) {
+    switch (packagePrice.value.label) {
+      case "ساعة":
+      case "نصف يوم":
+        placeHolderNumber.value = "عدد الساعات المطلوبة";
+        break;
+      case "أسبوع":
+        placeHolderNumber.value = "عدد الأسابيع المطلوبة";
+        break;
+      case "شهر":
+        placeHolderNumber.value = "عدد الأشهر المطلوبة";
+        break;
+      default:
+        placeHolderNumber.value = "";
+    }
+    console.log('Placeholder:', placeHolderNumber.value);
+  } else {
+    placeHolderNumber.value = '';
+  }
+});
 
 </script>
