@@ -1,38 +1,41 @@
 <template>
   <div
-    class="mt-16 bg-white border-t-[20px] border-[#BF3B74] w-3/4 mx-auto py-16 px-16 rounded-lg shadow-lg"
+    class="mt-12 bg-white border-t-[20px] border-[#BF3B74] w-3/4 mx-auto py-16 px-16 rounded-lg shadow-lg"
   >
     <v-form v-model="form" class="grid grid-cols-4 gap-4 mt-8">
-      <v-text-field
-        v-model="courseName"
-        class="w-5/6 col-span-2"
-        clearable
-        label="اسم دورة"
-        variant="outlined"
-        placeholder="ادخل إسم الباقة..."
-        :rules="[Rules.required, Rules.Length]"
-      ></v-text-field>
       <v-autocomplete
-        v-model="courseServ"
-        class="col-span-2"
+        v-model="TeacherId"
+        class="col-span-2 w-5/6"
         chips
-        label="اسم القاعة"
+        label="اسم المعلم"
         variant="outlined"
-        placeholder="اسم القاعة "
-        :items="['قاعة الخورزمي', 'معمل الحاسوب 1', 'معمل الحاسوب 2 (الكبير)']"
-        item-title="lable"
-        item-value="value"
+        :items="AllTeachers"
+        item-title="name"
+        item-value="id"
         clearable
       ></v-autocomplete>
-      <v-text-field
-        v-model="teacherName"
-        class="col-span-2 col-start-1 w-5/6"
-        clearable
-        label="اسم الأستاذ"
-        placeholder="ادخل سعر الساعة ..."
+      <v-autocomplete
+        v-model="couresId"
+        class="col-span-2 w-full mx-auto"
+        chips
+        label="اسم الدورة"
         variant="outlined"
-      ></v-text-field>
-
+        :items="AllCoureses"
+        item-title="name"
+        item-value="id"
+        clearable
+      ></v-autocomplete>
+      <v-autocomplete
+        v-model="ServiceId"
+        class="col-span-2 w-5/6"
+        chips
+        label="اسم الخدمة"
+        variant="outlined"
+        :items="AllService"
+        item-title="name"
+        item-value="id"
+        clearable
+      ></v-autocomplete>
       <v-text-field
         v-model="FromTime"
         :prepend-icon="mdiTimerEditOutline"
@@ -52,17 +55,18 @@
         prefix="د.ل"
         type="number"
       ></v-text-field>
-
-      <v-text-field
-        v-model="Price"
-        class="col-span-2 w-5/6"
-        clearable
-        label="سعر  "
-        placeholder="ادخل سعر   ..."
+      <v-autocomplete
+        v-model="HallId"
+        class="col-span-2 col-start-1 w-5/6"
+        chips
+        label="اسم القاعة"
         variant="outlined"
-        prefix="د.ل"
-        type="number"
-      ></v-text-field>
+        placeholder="اسم القاعة "
+        :items="AllHalls"
+        item-title="name"
+        item-value="id"
+        clearable
+      ></v-autocomplete>
 
       <v-text-field
         v-model="StartDate"
@@ -83,18 +87,20 @@
         variant="outlined"
         type="date"
       ></v-text-field>
-      <div class="pr-20 col-start-1">
+
+      <div class="pr-20 col-start-3 row-start-6 col-span-2">
         <v-btn
           size="large"
           class="p-4 mt-4 w-2/6 ml-3"
           color="green"
           type="submit"
-          @click="submitPackage"
           :disabled="!form"
+          @click="submitPackage"
           >اضافة</v-btn
         >
         <v-btn size="large" class="p-4 mt-4 w-2/6" color="red" @click="closeModel">الغاء </v-btn>
       </div>
+
       <v-snackbar :timeout="2000" color="success" :location="'top left'">
         تمت الإضافة بنجاح
       </v-snackbar>
@@ -104,42 +110,59 @@
 <script setup lang="ts">
 import { defineEmits, onMounted, ref, watchEffect } from 'vue'
 import { mdiTimerEditOutline, mdiCalendarRange } from '@mdi/js'
-import { postCoures } from '../models/CoursesService'
-import { getCouresesFromMang } from '@/core/services/mainServices'
-import type { Coures } from '@/core/models/Mainmodels'
-const teacherName = ref('')
-const courseName = ref('')
-const courseServ = ref()
-
-const Price = ref<number>()
-const ReservationId = ref('')
-const couresManagementId = ref('')
-const AllCoureses = ref<Coures[]>()
-
-// const TeacherManagementId = ref('')
-// const Hall_managementId = ref('')
-// const ServiceManagementId = ref('')
-const FromTime = ref(0)
-const ToTime = ref(0)
-const StartDate = ref('')
-const EndDate = ref('')
+import { postCoures } from '../CoursesService'
+import {
+  getCouresesFromMang,
+  getHalls,
+  getServices,
+  getTeacher
+} from '@/core/services/mainServices'
+import type { Coures, Hall, Service, Teacher } from '@/core/models/Mainmodels'
+import type { PostCoures } from '../models/courses'
 
 const form = ref(false)
-const Rules = {
-  Length: (v: string) => v.length >= 3 || ' يجب ان يكون اكبر من 3 حروف',
-  required: (v: string) => !!v || 'الحقل اجباري'
-}
-
+const Price = ref<number>()
 const emit = defineEmits<{
   close: []
 }>()
+//  Geting values   FROM API
+const AllTeachers = ref<Teacher[]>()
+const AllCoureses = ref<Coures[]>()
+const AllHalls = ref<Hall[]>()
+const AllService = ref<Service[]>()
+
+// **********************
+
+const TotalPrice = ref<number>()
+// Vars using for body request
+const FromTime = ref<number>()
+const ToTime = ref<number>()
+const StartDate = ref<string>()
+const EndDate = ref<string>()
+const couresId = ref<string>()
+const ServiceId = ref<string>()
+const HallId = ref<string>()
+const TeacherId = ref<string>()
+
+// **************************
 
 const closeModel = () => {
   emit('close')
 }
 
 const getAllData = () => {
-  getCouresesFromMang()
+  getCouresesFromMang().then((response) => {
+    AllCoureses.value = response
+  })
+  getServices().then((response) => {
+    AllService.value = response
+  })
+  getHalls().then((response) => {
+    AllHalls.value = response
+  })
+  getTeacher().then((response) => {
+    AllTeachers.value = response
+  })
 }
 
 onMounted(async () => {
@@ -147,19 +170,27 @@ onMounted(async () => {
 })
 watchEffect(() => {})
 
-// const submitPackage = async () => {
-//   const body = {
-//     reservationId: ReservationId,
-//     couresManagementId: CouresManagementId,
-//     teacherManagementId: TeacherManagementId,
-//     hall_managementId: Hall_managementId,
-//     serviceManagementId: ServiceManagementId,
-//     fromTime: FromTime,
-//     toTime: ToTime,
-//     startDate: StartDate,
-//     endDate: EndDate
-//   }
-//   postCoures(body)
+const submitPackage = async () => {
+  const body: PostCoures = {
+    couresManagementId: couresId.value,
+    teacherManagementId: TeacherId.value,
+    hall_managementId: HallId.value,
+    serviceManagementId: HallId.value,
+    totalPrice: 0,
+    payedPrice: 0,
+    restPrice: 0,
+    fromTime: FromTime.value,
+    toTime: ToTime.value,
+    startDate: StartDate.value,
+    endDate: EndDate.value
+  }
 
-// }
+  postCoures(body)
+    .then(() => {
+      console.log(body)
+    })
+    .catch((error) => {
+      console.log(error)
+    })
+}
 </script>

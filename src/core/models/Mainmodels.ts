@@ -29,4 +29,15 @@ type Coures = {
   curriculum: string
   level: string
 }
-export type { Customer, Service, Coures, Hall }
+
+type Teacher = {
+  id: String
+  name: string
+  phonenumber: string
+  passportnumber: string
+  address: string
+  academicQualification: string
+  pdfFileName: string
+}
+
+export type { Customer, Service, Coures, Hall, Teacher }

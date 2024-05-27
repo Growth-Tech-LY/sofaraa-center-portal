@@ -136,12 +136,31 @@
         </div>
       </div>
     </main>
- <footer class="bg-pink-600">
-<p>daskdlsadksadjlas</p>
-<p>daskdlsadksadjlas</p>
-<p>daskdlsadksadjlas</p>
-<p>daskdlsadksadjlas</p>
- </footer>
+    <footer class="bg-gray-200 pb-10">
+      <div class="flex justify-between px-4 pt-4">
+        <div class="text-center">
+          <p class="text-pink-600 bold text-2xl">Contact us</p>
+          <div class="flex justify-center items-center">
+            <p>Hai Alandalus Libyan/Tripoli</p>
+            <img src="../../../../src/assets/icons/location.svg" alt="">
+        </div>
+          <p>Info@sofaraa-alelm.ly</p>
+          <p>+218920920071</p>
+        </div>
+        <div class="text-center">
+          <p class="text-pink-600 bold text-2xl">Contact us</p>
+          <p>Hai Alandalus Libyan/Tripoli</p>
+          <p>Info@sofaraa-alelm.ly</p>
+          <p>+218920920071</p>
+        </div>
+        <div class="text-center">
+          <p class="text-pink-600 bold text-2xl">Contact us</p>
+          <p>Hai Alandalus Libyan/Tripoli</p>
+          <p>Info@sofaraa-alelm.ly</p>
+          <p>218920920071+</p>
+        </div>
+      </div>
+    </footer>
   </body>
 </template>
 

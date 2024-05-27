@@ -6,7 +6,7 @@
         color="green-accent-4"
         rounded="lg"
         :prepend-icon="mdiPlus"
-        @click="toggelPopUp"
+        @click="toggelForm"
         >اضافة حجز</v-btn
       >
       <div class="flex flex-col w-1/2">
@@ -19,10 +19,25 @@
           hide-details
         ></v-text-field>
       </div>
+      <div
+        v-show="formPopUP"
+        @click.self="toggelForm"
+        class="fixed h-screen w-full top-0 left-0 bg-gray-500/50 z-[1005]"
+      >
+        <CoursesForm
+          @close="toggelForm"
+          @refresh="
+            onOptionsChange({
+              page: paginations.page,
+              itemsPerPage: paginations.size
+            })
+          "
+        />
+      </div>
       <!-- The Edit start  -->
       <div
         v-if="editPopUp"
-        @click.self="toggelPopUp2"
+        @click.self="toggelEdit"
         class="fixed h-screen w-full top-0 left-0 bg-gray-500/50 z-[1005]"
       >
         <CoursesEditForm />
@@ -69,6 +84,15 @@
       <template #[`item.actions`]="{ item }">
         <div>
           <v-btn
+            class="ml-3"
+            color="blue-darken-2"
+            variant="text"
+            size="medium"
+            :prepend-icon="mdiAccountMultiplePlus"
+          >
+            <v-tooltip activator="parent" location="bottom">اسناد طالب لدورة</v-tooltip>
+          </v-btn>
+          <v-btn
             variant="text"
             class="ml-3"
             color="yellow-darken-2"
@@ -78,6 +102,7 @@
           >
             <v-tooltip activator="parent" location="bottom">تعديل</v-tooltip>
           </v-btn>
+
           <v-btn
             color="deep-orange-darken-1"
             variant="text"
@@ -94,30 +119,16 @@
     </v-data-table-server>
 
     <!--               The Coureses Add Form   Start       -->
-    <div
-      v-show="formPopUP"
-      @click.self="toggelPopUp"
-      class="fixed h-screen w-full top-0 left-0 bg-gray-500/50 z-[1005]"
-    >
-      <CoursesForm
-        @close="toggelPopUp"
-        @refresh="
-          onOptionsChange({
-            page: paginations.page,
-            itemsPerPage: paginations.size
-          })
-        "
-      />
-    </div>
+
     <!--               The Coureses Add Form   End !!        -->
   </div>
 </template>
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, defineEmits } from 'vue'
 import CoursesForm from './CoursesAddForm.vue'
 import type { Coures } from '../models/courses'
-import { mdiPlus, mdiPencil, mdiDelete } from '@mdi/js'
-import { getCourses } from '../models/CoursesService'
+import { mdiPlus, mdiPencil, mdiDelete, mdiAccountMultiplePlus } from '@mdi/js'
+import { getCourses } from '../CoursesService'
 import CoursesEditForm from './CoursesEditForm.vue'
 
 const search = ref('')
@@ -135,13 +146,14 @@ const paginations = ref({
 })
 const headers: any = [
   { title: 'id', align: 'start', key: 'id' },
-  { title: 'اسم الدروة', align: 'start', sortable: false, key: '' },
-  { title: 'السعر', key: '', align: 'center' },
-  { title: 'تاريخ البدء', key: 'startDate', align: 'center' },
+  { title: 'اسم الدروة', key: 'name', align: 'start', sortable: false },
+  { title: 'عدد الأفراد ', key: 'STcount', align: 'start' },
+  { title: 'السعر', key: 'price', align: 'center' },
+  { title: 'تاريخ البدء', key: 'dateStart', align: 'center' },
   { title: 'تاريخ الانتهاء', key: 'endDate', align: 'center' },
   { title: 'من الساعة', key: 'fromTime', align: 'center' },
   { title: 'الى الساعة', key: 'toTime', align: 'center' },
-  { title: 'الأجرائات', key: 'actions', align: 'start' }
+  { title: 'الأجرائات', key: 'actions', align: 'center' }
 ]
 const onOptionsChange = ({ page, itemsPerPage }: { page: number; itemsPerPage: number }) => {
   paginations.value = {
@@ -151,53 +163,20 @@ const onOptionsChange = ({ page, itemsPerPage }: { page: number; itemsPerPage: n
   }
   // getPackage(paginations.value)
 }
-// const desserts = [
-//   {
-//     id: '1',
-//     name: 'Frozen Yogurt',
-//     calories: 159,
-//     fat: 6,
-//     carbs: 24,
-//     protein: 4,
-//     iron: '1'
-//   },
-//   {
-//     id: '2',
-//     name: 'Jelly bean',
-//     calories: 375,
-//     fat: 0,
-//     carbs: 94,
-//     protein: 0,
-//     iron: '0'
-//   },
-//   {
-//     id: '3',
-//     name: 'KitKat',
-//     calories: 518,
-//     fat: 26,
-//     carbs: 65,
-//     protein: 7,
-//     iron: '6'
-//   },
-//   {
-//     id: '4',
-//     name: 'Eclair',
-//     calories: 262,
-//     fat: 16,
-//     carbs: 23,
-//     protein: 6,
-//     iron: '7'
-//   }
-// ]
 
 const openEdit = () => {
-  toggelPopUp2()
+  toggelEdit()
 }
+// const openAddStudent=(){
 
-const toggelPopUp = () => {
+// }
+// const toggelStudent = () => {
+//   formPopUP.value = !formPopUP.value
+// }
+const toggelForm = () => {
   formPopUP.value = !formPopUP.value
 }
-const toggelPopUp2 = () => {
+const toggelEdit = () => {
   editPopUp.value = !editPopUp.value
 }
 

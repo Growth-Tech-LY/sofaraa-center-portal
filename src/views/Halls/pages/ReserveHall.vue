@@ -341,7 +341,7 @@ watchEffect(() => {
 
 
 const onGetData = () => {
-getHalls()
+  getHalls()
 .then( (response) => {
 hallData.value=response
 }) 
