@@ -1,4 +1,4 @@
-import type { Customer, Service, Hall, Coures, Teacher } from '../models/Mainmodels'
+import type { Customer, Service, Hall, Coures, Teacher, Student } from '../models/Mainmodels'
 import apiClient from '@/axios'
 
 const getHalls = async () => {
@@ -24,7 +24,7 @@ const getTeacher = async () => {
   return response.data
 }
 const getStudent = async () => {
-  const response = await apiClient.get<Teacher[]>('GetAllHSCP/GetAllGetStudentManagement')
+  const response = await apiClient.get<Student[]>('GetAllHSCP/GetAllGetStudentManagement')
   return response.data
 }
 
