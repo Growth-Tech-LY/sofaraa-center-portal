@@ -28,4 +28,4 @@ const getStudent = async () => {
   return response.data
 }
 
-export { getCouresesFromMang }
+export { getCouresesFromMang, getStudent, getTeacher, getServices, getCustomers, getHalls }

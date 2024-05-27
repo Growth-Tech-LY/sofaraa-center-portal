@@ -1,12 +1,16 @@
 type Coures = {
   id: string
-  couresName: string
-  techerName: string
-  price: number
-  timeFrom: string
-  timeTo: string
-  dateFrom: Date
-  dateTo: Date
+  couresManagementId: string
+  teacherManagementId: string
+  hall_managementId: number
+  serviceManagementId: string
+  fromTime: number
+  toTime: number
+  startDate: string
+  endDate: string
+  totalPrice: number
+  payedPrice: number
+  restPrice: number
 }
 type PostCoures = {
   couresManagementId: string | undefined
@@ -20,6 +24,10 @@ type PostCoures = {
   toTime: number | undefined
   startDate: string | undefined
   endDate: string | undefined
+}
+export type List<T> = {
+  total: number
+  data: T
 }
 
 export type { Coures, PostCoures }

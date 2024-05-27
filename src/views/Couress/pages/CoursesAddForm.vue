@@ -2,6 +2,7 @@
   <div
     class="mt-12 bg-white border-t-[20px] border-[#BF3B74] w-3/4 mx-auto py-16 px-16 rounded-lg shadow-lg"
   >
+    <h2 class="text-2xl">- حجز دورة</h2>
     <v-form v-model="form" class="grid grid-cols-4 gap-4 mt-8">
       <v-autocomplete
         v-model="TeacherId"
@@ -93,9 +94,8 @@
           size="large"
           class="p-4 mt-4 w-2/6 ml-3"
           color="green"
-          type="submit"
           :disabled="!form"
-          @click="submitPackage"
+          @click="submitCoures"
           >اضافة</v-btn
         >
         <v-btn size="large" class="p-4 mt-4 w-2/6" color="red" @click="closeModel">الغاء </v-btn>
@@ -168,14 +168,19 @@ const getAllData = () => {
 onMounted(async () => {
   getAllData()
 })
-watchEffect(() => {})
+watchEffect(() => {
+  console.log(couresId.value)
+  console.log(TeacherId.value)
+  console.log(ServiceId.value)
+  console.log(HallId.value)
+})
 
-const submitPackage = async () => {
+const submitCoures = async () => {
   const body: PostCoures = {
     couresManagementId: couresId.value,
     teacherManagementId: TeacherId.value,
     hall_managementId: HallId.value,
-    serviceManagementId: HallId.value,
+    serviceManagementId: ServiceId.value,
     totalPrice: 0,
     payedPrice: 0,
     restPrice: 0,
