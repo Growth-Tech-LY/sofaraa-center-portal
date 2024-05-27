@@ -23,13 +23,14 @@
       </div>
       <div class="flex items-center justify-center">
         <v-autocomplete
-          v-model="customerId"
+          v-model="customer"
           :items="customerData"
           label="إسم الزبون"
           item-title="name"
           item-value="id"
           placeholder="إسم الزبون"
           variant="outlined"
+          :return-object="true"
         ></v-autocomplete>
         <v-btn
           class="text-white mb-4"
@@ -180,12 +181,12 @@
 
       <div>
         <v-btn
-          :disabled="!form"
+         
           size="large"
           class="mx-3"
           color="green"
           @click="submitHallData"
-          type="submit"
+          
         >
           إضافة
         </v-btn>
@@ -203,6 +204,7 @@
 import { mdiPlus, mdiTimerOutline ,mdiCalendarRange ,mdiArrowRightTop } from '@mdi/js'
 import { defineEmits, onMounted, ref, watchEffect } from 'vue'
 import { getHalls , getCustomers  ,getServices } from '@/core/services/mainServices';
+import { Postreservation } from '../hallReserve-services';
 import type { Hall ,Service , Customer } from '@/core/models/Mainmodels';
 
 
@@ -231,9 +233,9 @@ const hallName = ref<Hall>()
 const hallData = ref<Hall[]>([])
 const customerData = ref<Customer[]>([])
 const ServicesData = ref<Service[]>([])
-const customerId = ref('')
-const Payment = ref('')
-const reserveType = ref('')
+const customer = ref<Customer>()
+const Payment = ref(1)
+const reserveType = ref(1)
 
 const subscription = ref(1)
 const packagePrice = ref<PaymentMethod | null>(null)
@@ -255,64 +257,18 @@ const totalServicesPrice = ref(0)
 const remainingPayment = ref(0)
 const totalPackagePrice = ref(0)
 const countOfrequiedTime = ref<number | undefined>(undefined)
+
+//hold services id 
+ const servicesId =ref<string[]>([])
+
 //------------------------------------
 
 //the Test data to try the logic
 
 
-const customers = [
-  {
-    label: 'مصباح',
-    value: 'مصباح',
-    index: 1
-  },
-  {
-    label: 'هيثم',
-    value: 'هيثم',
-    index: 2
-  },
-  {
-    label: 'خالد',
-    value: 'خالد',
-    index: 3
-  }
-] as const
 
-const packages = [
-  {
-    label: 'ساعة',
-    value: 100,
-    index: 1
-  },
-  {
-    label: 'نصف يوم',
-    value: 350,
-    index: 2
-  },
-  {
-    label: 'أسبوع',
-    value: 1200,
-    index: 3
-  }
-] as const
 
-const services = [
-  {
-    label: 'إفطار',
-    value: 25,
-    index: 1
-  },
-  {
-    label: ' وجبة غذاء',
-    value: 40,
-    index: 2
-  },
-  {
-    label: 'إستراحة قهوة',
-    value: 1200,
-    index: 3
-  }
-] as const
+
 
 const PaymentMethods = [
   {
@@ -367,11 +323,13 @@ watchEffect(() => {
 })
 
 watchEffect(() => {
- 
+  servicesId.value=[]
   selectedServicesPrice.value =0;
     for (let i = 0; i < servicesPrice.value.length; i++) {
      selectedServicesPrice.value = selectedServicesPrice.value + servicesPrice.value[i].servicePrice;
+     servicesId.value.push(servicesPrice.value[i].id)
   } 
+ console.log( servicesId.value);
  
 
 })
@@ -384,7 +342,7 @@ watchEffect(() => {
 
 
 const onGetData = () => {
-getHalls()
+  getHalls()
 .then( (response) => {
 hallData.value=response
 }) 
@@ -410,10 +368,14 @@ onGetData()
 
 const submitHallData = () => {
 
+  if (hallName.value && countOfrequiedTime.value && packagePrice.value &&  customer.value) {
+    
+ 
   const body = {
-    hall_ManagementId:hallName.value?.id ,
-  // packageManagementId: ,
-  // serviceManagementId: servicesPrice.value?.id,
+    hall_ManagementId:hallName.value.id ,
+    packageType:packagePrice.value.label ,
+    customerManegentId: customer.value.id,
+  serviceManagementId: servicesId.value, 
   totalPrice: totalPayment.value,
   payedPrice: paid.value,
 restPrice: remainingPayment.value,
@@ -425,11 +387,10 @@ restPrice: remainingPayment.value,
   paymentMethodId: Payment.value,
   numberOfRquiredHours: countOfrequiedTime.value,
   numberOfIndividuals: individualNumber.value,
-  customerManegentId: customerId.value
   }
-//   if (!form){
-      
-//   }
+  Postreservation(body)
+}
+  
   
 }
 

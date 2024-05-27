@@ -219,26 +219,26 @@ const toggelPopUp = () => {
 //   // console.log(idToEdit.value)
 // }
 
-// onMounted(async () => {
-//   onGetHalls(paginations.value)
-// })
+onMounted(async () => {
+  onGetHalls(paginations.value)
+})
 
-// const onGetHalls = (paginations: PaginationParamas) => {
-//   isLoading.value = true
-//   getHalls(paginations)
-//     .then((response) => {
-//       totalHalls.value = response.total
-//       halls.value = response.data
-//       errorCheck.value = false
-//     })
-//     .catch(() => {
-//       halls.value = []
-//       errorCheck.value = true
-//     })
-//     .finally(() => {
-//       isLoading.value = false
-//     })
-// }
+const onGetHalls = (paginations: PaginationParamas) => {
+  isLoading.value = true
+  getHalls(paginations)
+    .then((response) => {
+      totalHalls.value = response.total
+      halls.value = response.data
+      errorCheck.value = false
+    })
+    .catch(() => {
+      halls.value = []
+      errorCheck.value = true
+    })
+    .finally(() => {
+      isLoading.value = false
+    })
+}
 
 const onOptionsChange = ({ page, itemsPerPage }: { page: number; itemsPerPage: number }) => {
   paginations.value = {
