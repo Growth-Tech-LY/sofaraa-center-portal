@@ -7,7 +7,7 @@ import type { PaginationParamas } from '@/core/models/pagination-params'
 
 
   const Postreservation = (body: PostReservationHalls) => {
-  return apiClient.post<Hall>('GetAllHSCP/GetAllServicesManagement', body)
+  return apiClient.post('HallReservations', body)
 }
 
 

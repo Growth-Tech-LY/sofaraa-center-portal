@@ -1,7 +1,7 @@
 import CoursesTable from '@/views/Couress/pages/CoursesTable.vue'
 import ReserveHall from '@/views/Halls/pages/ReserveHall.vue' 
 import ReservedHallTable from '@/views/Halls/pages/ReservedHallTable.vue'
-import testTem from '@/views/Halls/pages/testTem.vue'
+import testTem from '@/views/frontPage.vue'
 import MainLayout from '@/views/MainLayout.vue'
 import { createRouter, createWebHistory } from 'vue-router'
 
