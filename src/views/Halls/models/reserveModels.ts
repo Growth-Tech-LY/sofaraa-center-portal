@@ -23,7 +23,7 @@ endDate: string,
 type PostReservationHalls = {
 
   hall_ManagementId: string,
-  // packageManagementId: string,
+  packageType: string,
   serviceManagementId : string [],
   customerManegentId: string
   totalPrice: number,

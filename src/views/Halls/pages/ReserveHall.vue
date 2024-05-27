@@ -23,13 +23,14 @@
       </div>
       <div class="flex items-center justify-center">
         <v-autocomplete
-          v-model="customerId"
+          v-model="customer"
           :items="customerData"
           label="إسم الزبون"
           item-title="name"
           item-value="id"
           placeholder="إسم الزبون"
           variant="outlined"
+          :return-object="true"
         ></v-autocomplete>
         <v-btn
           class="text-white mb-4"
@@ -232,7 +233,7 @@ const hallName = ref<Hall>()
 const hallData = ref<Hall[]>([])
 const customerData = ref<Customer[]>([])
 const ServicesData = ref<Service[]>([])
-const customerId = ref('')
+const customer = ref<Customer>()
 const Payment = ref(1)
 const reserveType = ref(1)
 
@@ -367,12 +368,13 @@ onGetData()
 
 const submitHallData = () => {
 
-  if (hallName.value && hallName.value && countOfrequiedTime.value) {
+  if (hallName.value && countOfrequiedTime.value && packagePrice.value &&  customer.value) {
     
  
   const body = {
     hall_ManagementId:hallName.value.id ,
-  packageManagementId:hallName.value.id  ,
+    packageType:packagePrice.value.label ,
+    customerManegentId: customer.value.id,
   serviceManagementId: servicesId.value, 
   totalPrice: totalPayment.value,
   payedPrice: paid.value,
@@ -385,7 +387,6 @@ restPrice: remainingPayment.value,
   paymentMethodId: Payment.value,
   numberOfRquiredHours: countOfrequiedTime.value,
   numberOfIndividuals: individualNumber.value,
-  customerManegentId: customerId.value
   }
   Postreservation(body)
 }
