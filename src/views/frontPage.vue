@@ -1,5 +1,5 @@
 <template>
-  <body>
+  <body class="py-2">
     <!-- <div class="preloader loaded-success fixed inset-0 z-50 bg-gray-50">
 	  <div class="absolute left-1/2 top-1/2 transform -translate-y-1/2">
 	    <div class="relative mx-auto my-12">
@@ -37,6 +37,70 @@
           move your brand into a global landscape.
         </p>
       </div>
+
+      <div class="text-center mt-8 w-3/4 mx-auto">
+        <p class="text-3xl bold" data-aos="fade-up" data-aos-duration="1000">أهدافنا</p>
+        <p class="text-pink-400 text-4xl pb-8">__________________</p>
+
+        <div class="bg-gray-100 my-8" data-aos="fade-up" data-aos-anchor-placement="center-center">
+          <v-carousel height="700" show-arrows="hover" cycle hide-delimiter-background>
+            <v-carousel-item v-for="(goal, i) in goals" :key="i">
+              <v-img :src="goal.src" height="100%" :alt="goal.alt">
+                <!-- <v-row class="fill-height" align="center" justify="center">
+            <div class="display-3">{{ slide.caption }}</div>
+          </v-row> -->
+              </v-img>
+            </v-carousel-item>
+          </v-carousel>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 justify-center items-center border border-red-500 p-4">
+        <div >
+          <p class="text-pink-600 bold text-4xl "> TYPES OF TRAINING AVAILABLE</p>
+          <div class="grid grid-cols-2 gap-1 justify-between items-center w-1/2">
+            <div>
+              <p class="bold text-xl">01</p>
+              <p>
+                Open programs: These are programs that are included in an annual training plan, and
+                dates and locations are distributed in various cities. These programs vary between
+                administrative, financial, banking and specialized medical courses. The training
+                duration depends on the program aims and objectives from 1 day such refresher
+                training up to 6 weeks training courses. And the most important characteristic of
+                this type of program is that it is available to individuals and institutions.
+              </p>
+            </div>
+            <div>
+              <p>02</p>
+              <p>
+                In-service training programs: where individuals are trained during their duties (on
+                the job site), and the individual is subject to direct supervision during his
+                training to do his work and receives guidance and guidance from the person
+                responsible for his training until he is able to master the work as required
+              </p>
+            </div>
+            <div>
+              <p>03</p>
+              <p>
+                Special training programs: It provides the trainee with specific skills in a
+                specific knowledge field to fulfill his special need in this field
+              </p>
+            </div>
+            <div>
+              <p>04</p>
+              <p>
+                E-learning and training programs: It has become important to provide mechanisms and
+                means to keep pace with information and communication technology in addition to
+                achieving the principle of effectiveness and efficiency in time, cost and returns
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="h-auto w-full">
+          <img src="../assets/images/develop.PNG" />
+        </div>
+      </div>
+
       <div class="grid grid-cols-3 gap-4 mt-8 w-3/4 mx-auto rounded-sm">
         <div
           data-aos="fade-left"
@@ -114,9 +178,9 @@
       </div>
       <!-- //phto gallery -->
       <div class="bg-gray-100 my-8" data-aos="fade-up" data-aos-anchor-placement="center-center">
-        <v-carousel height="600" show-arrows="hover" cycle hide-delimiter-background>
-          <v-carousel-item v-for="(slide, i) in slides" :key="i">
-            <v-img :src="slide.src" height="100%" :alt="slide.alt">
+        <v-carousel height="700" show-arrows="hover" cycle hide-delimiter-background>
+          <v-carousel-item v-for="(goals, i) in slides" :key="i">
+            <v-img :src="goals.src" height="100%" :alt="goals.alt">
               <!-- <v-row class="fill-height" align="center" justify="center">
             <div class="display-3">{{ slide.caption }}</div>
           </v-row> -->
@@ -138,15 +202,24 @@
     </main>
     <footer class="bg-gray-200 pb-10">
       <div class="flex justify-between px-4 pt-4">
-        <div class="text-center">
+        <div class="text-center flex flex-col justify-start items-start">
           <p class="text-pink-600 bold text-2xl">Contact us</p>
-          <div class="flex justify-center items-center">
-            <p>Hai Alandalus Libyan/Tripoli</p>
-            <img src="../../../../src/assets/icons/location.svg" alt="">
+
+          <div class="flex justify-center items-center gap-4">
+            <img src="../../../../src/assets/icons/location.svg" alt="" />
+            <p>حي الأندلس / طرابلس</p>
+          </div>
+
+          <div class="flex justify-center items-center gap-4">
+            <img src="../../../../src/assets/icons/email.svg" alt="" />
+            <p>Info@sofaraa-alelm.ly</p>
+          </div>
+          <div class="flex justify-center items-center gap-4">
+            <img src="../../../../src/assets/icons/phone.svg" alt="" />
+            <p>218920920071+</p>
+          </div>
         </div>
-          <p>Info@sofaraa-alelm.ly</p>
-          <p>+218920920071</p>
-        </div>
+
         <div class="text-center">
           <p class="text-pink-600 bold text-2xl">Contact us</p>
           <p>Hai Alandalus Libyan/Tripoli</p>
@@ -161,31 +234,53 @@
         </div>
       </div>
     </footer>
+    <div class="bold text-2xl text-center bg-gray-300">
+      <p>Copyright © 2021 Design by sofaraa-alelm</p>
+    </div>
   </body>
 </template>
 
 <script setup lang="ts">
 const slides = [
   {
-    src: '../../../../src/assets/images/1.PNG',
+    src: '../../../../src/assets/images/slide1.jpg',
     alt: 'Image 1 description',
     caption: 'First Slide'
   },
   {
-    src: '../../../../src/assets/images/2.PNG',
+    src: '../../../../src/assets/images/slide2.jpg',
     alt: 'Image 2 description',
     caption: 'Second Slide'
   },
   {
-    src: '../../../../src/assets/images/3.PNG',
+    src: '../../../../src/assets/images/slide3.jpg',
     alt: 'Image 3 description',
     caption: 'Third Slide'
   },
   {
-    src: '../../../../src/assets/images/4.PNG',
+    src: '../../../../src/assets/images/slide4.jpg',
     alt: 'Image 4 description',
     caption: 'Fourth Slide'
   }
+]
+
+const goals = [
+  {
+    src: '../../../../src/assets/images/Goal3.PNG',
+    alt: 'Image 1 description',
+    caption: 'First Slide'
+  },
+  {
+    src: '../../../../src/assets/images/Goal2.PNG',
+    alt: 'Image 2 description',
+    caption: 'Second Slide'
+  },
+  {
+    src: '../../../../src/assets/images/Goal1.PNG',
+    alt: 'Image 3 description',
+    caption: 'Third Slide'
+  }
+
   // { src: '../../../../src/assets/images/1.PNG', alt: 'Image 5 description', caption: 'Fifth Slide' }
 ]
 </script>
