@@ -100,8 +100,8 @@
         dir="rtl"
         :prepend-icon="mdiCalendarRange"
         clearable
-        label="التاريخ الى"
-        placeholder="ادخل التاريخ الى ..."
+        label="التاريخ من"
+        placeholder="ادخل التاريخ من ..."
         variant="outlined"
         type="date"
       ></v-text-field>
@@ -206,6 +206,7 @@ import { defineEmits, onMounted, ref, watchEffect } from 'vue'
 import { getHalls , getCustomers  ,getServices } from '@/core/services/mainServices';
 import { Postreservation } from '../hallReserve-services';
 import type { Hall ,Service , Customer } from '@/core/models/Mainmodels';
+import router from '@/router';
 
 
 const form =ref(false)
@@ -214,17 +215,12 @@ const Rules= {
   time: (vlue :number) => vlue >0 && vlue <=24 || "time not valild "
 }
 
-const emit = defineEmits<{
-  close: []
-  refresh: []
-}>()
+
 
 const closeModel = () => {
-  emit('close')
+  router.replace('/hall-list')
 }
-const reload = () => {
-  emit('refresh')
-}
+
 
 // const updateModel = () => {
 //   emit('update');
@@ -329,7 +325,7 @@ watchEffect(() => {
      selectedServicesPrice.value = selectedServicesPrice.value + servicesPrice.value[i].servicePrice;
      servicesId.value.push(servicesPrice.value[i].id)
   } 
- console.log( servicesId.value);
+ console.log('theids' , servicesId.value);
  
 
 })

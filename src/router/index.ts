@@ -1,7 +1,7 @@
 import CoursesTable from '@/views/Couress/pages/CoursesTable.vue'
 import ReserveHall from '@/views/Halls/pages/ReserveHall.vue'
 import ReservedHallTable from '@/views/Halls/pages/ReservedHallTable.vue'
-import testTem from '@/views/frontPage.vue'
+import LandingPage from '@/views/LandingPage.vue'
 import MainLayout from '@/views/MainLayout.vue'
 import { createRouter, createWebHistory } from 'vue-router'
 import LoginPage from '@/views/LoginPage.vue'
@@ -15,6 +15,12 @@ const router = createRouter({
     },
     {
       path: '/',
+      name: 'landingPage',
+      component: LandingPage
+
+    },
+    {
+      path: '/dashboard',
       name: 'MainLayout',
       component: MainLayout,
       children: [
@@ -33,24 +39,25 @@ const router = createRouter({
           name: 'Courses',
           component: CoursesTable
         },
-        {
-          path: '/test',
-          name: 'test',
-          component: testTem
-        }
+      
       ]
     }
   ]
 })
-router.beforeEach(async (to) => {
-  const isAuthenticated: boolean = !!localStorage.getItem('token')
-  console.log(isAuthenticated)
+  router.beforeEach(async (to) => {
+    const isAuthenticated: boolean = !!localStorage.getItem('token')
+    console.log(isAuthenticated)
 
-  if (!isAuthenticated && to.name !== 'Login') {
-    return { name: 'Login' }
-  } else if (isAuthenticated && to.name == 'Login') {
-    return { name: 'MainLayout' }
-  }
-})
+    if (!isAuthenticated && (to.name !== 'Login' &&  to.name !== 'landingPage' )) {
+      return { name: 'landingPage' }
+    } 
+      //  else if (!isAuthenticated && to.name !== 'Login') {
+      //   return { name: 'Login' }
+      // } 
+    
+    if (isAuthenticated && (to.name == 'Login' ||  to.name == 'landingPage')) {
+      return { name: 'MainLayout' }
+    }
+  })
 
 export default router
