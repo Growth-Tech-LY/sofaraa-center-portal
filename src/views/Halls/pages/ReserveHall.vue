@@ -131,7 +131,7 @@
           item-value="value"
           placeholder="الوقيت إلي"
           variant="outlined"
-          :rules="[Rules.time]"
+          :rules="[Rules.time ]"
           :prepend-icon="mdiTimerOutline"
         ></v-text-field>
       </div>
@@ -166,6 +166,7 @@
           placeholder="المدفوع"
           variant="outlined"
           type="number"
+          :rules="[Rules.paymentCount]"
         ></v-text-field>
         <p class="ms-3 text-lg font-bold text-gray-900 text-center mt-4">
           <span class="text-red-500">سعر الإجمالي : </span> {{ totalPayment }}د.ل
@@ -176,7 +177,29 @@
       </div>
 
       <div>
-        <v-btn size="large" class="mx-3" color="green" @click="submitHallData"> إضافة </v-btn>
+        <v-btn
+          :disabled="
+            !hallName ||
+            !customer ||
+            !packagePrice ||
+            !countOfrequiedTime ||
+            !servicesPrice ||
+            !individualNumber ||
+            !formDate ||
+            !toDate ||
+            !fromTime ||
+            !toTime ||
+            !Payment ||
+            !reserveType ||
+            !paid
+          "
+          size="large"
+          class="mx-3"
+          color="pink-darken-1"
+          @click="submitHallData"
+        >
+          إضافة
+        </v-btn>
         <v-btn size="large" class="mx-3" color="red" @click="closeModel"> ألغاء </v-btn>
       </div>
     </v-form>
@@ -189,17 +212,18 @@
 </template>
 <script setup lang="ts">
 import { mdiPlus, mdiTimerOutline, mdiCalendarRange, mdiArrowRightTop } from '@mdi/js'
-import { defineEmits, onMounted, ref, watchEffect } from 'vue'
+import { onMounted, ref, watchEffect } from 'vue'
 import { getHalls, getCustomers, getServices } from '@/core/services/mainServices'
 import { Postreservation } from '../hallReserve-services'
 import type { Hall, Service, Customer } from '@/core/models/Mainmodels'
 import router from '@/router'
 
-
 const form = ref(false)
 
 const Rules = {
-  time: (vlue: number) => (vlue > 0 && vlue <= 24) || 'time not valild '
+  time: (value: number) => (value > 0 && value <= 24) || 'يجب التكون القيكة بين ال 1 إلي 24 ' ,
+  timeDiffrince: (value: number) => (value > fromTime.value) || ' يجب أن يكون قيمة الحقل أكبر من الوقت من' ,
+  paymentCount : (value : number) => (value <= totalPayment.value) || 'قيمة المدخلة اكبر من الإجمالي '
 }
 
 const closeModel = () => {
@@ -210,7 +234,7 @@ const closeModel = () => {
 //   emit('update');
 // };
 const hallName = ref<Hall>()
-  const oldHallName = ref<Hall>()
+const oldHallName = ref<Hall>()
 const hallData = ref<Hall[]>([])
 const customerData = ref<Customer[]>([])
 const ServicesData = ref<Service[]>([])
@@ -363,7 +387,7 @@ const submitHallData = () => {
 
         countOfrequiedTime.value = undefined
 
-        servicesPrice.value =[]
+        servicesPrice.value = []
 
         individualNumber.value = 1
 
@@ -388,11 +412,11 @@ const paymentMethods = ref<PaymentMethod[]>([])
 
 watchEffect(() => {
   if (hallName.value !== oldHallName.value) {
-    oldHallName.value = hallName.value;
+    oldHallName.value = hallName.value
 
     // Reset payment methods and package price
-    paymentMethods.value = [];
-    packagePrice.value = null;
+    paymentMethods.value = []
+    packagePrice.value = null
 
     // Set new payment methods if hallName is not null
     if (hallName.value) {
@@ -413,10 +437,10 @@ watchEffect(() => {
           label: 'شهر',
           value: hallName.value.monthPrice
         }
-      ];
+      ]
     }
   }
-});
+})
 watchEffect(() => {
   console.log('Payment Methods:', paymentMethods.value)
   console.log('Selected Package Price:', packagePrice.value)
