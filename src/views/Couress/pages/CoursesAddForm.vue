@@ -174,7 +174,7 @@ watchEffect(() => {
   console.log(ServiceId.value)
   console.log(HallId.value)
 })
-
+const arrForTist = ref<string[]>([])
 const submitCoures = async () => {
   const body: PostCoures = {
     couresManagementId: couresId.value,
@@ -184,6 +184,7 @@ const submitCoures = async () => {
     totalPrice: 0,
     payedPrice: 0,
     restPrice: 0,
+    studentManagementId: arrForTist.value,
     fromTime: FromTime.value,
     toTime: ToTime.value,
     startDate: StartDate.value,

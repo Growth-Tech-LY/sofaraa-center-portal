@@ -40,4 +40,13 @@ type Teacher = {
   pdfFileName: string
 }
 
-export type { Customer, Service, Coures, Hall, Teacher }
+type Student = {
+  id: string
+  name: string
+  phonenumber: string
+  email: string
+  address: string
+  imageFileName: string
+}
+
+export type { Customer, Service, Coures, Hall, Teacher, Student }
