@@ -176,11 +176,10 @@ const paginations = ref({
   Name: ''
 })
 const headers: any = [
-  { title: 'id', align: 'start', key: 'id' },
-  { title: 'اسم الدورة', key: 'couresManagementId', align: 'start', sortable: false },
-  { title: 'عدد الأفراد ', key: 'couresManagementId', align: 'start' },
-  { title: 'السعر', key: 'couresManagementId', align: 'center' },
-  { title: 'تاريخ البدء', key: 'dateStart', align: 'center' },
+  { title: 'اسم الدورة', key: 'couresManagementName', align: 'start', sortable: false },
+  { title: 'اسم الأستاذ ', key: 'teacherManagementName', align: 'start' },
+  { title: 'اسم القاعة', key: 'hall_managementName', align: 'center' },
+  { title: ' الخدمة', key: 'serviceManagementName', align: 'center' },
   { title: 'تاريخ الانتهاء', key: 'endDate', align: 'center' },
   { title: 'من الساعة', key: 'fromTime', align: 'center' },
   { title: 'الى الساعة', key: 'toTime', align: 'center' },
