@@ -1,11 +1,7 @@
 <template>
   <div>
-  <v-btn
-  color="red-darken-1"
-  :prepend-icon="mdiArrowRightTop"
- to="/hall-list"
-  >الرجوع</v-btn>
-</div>
+    <v-btn color="red-darken-1" :prepend-icon="mdiArrowRightTop" to="/hall-list">الرجوع</v-btn>
+  </div>
   <div class="mt-20 bg-white border-t-8 border-[#D81B60] mx-auto p-7 rounded-lg shadow-lg h-4/5">
     <p class="pr-8 text-lg">حجز قاعة</p>
     <v-form class="grid grid-cols-2 gap-3 p-4 items-center justify-center">
@@ -58,7 +54,7 @@
 
       <div class="mb-2">
         <v-text-field
-        v-model="countOfrequiedTime"
+          v-model="countOfrequiedTime"
           variant="outlined"
           :label="placeHolderNumber"
           hide-details
@@ -80,13 +76,13 @@
         ></v-autocomplete>
 
         <p class="ms-3 text-lg font-bold text-gray-900 text-center mt-4">
-          <span class="text-red-500">سعر الخدمة :</span> {{selectedServicesPrice }} د.ل
+          <span class="text-red-500">سعر الخدمة :</span> {{ selectedServicesPrice }} د.ل
         </p>
       </div>
 
       <div class="mb-2">
         <v-text-field
-        v-model="individualNumber"
+          v-model="individualNumber"
           variant="outlined"
           label=" عدد الأفراد "
           hide-details
@@ -96,30 +92,30 @@
 
       <div class="flex item-center justify-center gap-8">
         <v-text-field
-        v-model="formDate"
-        dir="rtl"
-        :prepend-icon="mdiCalendarRange"
-        clearable
-        label="التاريخ من"
-        placeholder="ادخل التاريخ من ..."
-        variant="outlined"
-        type="date"
-      ></v-text-field>
-      <v-text-field
-      v-model="toDate"
-        dir="rtl"
-        :prepend-icon="mdiCalendarRange"
-        clearable
-        label="التاريخ الى"
-        placeholder="ادخل التاريخ الى ..."
-        variant="outlined"
-        type="date"
-      ></v-text-field>
+          v-model="formDate"
+          dir="rtl"
+          :prepend-icon="mdiCalendarRange"
+          clearable
+          label="التاريخ من"
+          placeholder="ادخل التاريخ من ..."
+          variant="outlined"
+          type="date"
+        ></v-text-field>
+        <v-text-field
+          v-model="toDate"
+          dir="rtl"
+          :prepend-icon="mdiCalendarRange"
+          clearable
+          label="التاريخ الى"
+          placeholder="ادخل التاريخ الى ..."
+          variant="outlined"
+          type="date"
+        ></v-text-field>
       </div>
 
       <div class="flex item-center justify-center gap-8">
         <v-text-field
-        v-model="fromTime"
+          v-model="fromTime"
           :prepend-icon="mdiTimerOutline"
           label="الوقيت من"
           item-title="label"
@@ -129,7 +125,7 @@
           :rules="[Rules.time]"
         ></v-text-field>
         <v-text-field
-        v-model="toTime"
+          v-model="toTime"
           label="الوقيت إلي"
           item-title="label"
           item-value="value"
@@ -163,7 +159,7 @@
       </div>
       <div class="flex item-center justify-center gap-8">
         <v-text-field
-        v-model="paid"
+          v-model="paid"
           label="المدفوع"
           item-title="label"
           item-value="value"
@@ -180,52 +176,41 @@
       </div>
 
       <div>
-        <v-btn
-         
-          size="large"
-          class="mx-3"
-          color="green"
-          @click="submitHallData"
-          
-        >
-          إضافة
-        </v-btn>
+        <v-btn size="large" class="mx-3" color="green" @click="submitHallData"> إضافة </v-btn>
         <v-btn size="large" class="mx-3" color="red" @click="closeModel"> ألغاء </v-btn>
       </div>
     </v-form>
   </div>
   <div>
-    <v-snackbar v-model="showMessage" :timeout="2000" color="success" :location="'top left'">
+    <v-snackbar v-model="showAddMessage" :timeout="2000" color="success" :location="'top left'">
       تمت الإضافة بنجاح
     </v-snackbar>
   </div>
 </template>
 <script setup lang="ts">
-import { mdiPlus, mdiTimerOutline ,mdiCalendarRange ,mdiArrowRightTop } from '@mdi/js'
+import { mdiPlus, mdiTimerOutline, mdiCalendarRange, mdiArrowRightTop } from '@mdi/js'
 import { defineEmits, onMounted, ref, watchEffect } from 'vue'
-import { getHalls , getCustomers  ,getServices } from '@/core/services/mainServices';
-import { Postreservation } from '../hallReserve-services';
-import type { Hall ,Service , Customer } from '@/core/models/Mainmodels';
-import router from '@/router';
+import { getHalls, getCustomers, getServices } from '@/core/services/mainServices'
+import { Postreservation } from '../hallReserve-services'
+import type { Hall, Service, Customer } from '@/core/models/Mainmodels'
+import router from '@/router'
 
 
-const form =ref(false)
+const form = ref(false)
 
-const Rules= {
-  time: (vlue :number) => vlue >0 && vlue <=24 || "time not valild "
+const Rules = {
+  time: (vlue: number) => (vlue > 0 && vlue <= 24) || 'time not valild '
 }
-
-
 
 const closeModel = () => {
   router.replace('/hall-list')
 }
 
-
 // const updateModel = () => {
 //   emit('update');
 // };
 const hallName = ref<Hall>()
+  const oldHallName = ref<Hall>()
 const hallData = ref<Hall[]>([])
 const customerData = ref<Customer[]>([])
 const ServicesData = ref<Service[]>([])
@@ -237,16 +222,16 @@ const subscription = ref(1)
 const packagePrice = ref<PaymentMethod | null>(null)
 
 const individualNumber = ref<number>(1)
-const showMessage = ref(false)
-const fromTime = ref(0)   
+const showAddMessage = ref(false)
+const fromTime = ref(0)
 const toTime = ref(0)
 const totalTime = ref(0)
 const formDate = ref('')
 const toDate = ref('')
 const placeHolderNumber = ref('')
-//variables for the calculation of the total 
+//variables for the calculation of the total
 const servicesPrice = ref<Service[]>([])
-const selectedServicesPrice=ref(0)
+const selectedServicesPrice = ref(0)
 const totalPayment = ref(0)
 const paid = ref(0)
 const totalServicesPrice = ref(0)
@@ -254,17 +239,12 @@ const remainingPayment = ref(0)
 const totalPackagePrice = ref(0)
 const countOfrequiedTime = ref<number | undefined>(undefined)
 
-//hold services id 
- const servicesId =ref<string[]>([])
+//hold services id
+const servicesId = ref<string[]>([])
 
 //------------------------------------
 
 //the Test data to try the logic
-
-
-
-
-
 
 const PaymentMethods = [
   {
@@ -276,7 +256,7 @@ const PaymentMethods = [
     label: ' بطاقة مصرفية',
     value: 2,
     index: 2
-  } ,
+  },
   {
     label: 'شيك',
     value: 3,
@@ -302,148 +282,163 @@ const calculatePaymrnt = () => {
     totalServicesPrice.value = selectedServicesPrice.value * individualNumber.value
   }
 
- 
-
-
   if (packagePrice.value && countOfrequiedTime.value) {
-    totalPackagePrice.value=packagePrice.value.value * countOfrequiedTime.value
-    totalPayment.value =  totalServicesPrice.value + totalPackagePrice.value
+    totalPackagePrice.value = packagePrice.value.value * countOfrequiedTime.value
+    totalPayment.value = totalServicesPrice.value + totalPackagePrice.value
   }
 }
 
 watchEffect(() => {
   calculatePaymrnt()
- remainingPayment.value = totalPayment.value - paid.value 
- console.log(hallName.value );
- 
+  remainingPayment.value = totalPayment.value - paid.value
+  console.log(hallName.value)
 })
 
 watchEffect(() => {
-  servicesId.value=[]
-  selectedServicesPrice.value =0;
-    for (let i = 0; i < servicesPrice.value.length; i++) {
-     selectedServicesPrice.value = selectedServicesPrice.value + servicesPrice.value[i].servicePrice;
-     servicesId.value.push(servicesPrice.value[i].id)
-  } 
- console.log('theids' , servicesId.value);
- 
-
+  servicesId.value = []
+  selectedServicesPrice.value = 0
+  for (let i = 0; i < servicesPrice.value.length; i++) {
+    selectedServicesPrice.value = selectedServicesPrice.value + servicesPrice.value[i].servicePrice
+    servicesId.value.push(servicesPrice.value[i].id)
+  }
+  console.log('theids', servicesId.value)
 })
 
 watchEffect(() => {
-
- console.log('the hallname value is ',hallName.value );
- 
+  console.log('the hallname value is ', hallName.value)
 })
-
 
 const onGetData = () => {
-  getHalls()
-.then( (response) => {
-hallData.value=response
-}) 
+  getHalls().then((response) => {
+    hallData.value = response
+  })
 
-getCustomers()
-.then( (response) => {
-customerData.value=response
-}) 
+  getCustomers().then((response) => {
+    customerData.value = response
+  })
 
-getServices()
-.then( (response) => {
-ServicesData.value=response
-}) 
-
+  getServices().then((response) => {
+    ServicesData.value = response
+  })
 }
 
 onMounted(() => {
-onGetData()
+  onGetData()
 })
-
 
 //----------------------------------------------------------
 
 const submitHallData = () => {
+  if (hallName.value && countOfrequiedTime.value && packagePrice.value && customer.value) {
+    const body = {
+      hall_ManagementId: hallName.value.id,
+      packageType: packagePrice.value.label,
+      customerManegentId: customer.value.id,
+      serviceManagementId: servicesId.value,
+      totalPrice: totalPayment.value,
+      payedPrice: paid.value,
+      restPrice: remainingPayment.value,
+      fromTime: fromTime.value,
+      toTime: toTime.value,
+      startDate: formDate.value,
+      endDate: toDate.value,
+      reservationsTypeId: reserveType.value,
+      paymentMethodId: Payment.value,
+      numberOfRquiredHours: countOfrequiedTime.value,
+      numberOfIndividuals: individualNumber.value
+    }
+    Postreservation(body)
+      .then(() => {
+        showAddMessage.value = true
+      })
+      .catch((error) => {
+        console.log(error)
+      })
+      .finally(() => {
+        hallName.value = undefined
 
-  if (hallName.value && countOfrequiedTime.value && packagePrice.value &&  customer.value) {
-    
- 
-  const body = {
-    hall_ManagementId:hallName.value.id ,
-    packageType:packagePrice.value.label ,
-    customerManegentId: customer.value.id,
-  serviceManagementId: servicesId.value, 
-  totalPrice: totalPayment.value,
-  payedPrice: paid.value,
-restPrice: remainingPayment.value,
-  fromTime: fromTime.value,
-  toTime: toTime.value,
-  startDate: formDate.value,
-  endDate: toDate.value,
-  reservationsTypeId: reserveType.value,
-  paymentMethodId: Payment.value,
-  numberOfRquiredHours: countOfrequiedTime.value,
-  numberOfIndividuals: individualNumber.value,
+        customer.value = undefined
+
+        packagePrice.value = null
+
+        countOfrequiedTime.value = undefined
+
+        servicesPrice.value =[]
+
+        individualNumber.value = 1
+
+        formDate.value = ''
+        toDate.value = ''
+
+        fromTime.value = 0
+        toTime.value = 0
+        Payment.value = 0
+        reserveType.value = 0
+        paid.value = 0
+      })
   }
-  Postreservation(body)
-}
-  
-  
 }
 
 type PaymentMethod = {
-  label: string;
-  value: number;
+  label: string
+  value: number
 }
 
 const paymentMethods = ref<PaymentMethod[]>([])
 
 watchEffect(() => {
-  if (hallName.value) {
-    paymentMethods.value = [
-      {
-        label: "ساعة",
-        value: hallName.value.hourPrice
-      },
-      {
-        label: "نصف يوم",
-        value: hallName.value.halfDayPrice
-      },
-      {
-        label: "أسبوع",
-        value: hallName.value.weekPrice
-      },
-      {
-        label: "شهر",
-        value: hallName.value.monthPrice
-      },
-    ]
-  }
-  
-})
+  if (hallName.value !== oldHallName.value) {
+    oldHallName.value = hallName.value;
 
+    // Reset payment methods and package price
+    paymentMethods.value = [];
+    packagePrice.value = null;
+
+    // Set new payment methods if hallName is not null
+    if (hallName.value) {
+      paymentMethods.value = [
+        {
+          label: 'ساعة',
+          value: hallName.value.hourPrice
+        },
+        {
+          label: 'نصف يوم',
+          value: hallName.value.halfDayPrice
+        },
+        {
+          label: 'أسبوع',
+          value: hallName.value.weekPrice
+        },
+        {
+          label: 'شهر',
+          value: hallName.value.monthPrice
+        }
+      ];
+    }
+  }
+});
 watchEffect(() => {
-  console.log('Payment Methods:', paymentMethods.value);
-  console.log('Selected Package Price:', packagePrice.value);
+  console.log('Payment Methods:', paymentMethods.value)
+  console.log('Selected Package Price:', packagePrice.value)
 
   if (packagePrice.value) {
     switch (packagePrice.value.label) {
-      case "ساعة":
-      case "نصف يوم":
-        placeHolderNumber.value = "عدد الساعات المطلوبة";
-        break;
-      case "أسبوع":
-        placeHolderNumber.value = "عدد الأسابيع المطلوبة";
-        break;
-      case "شهر":
-        placeHolderNumber.value = "عدد الأشهر المطلوبة";
-        break;
+      case 'ساعة':
+      case 'نصف يوم':
+        placeHolderNumber.value = 'عدد الساعات المطلوبة'
+        break
+      case 'أسبوع':
+        placeHolderNumber.value = 'عدد الأسابيع المطلوبة'
+        break
+      case 'شهر':
+        placeHolderNumber.value = 'عدد الأشهر المطلوبة'
+        break
       default:
-        placeHolderNumber.value = "";
+        placeHolderNumber.value = ''
     }
-    console.log('Placeholder:', placeHolderNumber.value);
+    console.log('Placeholder:', placeHolderNumber.value)
   } else {
-    placeHolderNumber.value = '';
+    placeHolderNumber.value = ''
   }
-});
-
+})
 </script>
