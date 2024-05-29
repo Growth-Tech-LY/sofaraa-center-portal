@@ -8,7 +8,7 @@ import type { PaginationParamas } from '@/core/models/pagination-params'
 
 
   const Postreservation = (body: PostReservationHalls) => {
-  return apiClient.post('HallReservations', body)
+  return apiClient.post<ReservationTable>('HallReservations', body)
 }
 
 
@@ -20,15 +20,25 @@ const getResHallTaple = (paginationParams: PaginationParamas) => {
     })
 }
 
+
+
+const deleteResHall = (id: string) => {
+  return apiClient.delete<string>(`HallReservations?Id=${id}`)
+}
+
+const putResHall = (body: PostReservationHalls) => {
+  return apiClient.put<ReservationTable>('HallReservations/update', body)
+
+}
+
 const getResHallByID = (id: string) => {
-  return apiClient.get<ReservationTable>(`HallReservations/Id?Id=${id}`).then((response) => {
+  return apiClient.get<ReservationTable>(`HallReservations/${id}`).then((response) => {
     return response.data
   })
 }
 
 
-export {  Postreservation ,getResHallTaple , getResHallByID }
+export {  Postreservation ,getResHallTaple , getResHallByID , deleteResHall , putResHall }
 
 
 
-// postHall, deleteHall, putHall, getHallsByID

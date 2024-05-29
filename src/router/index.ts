@@ -5,6 +5,9 @@ import LandingPage from '@/views/LandingPage.vue'
 import MainLayout from '@/views/MainLayout.vue'
 import { createRouter, createWebHistory } from 'vue-router'
 import LoginPage from '@/views/LoginPage.vue'
+import EditResrvedHall from '@/views/Halls/pages/EditResrvedHall.vue'
+
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -33,6 +36,11 @@ const router = createRouter({
           path: '/hall-reserve',
           name: 'hall-reserve',
           component: ReserveHall
+        },
+        {
+          path: '/edit-reserved/:id',
+          name: 'edit-reserved',
+          component: EditResrvedHall
         },
         {
           path: '/Courses',

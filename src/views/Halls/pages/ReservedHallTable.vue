@@ -2,16 +2,11 @@
   <div class="mx-auto mt-12 px-4 relative">
     <div class="flex justify-between items-center">
       <p class="text-2xl">حجوزات القاعات</p>
-<RouterLink to="/hall-reserve">
-      <v-btn
-        class="mt-4 text-white"
-        color="green-accent-4"
-        rounded="lg"
-        :prepend-icon="mdiPlus"
-        
-        >اضافة حجز
-      </v-btn>
-    </RouterLink>
+      <RouterLink to="/hall-reserve">
+        <v-btn class="mt-4 text-white" color="pink-darken-2" rounded="lg" :prepend-icon="mdiPlus"
+          >اضافة حجز  
+        </v-btn>
+      </RouterLink>
     </div>
     <div class="flex justify-between items-center">
       <v-btn @click="searchToggle" size="large" variant="text" :prepend-icon="mdiFilter">
@@ -30,7 +25,7 @@
       </div>
     </div>
 
-    <td class="w-3/4 mx-auto flex justify-center items-center mb-2">
+    <!-- <td class="w-3/4 mx-auto flex justify-center items-center mb-2">
       <div
         v-show="popUp"
         @click.self="toggelPopUp"
@@ -63,7 +58,7 @@
           :id="idToEdit"
         />
       </div>
-    </td>
+    </td> -->
 
     <v-data-table-server
       class="px-4"
@@ -78,26 +73,40 @@
       @update:options="onOptionsChange"
     >
       <template #[`item.actions`]="{ item }">
-        <v-btn variant="text" size="medium" class="me-2" :append-icon="mdiNote" >
-          <v-tooltip activator="parent" location="bottom" @click="openDetials(item)">عرض التفاصيل</v-tooltip>
+        <v-btn
+          color="blue-darken-2"
+          variant="text"
+          size="medium"
+          class="me-2"
+          :append-icon="mdiNote"
+          @click="openDetials(item)"
+        >
+          <v-tooltip activator="parent" location="bottom" 
+            >عرض التفاصيل</v-tooltip
+          >
         </v-btn>
+        <RouterLink :to="{ name :'edit-reserved' , params : {id: item.id}}"  >
+          <v-btn
+            variant="text"
+            class="me-2"
+            size="medium"
+            color="yellow-darken-2"
+            :append-icon="mdiPencil"
+          >
+            <v-tooltip activator="parent" location="bottom">تعديل</v-tooltip>
+          </v-btn>
+        </RouterLink>
+        <!-- :to="{ name: 'edit-hall', params: { id: item.id } }" -->
 
         <v-btn
           variant="text"
-          class="me-2"
           size="medium"
-          @click="openEdit(item)"
-          :append-icon="mdiPencil"
+          color="red-darken-2"
+          :append-icon="mdiDelete"
+          @click="openDeleteModal(item)"
         >
-          <v-tooltip activator="parent" location="bottom">تعديل</v-tooltip>
-        </v-btn>
-
-        <!-- :to="{ name: 'edit-hall', params: { id: item.id } }" -->
-
-        <v-btn variant="text" size="medium"  :append-icon="mdiDelete" @click="openDeleteModal(item)">
           <v-tooltip activator="parent" location="bottom">حذف</v-tooltip>
         </v-btn>
-       
       </template>
       <template v-slot:[`item.reservationsTypeId`]="{ value }">
         <p v-if="value == 1">مبديء</p>
@@ -105,7 +114,7 @@
       </template>
       <template v-slot:[`item.paymentMethodId`]="{ value }">
         <p v-if="value == 1">نقدا</p>
-        <p v-else-if="value == 2">شيك </p>
+        <p v-else-if="value == 2">شيك</p>
         <p v-else-if="value == 3">بطاقة مصرفية</p>
       </template>
     </v-data-table-server>
@@ -156,29 +165,26 @@
     </v-snackbar>
   </div>
   <div
-        v-if="popDetials"
-        @click.self="toggeDetials"
-        class="fixed h-screen w-full top-0 left-0 bg-gray-500/50 z-[1005]"
-      >
-        <ReserveDetials
-          @closeIt="toggeDetials"
-          :id="idToEdit"
-        />
-      </div>
+    v-if="popDetials"
+    @click.self="toggeDetials"
+    class="fixed h-screen w-full top-0 left-0 bg-gray-500/50 z-[1005]"
+  >
+    <ReserveDetials @closeIt="toggeDetials" :id="idToEdit" />
+  </div>
 </template>
 
 <script lang="ts" setup>
 import { onMounted, ref } from 'vue'
 
-import { mdiDelete, mdiPencil, mdiPlus, mdiFilter , mdiNote } from '@mdi/js'
+import { mdiDelete, mdiPencil, mdiPlus, mdiFilter, mdiNote } from '@mdi/js'
 
-import ReserveHall from './ReserveHall.vue';
+import ReserveHall from './ReserveHall.vue'
 // import editHall from '@/views/halls/pages/editHall.vue'
 // import type { Hall } from '../models/hall'
-import { getResHallTaple } from '../hallReserve-services'; 
-import type { PaginationParamas} from '@/core/models/pagination-params';
-import type {   ReservationTable } from '@/views/Halls/models/reserveModels'
-import ReserveDetials  from './ReserveDetials.vue';
+import { deleteResHall, getResHallTaple } from '../hallReserve-services'
+import type { PaginationParamas } from '@/core/models/pagination-params'
+import type { ReservationTable } from '@/views/Halls/models/reserveModels'
+import ReserveDetials from './ReserveDetials.vue'
 
 const headers: any = [
   { title: 'أسم القاعة', align: 'start', sortable: false, value: 'hall_ManagementName' },
@@ -192,7 +198,7 @@ const headers: any = [
   { title: ' طريقة الدفع', value: 'paymentMethodId', align: 'end' },
   { title: 'المدفوع', value: 'payedPrice', align: 'end' },
   { title: 'الباقي', value: 'restPrice', align: 'end' },
-  { title: 'الإجراءات', value: 'actions', align: 'end' },
+  { title: 'الإجراءات', value: 'actions', align: 'end' }
 ]
 const isLoading = ref(false)
 const showEditMessage = ref(false)
@@ -203,7 +209,7 @@ const totalHalls = ref(0)
 const errorCheck = ref(false)
 const confirmDelete = ref(false)
 const showDeleteMessage = ref(false)
-const HallDeleteId = ref<number>(0)
+const HallDeleteId = ref<string>('')
 const popDetials = ref(false)
 const idToEdit = ref('')
 
@@ -224,9 +230,10 @@ const toggeDetials = () => {
 //   showEditMessage.value = !showEditMessage.value
 // }
 
-const openDetials = (item: ReservationTable ) => {
+const openDetials = (item: ReservationTable) => {
   idToEdit.value = item.id
   toggeDetials()
+  console.log('this is :  ', idToEdit.value)
 }
 
 // const toggelPopUp2 = () => {
@@ -263,29 +270,29 @@ const onOptionsChange = ({ page, itemsPerPage }: { page: number; itemsPerPage: n
     Name: search.value
   }
   onGetHallsRes(paginations.value)
-  console.log('OnOptionsChange');
-  
+  console.log('OnOptionsChange')
 }
 
-// const openDeleteModal = (item: Hall) => {
-//   console.log('delete', item)
-//   HallDeleteId.value = item.id
+const openDeleteModal = (item: ReservationTable) => {
+  console.log('delete', item)
+  HallDeleteId.value = item.id
+  console.log(HallDeleteId.value)
 
-//   confirmDelete.value = true
-// }
+  confirmDelete.value = true
+}
 
-// const deleteHallConfirm = () => {
-//   console.log('delete :', HallDeleteId.value)
-//   deleteHall(HallDeleteId.value)
-//     .then(() => {
-//       showDeleteMessage.value = true
-//     })
-//     .finally(() => {
-//       confirmDelete.value = false
-//       onOptionsChange({
-//         page: paginations.value.page,
-//         itemsPerPage: paginations.value.size
-//       })
-//     })
-// }
+const deleteHallConfirm = () => {
+  console.log('delete :', HallDeleteId.value)
+  deleteResHall(HallDeleteId.value)
+    .then(() => {
+      showDeleteMessage.value = true
+    })
+    .finally(() => {
+      confirmDelete.value = false
+      onOptionsChange({
+        page: paginations.value.page,
+        itemsPerPage: paginations.value.size
+      })
+    })
+}
 </script>

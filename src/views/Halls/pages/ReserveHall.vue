@@ -374,6 +374,7 @@ const submitHallData = () => {
     Postreservation(body)
       .then(() => {
         showAddMessage.value = true
+        router.replace('/hall-list')
       })
       .catch((error) => {
         console.log(error)
