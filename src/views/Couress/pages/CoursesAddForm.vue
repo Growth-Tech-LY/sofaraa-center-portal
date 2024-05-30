@@ -13,52 +13,12 @@
         :items="AllTeachers"
         item-title="name"
         item-value="id"
+        :rules="[rules.required]"
         clearable
       ></v-autocomplete>
-      <v-autocomplete
-        v-model="couresId"
-        class="col-span-2 w-full mx-auto"
-        chips
-        label="اسم الدورة"
-        variant="outlined"
-        :items="AllCoureses"
-        item-title="name"
-        item-value="id"
-        clearable
-      ></v-autocomplete>
-      <v-autocomplete
-        v-model="ServiceId"
-        class="col-span-2 w-5/6"
-        chips
-        label="اسم الخدمة"
-        variant="outlined"
-        :items="AllService"
-        item-title="name"
-        item-value="id"
-        clearable
-      ></v-autocomplete>
-      <v-text-field
-        v-model="FromTime"
-        :prepend-icon="mdiTimerEditOutline"
-        label="الساعة من"
-        variant="outlined"
-        placeholder="ادخل الساعة من ..."
-        type="number"
-      >
-      </v-text-field>
-      <v-text-field
-        v-modle="ToTime"
-        :prepend-icon="mdiTimerEditOutline"
-        clearable
-        label="الساعة الى"
-        placeholder="ادخل الساعة الى ..."
-        variant="outlined"
-        prefix="د.ل"
-        type="number"
-      ></v-text-field>
       <v-autocomplete
         v-model="HallId"
-        class="col-span-2 col-start-1 w-5/6"
+        class="col-span-2 w-5/6"
         chips
         label="اسم القاعة"
         variant="outlined"
@@ -67,8 +27,33 @@
         item-title="name"
         item-value="id"
         clearable
+        :rules="[rules.required]"
       ></v-autocomplete>
-
+      <v-autocomplete
+        v-model="couresId"
+        class="col-span-1 w-full mx-auto"
+        chips
+        label="اسم الدورة"
+        variant="outlined"
+        :items="AllCoureses"
+        item-title="name"
+        item-value="id"
+        clearable
+        :rules="[rules.required]"
+      ></v-autocomplete>
+      <v-autocomplete
+        v-model="ServiceId"
+        class="col-span-1 w-5/6"
+        multiple
+        chips
+        label="اسم الخدمة"
+        variant="outlined"
+        :items="AllService"
+        item-title="name"
+        item-value="id"
+        clearable
+        :rules="[rules.required]"
+      ></v-autocomplete>
       <v-text-field
         v-model="StartDate"
         class="col-start-3"
@@ -77,6 +62,7 @@
         variant="outlined"
         placeholder="ادخل التاريخ من ..."
         type="date"
+        :rules="[rules.required]"
       >
       </v-text-field>
       <v-text-field
@@ -87,9 +73,44 @@
         placeholder="ادخل التاريخ الى ..."
         variant="outlined"
         type="date"
+        :rules="[rules.required]"
+      ></v-text-field>
+      <v-text-field
+        v-modle="numOfHours"
+        :prepend-icon="mdiTimerEditOutline"
+        clearable
+        label="عدد الساعات "
+        placeholder="ادخل عدد الساعات  ..."
+        variant="outlined"
+        prefix="د.ل"
+        type="number"
+        :rules="[rules.required]"
       ></v-text-field>
 
-      <div class="pr-20 col-start-3 row-start-6 col-span-2">
+      <v-text-field
+        v-model="Price"
+        class="col-span-1 w-5/6"
+        :prepend-icon="mdiCash"
+        :rules="[rules.required]"
+        clearable
+        label="سعر الدورة"
+        placeholder="ادخل السعر  ..."
+        variant="outlined"
+        type="number"
+      ></v-text-field>
+      <v-text-field
+        v-model="numOfstudents"
+        class="col-span-2 w-5/6"
+        :prepend-icon="mdiCash"
+        :rules="[rules.required]"
+        clearable
+        label=" عدد الأفراد"
+        placeholder="ادخل عدد الافراد  ..."
+        variant="outlined"
+        type="number"
+      ></v-text-field>
+
+      <div class="pr-20 col-start-2 row-start-6 col-span-2">
         <v-btn
           size="large"
           class="p-4 mt-4 w-2/6 ml-3"
@@ -109,7 +130,7 @@
 </template>
 <script setup lang="ts">
 import { defineEmits, onMounted, ref, watchEffect } from 'vue'
-import { mdiTimerEditOutline, mdiCalendarRange } from '@mdi/js'
+import { mdiTimerEditOutline, mdiCalendarRange, mdiCash } from '@mdi/js'
 import { postCoures } from '../CoursesService'
 import {
   getCouresesFromMang,
@@ -121,7 +142,7 @@ import type { Coures, Hall, Service, Teacher } from '@/core/models/Mainmodels'
 import type { PostCoures } from '../models/courses'
 
 const form = ref(false)
-const Price = ref<number>()
+
 const emit = defineEmits<{
   close: []
 }>()
@@ -132,18 +153,20 @@ const AllHalls = ref<Hall[]>()
 const AllService = ref<Service[]>()
 
 // **********************
+const rules = {
+  required: (v: string) => !!v || 'الحقل اجباري'
+}
 
-const TotalPrice = ref<number>()
 // Vars using for body request
-const FromTime = ref<number>()
-const ToTime = ref<number>()
+const Price = ref<number>()
 const StartDate = ref<string>()
 const EndDate = ref<string>()
 const couresId = ref<string>()
-const ServiceId = ref<string>()
+const ServiceId = ref<string[]>()
 const HallId = ref<string>()
 const TeacherId = ref<string>()
-
+const numOfstudents = ref<number>()
+const numOfHours = ref<number>()
 // **************************
 
 const closeModel = () => {
@@ -174,19 +197,16 @@ watchEffect(() => {
   console.log(ServiceId.value)
   console.log(HallId.value)
 })
-const arrForTist = ref<string[]>([])
+
 const submitCoures = async () => {
   const body: PostCoures = {
     couresManagementId: couresId.value,
     teacherManagementId: TeacherId.value,
     hall_managementId: HallId.value,
     serviceManagementId: ServiceId.value,
-    totalPrice: 0,
-    payedPrice: 0,
-    restPrice: 0,
-    studentManagementId: arrForTist.value,
-    fromTime: FromTime.value,
-    toTime: ToTime.value,
+    Price: Price.value,
+    numberOfRquiredHours: numOfHours.value,
+    numberOfIndividuals: numOfstudents.value,
     startDate: StartDate.value,
     endDate: EndDate.value
   }
