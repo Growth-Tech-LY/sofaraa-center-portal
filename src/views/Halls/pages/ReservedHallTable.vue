@@ -4,7 +4,7 @@
       <p class="text-2xl">حجوزات القاعات</p>
       <RouterLink to="/hall-reserve">
         <v-btn class="mt-4 text-white" color="pink-darken-2" rounded="lg" :prepend-icon="mdiPlus"
-          >اضافة حجز  
+          >اضافة حجز
         </v-btn>
       </RouterLink>
     </div>
@@ -13,15 +13,127 @@
         <v-tooltip activator="parent" location="bottom">بحث</v-tooltip></v-btn
       >
 
-      <div v-show="showSearch" class="flex flex-col w-1/2 right-20 absolute">
-        <p class="w-3/4 text-gray-700 mx-auto pr-3">البحث</p>
-        <v-text-field
-          v-model="search"
-          class="w-3/4 mx-auto"
-          density="compact"
-          placeholder="بحث اسم القاعة ..... "
-          hide-details
-        ></v-text-field>
+      <!-- //filter div -->
+      <div
+        v-show="showSearch"
+        class="bg-white border-t-8 border-[#BF3B74] mx-auto p-7 rounded-lg shadow-lg w-3/4 z-50 right-40 top-10 absolute"
+      >
+        <p class="text-gray-700 mx-auto pr-3 mb-1">البحث</p>
+        <div class="bg-white grid grid-cols-3 gap-4 justify-center items-center">
+          <div class="flex gap-1 justify-center items-center">
+            <v-autocomplete
+              transition="slide-y-transition"
+              v-model="hallName"
+              :items="hallData"
+              label="إسم القاعة"
+              item-title="name"
+              item-value="value"
+              placeholder="إسم القاعة"
+              variant="outlined"
+              :return-object="true"
+            ></v-autocomplete>
+          </div>
+          <div class="flex gap-1 justify-center items-center">
+            <v-text-field
+              dir="rtl"
+              :prepend-icon="mdiCalendarRange"
+              clearable
+              label="التاريخ من"
+              placeholder="ادخل التاريخ من ..."
+              variant="outlined"
+              type="date"
+            ></v-text-field>
+          </div>
+
+          <div class="flex gap-1 justify-center items-center">
+            <v-text-field
+              dir="rtl"
+              :prepend-icon="mdiCalendarRange"
+              clearable
+              label="التاريخ الى"
+              placeholder="ادخل التاريخ الى ..."
+              variant="outlined"
+              type="date"
+            ></v-text-field>
+          </div>
+
+          <div class="flex gap-1 justify-center items-center">
+            <v-autocomplete
+              v-model="customer"
+              transition="slide-y-transition"
+              :items="customerData"
+              label="إسم الزبون"
+              item-title="name"
+              item-value="id"
+              placeholder="إسم الزبون"
+              variant="outlined"
+              :return-object="true"
+            ></v-autocomplete>
+          </div>
+          <div class="flex gap-1 justify-center items-center">
+            <v-text-field
+              label="التوقيت من"
+              item-title="label"
+              item-value="value"
+              placeholder="التوقيت من"
+              variant="outlined"
+              type="number"
+            ></v-text-field>
+          </div>
+          <div class="flex gap-1 justify-center items-center">
+            <v-text-field
+              label="التوقيت إلي"
+              item-title="label"
+              item-value="value"
+              placeholder="التوقيت إلي"
+              variant="outlined"
+              type="number"
+            ></v-text-field>
+          </div>
+
+          <div class="flex gap-1 justify-center items-center">
+            <v-autocomplete
+              
+              transition="slide-y-transition"
+              :items="packageType"
+              label="نوع الباقة"
+              item-title="label"
+              item-value="value"
+              :return-object="true"
+              placeholder="نوع الباقة"
+              variant="outlined"
+            ></v-autocomplete>
+          </div>
+
+          <div class="flex gap-1 justify-center items-center">
+            <v-autocomplete
+              v-model="reserveType"
+              :items="reserveTypes"
+              transition="slide-y-transition"
+              label="نوع الحجز  "
+              item-title="label"
+              item-value="value"
+              placeholder=" نوع الحجز"
+              variant="outlined"
+            ></v-autocomplete>
+          </div>
+
+          <div class="flex gap-1 justify-center items-center">
+            <v-autocomplete
+              v-model="Payment"
+              transition="slide-y-transition"
+              :items="PaymentMethods"
+              label="طريقة الدفع  "
+              item-title="label"
+              item-value="value"
+              placeholder=" طريقة الدفع"
+              variant="outlined"
+            ></v-autocomplete>
+          </div>
+        </div>
+        <v-btn size="large" class="mx-3" color="red" @click="searchToggle"> ألغاء </v-btn>
+
+        <!-- //filter div Ends-->
       </div>
     </div>
 
@@ -81,11 +193,9 @@
           :append-icon="mdiNote"
           @click="openDetials(item)"
         >
-          <v-tooltip activator="parent" location="bottom" 
-            >عرض التفاصيل</v-tooltip
-          >
+          <v-tooltip activator="parent" location="bottom">عرض التفاصيل</v-tooltip>
         </v-btn>
-        <RouterLink :to="{ name :'edit-reserved' , params : {id: item.id}}"  >
+        <RouterLink :to="{ name: 'edit-reserved', params: { id: item.id } }">
           <v-btn
             variant="text"
             class="me-2"
@@ -130,18 +240,10 @@
         <v-card-title class="text-h5">هل أنت متأكد من حذف القاعة؟ </v-card-title>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn
-            class="mt-4 text-white"
-            color="green-accent-4"
-            rounded="lg"
-            @click="confirmDelete = false"
+          <v-btn class="mt-4" color="blue-darken-1" rounded="lg" @click="confirmDelete = false"
             >إلغاء</v-btn
           >
-          <v-btn
-            class="mt-4 text-white"
-            color="red-darken-2"
-            rounded="lg"
-            @click="deleteHallConfirm()"
+          <v-btn class="mt-4" color="pink-darken-1" rounded="lg" @click="deleteHallConfirm()"
             >نعم</v-btn
           >
           <v-spacer></v-spacer>
@@ -176,15 +278,15 @@
 <script lang="ts" setup>
 import { onMounted, ref } from 'vue'
 
-import { mdiDelete, mdiPencil, mdiPlus, mdiFilter, mdiNote } from '@mdi/js'
+import { mdiDelete, mdiPencil, mdiPlus, mdiFilter, mdiNote, mdiCalendarRange } from '@mdi/js'
 
 import ReserveHall from './ReserveHall.vue'
-// import editHall from '@/views/halls/pages/editHall.vue'
-// import type { Hall } from '../models/hall'
+import type { Hall, Customer } from '@/core/models/Mainmodels'
 import { deleteResHall, getResHallTaple } from '../hallReserve-services'
 import type { PaginationParamas } from '@/core/models/pagination-params'
 import type { ReservationTable } from '@/views/Halls/models/reserveModels'
 import ReserveDetials from './ReserveDetials.vue'
+import { getHalls, getCustomers, getServices, Service } from '@/core/services/mainServices'
 
 const headers: any = [
   { title: 'أسم القاعة', align: 'start', sortable: false, value: 'hall_ManagementName' },
@@ -213,11 +315,68 @@ const HallDeleteId = ref<string>('')
 const popDetials = ref(false)
 const idToEdit = ref('')
 
+const hallName = ref<Hall>()
+
+const hallData = ref<Hall[]>([])
+const customerData = ref<Customer[]>([])
+const ServicesData = ref<Service[]>([])
+
 const paginations = ref<PaginationParamas>({
   page: 1,
   size: 10,
   Name: ''
 })
+
+const PaymentMethods = [
+  {
+    label: 'نقدا',
+    value: 1,
+    index: 1
+  },
+  {
+    label: ' بطاقة مصرفية',
+    value: 2,
+    index: 2
+  },
+  {
+    label: 'شيك',
+    value: 3,
+    index: 3
+  }
+] as const
+
+const reserveTypes = [
+  {
+    label: 'مبدئ',
+    value: 1,
+    index: 1
+  },
+  {
+    label: 'نهائي',
+    value: 2,
+    index: 2
+  }
+] as const
+
+const packageType = [
+  {
+    label: 'ساعة',
+    value: 'ساعة'
+  },
+  {
+    label: 'نصف يوم',
+    value: 'نصف يوم'
+  },
+  {
+    label: 'أسبوع',
+    value: 'أسبوع'
+  },
+  {
+    label: 'شهر',
+    value: 'أسبوع'
+  }
+] as const
+
 
 const searchToggle = () => {
   showSearch.value = !showSearch.value
@@ -253,6 +412,9 @@ const onGetHallsRes = (paginations: PaginationParamas) => {
       totalHalls.value = response.total
       hallsRes.value = response.data
       errorCheck.value = false
+      getHalls()
+      getCustomers()
+      getServices()
     })
     .catch(() => {
       hallsRes.value = []

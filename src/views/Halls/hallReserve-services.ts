@@ -1,9 +1,9 @@
 import apiClient from '@/axios'
-import type {   PostReservationHalls  , ReservationTable} from './models/reserveModels'
+import type {   PostReservationHalls  , ReservationTable , Postcustomer} from './models/reserveModels'
 import type { Hall } from '@/core/models/Mainmodels'
 import type { List } from '../Couress/models/courses' 
 
-import type { PaginationParamas } from '@/core/models/pagination-params'
+import type { PaginationParamas  } from '@/core/models/pagination-params'
 
 
 
@@ -37,8 +37,11 @@ const getResHallByID = (id: string) => {
   })
 }
 
+const postCustomer = (body: Postcustomer) => {
+  return apiClient.post('HallReservations/AddCustomers', body)
+}
 
-export {  Postreservation ,getResHallTaple , getResHallByID , deleteResHall , putResHall }
+export {  Postreservation ,getResHallTaple , getResHallByID , deleteResHall , putResHall , postCustomer  }
 
 
 
