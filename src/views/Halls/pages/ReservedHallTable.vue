@@ -412,8 +412,15 @@ const onGetHallsRes = (paginations: PaginationParamas) => {
       totalHalls.value = response.total
       hallsRes.value = response.data
       errorCheck.value = false
-      getHalls()
-      getCustomers()
+      getHalls() .then((response) => {
+        hallData.value =response
+      })
+
+
+      getCustomers()  .then((response) => {
+        customerData.value =response
+      })
+
       getServices()
     })
     .catch(() => {
