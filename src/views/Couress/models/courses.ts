@@ -33,7 +33,7 @@ type student = {
 
 type postStudents = {
   trainingCouresReservationsId: string
-  student: student[]
+  studentInfoManagement: student[]
 }
 export type List<T> = {
   total: number

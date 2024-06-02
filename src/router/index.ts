@@ -49,20 +49,20 @@ const router = createRouter({
     }
   ]
 })
-  // router.beforeEach(async (to) => {
-  //   const isAuthenticated: boolean = !!localStorage.getItem('token')
-  //   console.log(isAuthenticated)
+// router.beforeEach(async (to) => {
+//   const isAuthenticated: boolean = !!localStorage.getItem('token')
+//   console.log(isAuthenticated)
 
-  if (!isAuthenticated && to.name !== 'Login' && to.name !== 'landingPage') {
-    return { name: 'landingPage' }
-  }
-  //  else if (!isAuthenticated && to.name !== 'Login') {
-  //   return { name: 'Login' }
-  // }
+//   if (!isAuthenticated && to.name !== 'Login' && to.name !== 'landingPage') {
+//     return { name: 'landingPage' }
+//   }
+//   //  else if (!isAuthenticated && to.name !== 'Login') {
+//   //   return { name: 'Login' }
+//   // }
 
-  if (isAuthenticated && (to.name == 'Login' || to.name == 'landingPage')) {
-    return { name: 'MainLayout' }
-  }
-})
+//   if (isAuthenticated && (to.name == 'Login' || to.name == 'landingPage')) {
+//     return { name: 'MainLayout' }
+//   }
+// })
 
 export default router

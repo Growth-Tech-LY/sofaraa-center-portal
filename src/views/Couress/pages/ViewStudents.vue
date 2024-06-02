@@ -1,13 +1,13 @@
 <template>
   <div
-    class="mt-12 bg-white border-t-[20px] border-[#BF3B74] w-4/5 mx-auto py-16 px-16 rounded-lg shadow-lg"
+    class="mt-12 bg-white border-t-[20px] border-[#BF3B74] w-4/5 mx-auto py-16 px-16 rounded-lg shadow-lg max-h-[75%] overflow-y-scroll"
   >
     <p>جدول الطلبة</p>
     <v-data-table-server
       :headers="headers"
       :loading="isloading"
       :search="search"
-      :items="students"
+      :items="studentsInCoures"
       v-model:items-per-page="paginations.size"
       :items-length="paginations.size"
     >
@@ -18,19 +18,37 @@
           color="yellow-darken-2"
           :prepend-icon="mdiPencil"
           size="medium"
+          @click="editPopUp = true"
         >
           <v-tooltip activator="parent" location="bottom">تعديل</v-tooltip>
         </v-btn>
       </template>
     </v-data-table-server>
+    <div
+      v-if="editPopUp"
+      class="fixed h-screen w-full top-0 left-0 bg-gray-500/50 z-[1005]"
+      @click.self="editPopUp = false"
+    >
+      <EditStudent />
+    </div>
   </div>
 </template>
 <script setup lang="ts">
 import { mdiPencil } from '@mdi/js'
 import type { Student } from '@/core/models/Mainmodels'
-import { ref } from 'vue'
-const isloading = ref(false)
+import { onMounted, ref, watchEffect } from 'vue'
+import { getCoursesById } from '../CoursesService'
+import EditStudent from './EditStudent.vue'
+import type { postStudents } from '../models/courses'
+const props = defineProps<{
+  trainingCouresReservationsId: string
+}>()
+const editPopUp = ref(false)
+const TheID = ref<string>('')
+const isloading = ref(true)
 const search = ref('')
+const studentsInCoures = ref<postStudents>()
+
 const paginations = ref({
   page: 1,
   size: 10,
@@ -38,12 +56,35 @@ const paginations = ref({
 })
 
 const headers: any = [
-  { title: 'اسم الطالب', key: 'name', align: 'start', sortable: false },
-  { title: 'السعر', key: 'couresPrice', align: 'center' },
+  { title: 'اسم الطالب', key: 'couresManagementName', align: 'start', sortable: false },
+  { title: 'السعر', key: 'price', align: 'center' },
   { title: 'المدفوع ', key: 'payedprice', align: 'center' },
   { title: ' المتبقي', key: 'restPrice', align: 'center' },
   { title: 'الأجرائات', key: 'actions' }
 ]
+
+TheID.value = props.trainingCouresReservationsId
+
+onMounted(() => {
+  console.log(TheID.value)
+  getStudents()
+})
+
+const getStudents = () => {
+  getCoursesById(TheID.value)
+    .then((response) => {
+      isloading.value = true
+      console.log(response.data)
+      studentsInCoures.value = response.data
+      return response.data
+    })
+    .finally(() => {
+      isloading.value = false
+    })
+}
+watchEffect(() => {
+  console.log(studentsInCoures.value)
+})
 
 // const students =ref<Student[]>()
 const students = [
