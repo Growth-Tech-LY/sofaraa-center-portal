@@ -2,11 +2,12 @@
   <div>
     <v-btn color="red-darken-1" :prepend-icon="mdiArrowRightTop" to="/hall-list">الرجوع</v-btn>
   </div>
-  <div class="mt-20 bg-white border-t-8 border-[#D81B60] mx-auto p-7 rounded-lg shadow-lg h-4/5">
+  <div class="mt-20 bg-white border-t-8 border-[#BF3B74] mx-auto p-7 rounded-lg shadow-lg h-4/5">
     <p class="pr-8 text-lg">حجز قاعة</p>
     <v-form class="grid grid-cols-2 gap-3 p-4 items-center justify-center">
-      <div>
+      <div >
         <v-autocomplete
+        transition="slide-y-transition"
           v-model="hallName"
           :items="hallData"
           label="إسم القاعة"
@@ -20,6 +21,7 @@
       <div class="flex items-center justify-center">
         <v-autocomplete
           v-model="customer"
+          transition="slide-y-transition"
           :items="customerData"
           label="إسم الزبون"
           item-title="name"
@@ -33,11 +35,13 @@
           color="green-accent-4"
           density="comfortable"
           :icon="mdiPlus"
+          @click="toggeAddCustomer"
         ></v-btn>
       </div>
       <div class="flex item-center justify-center gap-8">
         <v-autocomplete
           v-model="packagePrice"
+          transition="slide-y-transition"
           :items="paymentMethods"
           label="نوع الباقة"
           item-title="label"
@@ -55,8 +59,8 @@
       <div class="mb-2">
         <v-text-field
           v-model="countOfrequiedTime"
-          variant="outlined"
           :label="placeHolderNumber"
+          variant="outlined"
           hide-details
           type="number"
         ></v-text-field>
@@ -64,6 +68,7 @@
       <div class="flex item-center justify-center gap-8">
         <v-autocomplete
           v-model="servicesPrice"
+          transition="slide-y-transition"
           :items="ServicesData"
           label="نوع الخدمة"
           multiple
@@ -131,7 +136,7 @@
           item-value="value"
           placeholder="الوقيت إلي"
           variant="outlined"
-          :rules="[Rules.time ]"
+          :rules="[Rules.time]"
           :prepend-icon="mdiTimerOutline"
         ></v-text-field>
       </div>
@@ -139,7 +144,8 @@
       <div class="flex item-center justify-center gap-8">
         <v-autocomplete
           v-model="Payment"
-          :items="PaymentMethods"
+          transition="slide-y-transition"
+          :items="PaymentMethods"     
           label="طريقة الدفع  "
           item-title="label"
           item-value="value"
@@ -150,6 +156,7 @@
         <v-autocomplete
           v-model="reserveType"
           :items="reserveTypes"
+          transition="slide-y-transition"
           label="نوع الحجز  "
           item-title="label"
           item-value="value"
@@ -209,9 +216,22 @@
       تمت الإضافة بنجاح
     </v-snackbar>
   </div>
+
+  <div
+    data-aos="fade-left"
+    v-if="popAddCustomer"
+    @click.self="toggeAddCustomer"
+    class="fixed h-screen w-full top-0 left-0 bg-gray-500/50 z-[1005]"
+  >
+    <AddCustomerRes @close="toggeAddCustomer" @refresh="OngetCustomers" />
+  </div>
+
+  
+
 </template>
 <script setup lang="ts">
 import { mdiPlus, mdiTimerOutline, mdiCalendarRange, mdiArrowRightTop } from '@mdi/js'
+import AddCustomerRes from './AddCustomerRes.vue'
 import { onMounted, ref, watchEffect } from 'vue'
 import { getHalls, getCustomers, getServices } from '@/core/services/mainServices'
 import { Postreservation } from '../hallReserve-services'
@@ -221,9 +241,10 @@ import router from '@/router'
 const form = ref(false)
 
 const Rules = {
-  time: (value: number) => (value > 0 && value <= 24) || 'يجب التكون القيكة بين ال 1 إلي 24 ' ,
-  timeDiffrince: (value: number) => (value > fromTime.value) || ' يجب أن يكون قيمة الحقل أكبر من الوقت من' ,
-  paymentCount : (value : number) => (value <= totalPayment.value) || 'قيمة المدخلة اكبر من الإجمالي '
+  time: (value: number) => (value > 0 && value <= 24) || 'يجب التكون القيكة بين ال 1 إلي 24 ',
+  timeDiffrince: (value: number) =>
+    value > fromTime.value || ' يجب أن يكون قيمة الحقل أكبر من الوقت من',
+  paymentCount: (value: number) => value <= totalPayment.value || 'قيمة المدخلة اكبر من الإجمالي '
 }
 
 const closeModel = () => {
@@ -244,6 +265,23 @@ const reserveType = ref(1)
 
 const subscription = ref(1)
 const packagePrice = ref<PaymentMethod | null>(null)
+
+//popUps
+const popAddCustomer = ref(false)
+
+const toggeAddCustomer = () => {
+  popAddCustomer.value = !popAddCustomer.value
+}
+
+const OngetCustomers = () => {
+  getCustomers().then((response) => {
+    customerData.value = response
+    popAddCustomer.value = !popAddCustomer.value
+    showAddMessage.value = true
+  })
+}
+
+//--------------------
 
 const individualNumber = ref<number>(1)
 const showAddMessage = ref(false)

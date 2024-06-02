@@ -52,4 +52,11 @@ type ReservationTable = {
   serviceManagementName: [string]
 }
 
-export type { packages, PostReservationHalls, ReservationTable }
+type Postcustomer = {
+  name: string
+  phoneNumber: string
+  email: string
+
+}
+
+export type { packages, PostReservationHalls, ReservationTable , Postcustomer }

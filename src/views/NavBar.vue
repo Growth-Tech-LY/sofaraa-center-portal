@@ -8,7 +8,7 @@
         :prepend-icon="mdiLogoutVariant"
         @click="LogOutbtn"
         variant="plain"
-        >اتسجيل الخروج</v-btn
+        >تسجيل الخروج</v-btn
       >
     </div>
     <div>

@@ -2,7 +2,7 @@
     <div>
       <v-btn color="red-darken-1" :prepend-icon="mdiArrowRightTop" to="/hall-list">الرجوع</v-btn>
     </div>
-    <div class="mt-20 bg-white border-t-8 border-[#D81B60] mx-auto p-7 rounded-lg shadow-lg h-4/5">
+    <div class="mt-20 bg-white border-t-8 border-[#BF3B74] mx-auto p-7 rounded-lg shadow-lg h-4/5">
       <p class="pr-8 text-lg">حجز قاعة</p>
       <v-form class="grid grid-cols-2 gap-3 p-4 items-center justify-center">
         <div>
