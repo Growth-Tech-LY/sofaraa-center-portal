@@ -3,33 +3,41 @@ type Coures = {
   couresManagementName: string
   teacherManagementName: string
   hall_managementName: string
-  serviceManagementName: string
+  serviceManagementName: string[]
   fromTime: number
   toTime: number
   startDate: string
   endDate: string
-  totalPrice: number
-  payedPrice: number
-  restPrice: number
+  numberOfRquiredHours: number
+  numberOfIndividuals: number
   studentName: string[]
+  price: number
 }
 type PostCoures = {
   couresManagementId: string | undefined
   teacherManagementId: string | undefined
   hall_managementId: string | undefined
-  serviceManagementId: string | undefined
-  totalPrice: number | undefined
-  payedPrice: number | undefined
-  restPrice: number | undefined
-  fromTime: number | undefined
-  toTime: number | undefined
+  serviceManagementId: string[] | undefined
+  Price: number | undefined
+  numberOfRquiredHours: number | undefined
+  numberOfIndividuals: number | undefined
+
   startDate: string | undefined
   endDate: string | undefined
-  studentManagementId: string[]
+}
+
+type student = {
+  studentManagementId: string
+  payedPrice: number
+}
+
+type postStudents = {
+  trainingCouresReservationsId: string
+  studentInfoManagement: student[]
 }
 export type List<T> = {
   total: number
   data: T
 }
 
-export type { Coures, PostCoures }
+export type { Coures, PostCoures, student, postStudents }

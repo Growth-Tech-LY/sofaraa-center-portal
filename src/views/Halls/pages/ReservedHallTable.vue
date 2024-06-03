@@ -2,11 +2,13 @@
   <div class="mx-auto mt-12 px-4 relative">
     <div class="flex justify-between items-center">
       <p class="text-2xl">حجوزات القاعات</p>
-      <RouterLink to="/hall-reserve">
+
+      <RouterLink :to="{ name: 'hall-reserve' }">
         <v-btn class="mt-4 text-white" color="pink-darken-2" rounded="lg" :prepend-icon="mdiPlus"
           >اضافة حجز
         </v-btn>
       </RouterLink>
+
     </div>
     <div class="flex justify-between items-center">
       <v-btn @click="searchToggle" size="large" variant="text" :prepend-icon="mdiFilter">
@@ -16,10 +18,11 @@
       <!-- //filter div -->
       <div
         v-show="showSearch"
-        class="bg-white border-t-8 border-[#BF3B74] mx-auto p-7 rounded-lg shadow-lg w-3/4 z-50 right-40 top-10 absolute"
+        class="bg-white border-t-8 border-[#BF3B74] mx-auto p-7 rounded-lg shadow-lg w-3/4 z-50 right-52 top-40 fixed"
       >
         <p class="text-gray-700 mx-auto pr-3 mb-1">البحث</p>
         <div class="bg-white grid grid-cols-3 gap-4 justify-center items-center">
+          
           <div class="flex gap-1 justify-center items-center">
             <v-autocomplete
               transition="slide-y-transition"
@@ -33,6 +36,7 @@
               :return-object="true"
             ></v-autocomplete>
           </div>
+
           <div class="flex gap-1 justify-center items-center">
             <v-text-field
               dir="rtl"
@@ -70,6 +74,7 @@
               :return-object="true"
             ></v-autocomplete>
           </div>
+
           <div class="flex gap-1 justify-center items-center">
             <v-text-field
               label="التوقيت من"
@@ -131,7 +136,7 @@
             ></v-autocomplete>
           </div>
         </div>
-        <v-btn size="large" class="mx-3" color="red" @click="searchToggle"> ألغاء </v-btn>
+        <v-btn size="large" class="mx-3" color="red" @click="searchToggle"> إغلاق </v-btn>
 
         <!-- //filter div Ends-->
       </div>
@@ -197,6 +202,7 @@
         </v-btn>
         <RouterLink :to="{ name: 'edit-reserved', params: { id: item.id } }">
           <v-btn
+          :disabled="true"
             variant="text"
             class="me-2"
             size="medium"
@@ -281,12 +287,12 @@ import { onMounted, ref } from 'vue'
 import { mdiDelete, mdiPencil, mdiPlus, mdiFilter, mdiNote, mdiCalendarRange } from '@mdi/js'
 
 import ReserveHall from './ReserveHall.vue'
-import type { Hall, Customer } from '@/core/models/Mainmodels'
+import type { Hall, Customer , Service } from '@/core/models/Mainmodels'
 import { deleteResHall, getResHallTaple } from '../hallReserve-services'
 import type { PaginationParamas } from '@/core/models/pagination-params'
 import type { ReservationTable } from '@/views/Halls/models/reserveModels'
 import ReserveDetials from './ReserveDetials.vue'
-import { getHalls, getCustomers, getServices, Service } from '@/core/services/mainServices'
+import { getHalls, getCustomers, getServices } from '@/core/services/mainServices'
 
 const headers: any = [
   { title: 'أسم القاعة', align: 'start', sortable: false, value: 'hall_ManagementName' },

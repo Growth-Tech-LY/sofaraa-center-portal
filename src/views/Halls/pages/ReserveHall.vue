@@ -248,7 +248,7 @@ const Rules = {
 }
 
 const closeModel = () => {
-  router.replace('/hall-list')
+  router.replace({name:'reservations-list'})
 }
 
 // const updateModel = () => {
@@ -412,7 +412,7 @@ const submitHallData = () => {
     Postreservation(body)
       .then(() => {
         showAddMessage.value = true
-        router.replace('/hall-list')
+        closeModel()
       })
       .catch((error) => {
         console.log(error)

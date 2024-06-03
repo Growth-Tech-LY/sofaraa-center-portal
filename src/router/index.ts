@@ -7,7 +7,6 @@ import { createRouter, createWebHistory } from 'vue-router'
 import LoginPage from '@/views/LoginPage.vue'
 import EditResrvedHall from '@/views/Halls/pages/EditResrvedHall.vue'
 
-
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -20,7 +19,6 @@ const router = createRouter({
       path: '/',
       name: 'landingPage',
       component: LandingPage
-
     },
     {
       path: '/dashboard',
@@ -28,45 +26,50 @@ const router = createRouter({
       component: MainLayout,
       children: [
         {
-          path: '/hall-list',
-          name: 'hall-list',
-          component: ReservedHallTable
+          path: '/reservations',
+          children: [
+            {
+              path: '',
+              name: 'reservations-list',
+              component: ReservedHallTable,
+            },
+            {
+              path: 'add',
+              name: 'hall-reserve',
+              component: ReserveHall
+            },
+            {
+              path: ':id/edit',
+              name: 'edit-reserved',
+              component: EditResrvedHall
+            }
+          ]
         },
-        {
-          path: '/hall-reserve',
-          name: 'hall-reserve',
-          component: ReserveHall
-        },
-        {
-          path: '/edit-reserved/:id',
-          name: 'edit-reserved',
-          component: EditResrvedHall
-        },
+
         {
           path: '/Courses',
           name: 'Courses',
           component: CoursesTable
-        },
-      
+        }
       ]
     }
   ]
 })
 
-  // router.beforeEach(async (to) => {
-  //   const isAuthenticated: boolean = !!localStorage.getItem('token')
-  //   console.log(isAuthenticated)
+router.beforeEach(async (to) => {
+  const isAuthenticated: boolean = !!localStorage.getItem('token')
+  console.log(isAuthenticated)
 
-  //   if (!isAuthenticated && (to.name !== 'Login' &&  to.name !== 'landingPage' )) {
-  //     return { name: 'landingPage' }
-  //   } 
-  //     //  else if (!isAuthenticated && to.name !== 'Login') {
-  //     //   return { name: 'Login' }
-  //     // } 
-    
-  //   if (isAuthenticated && (to.name == 'Login' ||  to.name == 'landingPage')) {
-  //     return { name: 'MainLayout' }
-  //   }
-  // })
+  if (!isAuthenticated && to.name !== 'Login' && to.name !== 'landingPage') {
+    return { name: 'landingPage' }
+  }
+  //  else if (!isAuthenticated && to.name !== 'Login') {
+  //   return { name: 'Login' }
+  // }
+
+  if (isAuthenticated && (to.name == 'Login' || to.name == 'landingPage')) {
+    return { name: 'MainLayout' }
+  }
+})
 
 export default router

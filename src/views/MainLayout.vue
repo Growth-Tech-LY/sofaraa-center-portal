@@ -21,7 +21,7 @@
             <v-divider></v-divider>
 
             <v-list density="compact" nav>
-              <RouterLink to="/hall-list">
+              <RouterLink :to="{ name: 'reservations-list'}">
                 <v-list-item
                   :prepend-icon="mdiHomeCityOutline"
                   title="حجوزات القاعات "
@@ -38,9 +38,10 @@
                 ></v-list-item>
               </RouterLink>
 
-              <RouterLink to="/hall-list">
+              <!-- <RouterLink to="/hall-list">
                 <v-list-item :prepend-icon="mdiAccountTie" title="test" value="Staff"></v-list-item>
               </RouterLink>
+              
               <RouterLink to="/hall-list">
                 <v-list-item
                   :prepend-icon="mdiHumanMaleBoard"
@@ -67,12 +68,12 @@
                   title="test"
                   value="packages"
                 ></v-list-item>
-              </RouterLink>
-              <v-list-item
+              </RouterLink> -->
+              <!-- <v-list-item
                 :prepend-icon="mdiRoomServiceOutline"
                 title="test"
                 value="services"
-              ></v-list-item>
+              ></v-list-item> -->
               <!-- <v-btn @click="LogOutbtn">
                   <v-list-item
                     :prepend-icon="mdiLogout"

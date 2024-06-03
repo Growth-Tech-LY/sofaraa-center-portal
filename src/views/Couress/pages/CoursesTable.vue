@@ -43,7 +43,7 @@
         @click.self="viewStudents = false"
         class="fixed h-screen w-full top-0 left-0 bg-gray-500/50 z-[1005]"
       >
-        <ViewStudents />
+        <ViewStudents :trainingCouresReservationsId="courseId" @close="viewStudents = false" />
       </div>
 
       <!-- [     The Coureses Add Form Start           >>      ]  -->
@@ -53,7 +53,7 @@
         class="fixed h-screen w-full top-0 left-0 bg-gray-500/50 z-[1005]"
         @click.self="studentPopUp = false"
       >
-        <AddStudent />
+        <AddStudent :trainingCouresReservationsId="courseId" />
       </div>
 
       <!--  <<  [        The Edit start          ] >>       -->
@@ -109,7 +109,8 @@
             variant="text"
             size="medium"
             :prepend-icon="mdiAccountEye"
-            @click="viewStudents = true"
+            @click="OpenViewstudent(item)"
+            :trainingCouresReservationsId="courseId"
           >
             <v-tooltip activator="parent" location="bottom">عرض الطالبة </v-tooltip>
           </v-btn>
@@ -119,7 +120,8 @@
             variant="text"
             size="medium"
             :prepend-icon="mdiAccountMultiplePlus"
-            @click="studentPopUp = true"
+            @click="OpenAddstudent(item)"
+            :trainingCouresReservationsId="courseId"
           >
             <v-tooltip activator="parent" location="bottom">اسناد طالب لدورة</v-tooltip>
           </v-btn>
@@ -129,7 +131,6 @@
             color="yellow-darken-2"
             :prepend-icon="mdiPencil"
             size="medium"
-            @click="openEdit"
           >
             <v-tooltip activator="parent" location="bottom">تعديل</v-tooltip>
           </v-btn>
@@ -139,7 +140,6 @@
             variant="text"
             size="medium"
             :prepend-icon="mdiDelete"
-            @click="openDeleteModal(item)"
           >
             <v-tooltip activator="parent" location="bottom">حذف</v-tooltip>
           </v-btn>
@@ -153,7 +153,7 @@
 <script setup lang="ts">
 import { onMounted, ref, defineEmits } from 'vue'
 import CoursesForm from './CoursesAddForm.vue'
-import type { Coures } from '../models/courses'
+import type { Coures, postStudents } from '../models/courses'
 import { mdiPlus, mdiPencil, mdiDelete, mdiAccountMultiplePlus, mdiAccountEye } from '@mdi/js'
 import { getCourses } from '../CoursesService'
 import CoursesEditForm from './CoursesEditForm.vue'
@@ -168,8 +168,9 @@ const formPopUP = ref(false)
 const editPopUp = ref(false)
 const confirmDelete = ref(false)
 const viewStudents = ref(false)
-const courseIdDelete = ref<string>('')
+const courseId = ref<string>('')
 const totalCustomers = ref(0)
+
 const paginations = ref({
   page: 1,
   size: 10,
@@ -177,64 +178,93 @@ const paginations = ref({
 })
 const headers: any = [
   { title: 'اسم الدورة', key: 'couresManagementName', align: 'start', sortable: false },
-  { title: 'اسم الأستاذ ', key: 'teacherManagementName', align: 'start' },
-  { title: 'اسم القاعة', key: 'hall_managementName', align: 'center' },
+  { title: ' الأستاذ ', key: 'teacherManagementName', align: 'start' },
+  { title: ' سعر  ', key: 'price', align: 'start' },
+  { title: ' القاعة', key: 'hall_managementName', align: 'center' },
   { title: ' الخدمة', key: 'serviceManagementName', align: 'center' },
+  { title: 'تاريخ البدء', key: 'startDate', align: 'center' },
   { title: 'تاريخ الانتهاء', key: 'endDate', align: 'center' },
-  { title: 'من الساعة', key: 'fromTime', align: 'center' },
-  { title: 'الى الساعة', key: 'toTime', align: 'center' },
+  { title: ' الساعات ', key: 'numberOfRquiredHours', align: 'center' },
+  { title: ' الطلبة ', key: 'numberOfIndividuals', align: 'center' },
   { title: 'الأجرائات', key: 'actions', align: 'center' }
 ]
 
-const test = [
-  {
-    id: '300',
-    name: 'English for Libya',
-    STcount: '50',
-    price: '600',
-    dateStart: '14/5/2023',
-    endDate: '14/6/2023',
-    fromTime: '8:00',
-    toTime: '12:30'
-  },
-  {
-    id: '300',
-    name: 'English for Libya',
-    STcount: '50',
-    price: '600',
-    dateStart: '14/5/2023',
-    endDate: '14/6/2023',
-    fromTime: '8:00',
-    toTime: '12:30'
-  },
-  {
-    id: '300',
-    name: 'English for Libya',
-    STcount: '50',
-    price: '600',
-    dateStart: '14/5/2023',
-    endDate: '14/6/2023',
-    fromTime: '8:00',
-    toTime: '12:30'
-  },
-  {
-    id: '300',
-    name: 'English for Libya',
-    STcount: '50',
-    price: '600',
-    dateStart: '14/5/2023',
-    endDate: '14/6/2023',
-    fromTime: '8:00',
-    toTime: '12:30'
-  }
-]
+// const test = [
+//   {
+//     couresManagementName: 'دورة طبخ ',
+//     teacherManagementName: 'الشيف العالم',
+//     hall_managementName: 'Top Chaf',
+//     serviceManagementName: 'فطور + غذاء',
+//     endDate: '3/3/2023',
+//     fromTime: '11',
+//     toTime: '2'
+//   },
+
+//   {
+//     couresManagementName: 'دورة طبخ ',
+//     teacherManagementName: 'الشيف العالم',
+//     hall_managementName: 'Top Chaf',
+//     serviceManagementName: 'فطور + غذاء',
+//     endDate: '3/3/2023',
+//     fromTime: '11',
+//     toTime: '2'
+//   },
+
+//   {
+//     couresManagementName: 'دورة طبخ ',
+//     teacherManagementName: 'الشيف العالم',
+//     hall_managementName: 'Top Chaf',
+//     serviceManagementName: 'فطور + غذاء',
+//     endDate: '3/3/2023',
+//     fromTime: '11',
+//     toTime: '2'
+//   },
+
+//   {
+//     couresManagementName: 'دورة طبخ ',
+//     teacherManagementName: 'الشيف العالم',
+//     hall_managementName: 'Top Chaf',
+//     serviceManagementName: 'فطور + غذاء',
+//     endDate: '3/3/2023',
+//     fromTime: '11',
+//     toTime: '2'
+//   },
+
+//   {
+//     couresManagementName: 'دورة طبخ ',
+//     teacherManagementName: 'الشيف العالم',
+//     hall_managementName: 'Top Chaf',
+//     serviceManagementName: 'فطور + غذاء',
+//     endDate: '3/3/2023',
+//     fromTime: '11',
+//     toTime: '2'
+//   },
+
+//   {
+//     couresManagementName: 'دورة طبخ ',
+//     teacherManagementName: 'الشيف العالم',
+//     hall_managementName: 'Top Chaf',
+//     serviceManagementName: 'فطور + غذاء',
+//     endDate: '3/3/2023',
+//     fromTime: '11',
+//     toTime: '2'
+//   },
+
+//   {
+//     couresManagementName: 'دورة طبخ ',
+//     teacherManagementName: 'الشيف العالم',
+//     hall_managementName: 'Top Chaf',
+//     serviceManagementName: 'فطور + غذاء',
+//     endDate: '3/3/2023',
+//     fromTime: '11',
+//     toTime: '2'
+//   }
+// ]
 
 const openEdit = () => {
   toggelEdit()
 }
-// const openAddStudent=(){
 
-// }
 // const toggelStudent = () => {
 //   formPopUP.value = !formPopUP.value
 // }
@@ -244,13 +274,20 @@ const toggelForm = () => {
 const toggelEdit = () => {
   editPopUp.value = !editPopUp.value
 }
-
-const openDeleteModal = (item: Coures) => {
-  console.log(item.id)
-
-  courseIdDelete.value = item.id
-  confirmDelete.value = true
+const OpenAddstudent = (item: Coures) => {
+  studentPopUp.value = true
+  courseId.value = item.id
 }
+const OpenViewstudent = (item: Coures) => {
+  viewStudents.value = true
+  courseId.value = item.id
+}
+// const openDeleteModal = (item: Coures) => {
+//   console.log(item.id)
+
+//   courseIdDelete.value = item.id
+//   confirmDelete.value = true
+// }
 
 onMounted(async () => {
   onGetCourse(paginations.value)
