@@ -29,7 +29,7 @@
       class="fixed h-screen w-full top-0 left-0 bg-gray-500/50 z-[1005]"
       @click.self="editPopUp = false"
     >
-      <EditStudent />
+      <EditStudent :couresID="TheID" />
     </div>
   </div>
 </template>
@@ -39,7 +39,7 @@ import type { Student } from '@/core/models/Mainmodels'
 import { onMounted, ref, watchEffect } from 'vue'
 import { getCoursesById } from '../CoursesService'
 import EditStudent from './EditStudent.vue'
-import type { postStudents } from '../models/courses'
+import type { postStudents, studentInfo } from '../models/courses'
 const props = defineProps<{
   trainingCouresReservationsId: string
 }>()
@@ -47,7 +47,7 @@ const editPopUp = ref(false)
 const TheID = ref<string>('')
 const isloading = ref(true)
 const search = ref('')
-const studentsInCoures = ref<postStudents>()
+const studentsInCoures = ref<studentInfo[]>()
 
 const paginations = ref({
   page: 1,
@@ -56,9 +56,9 @@ const paginations = ref({
 })
 
 const headers: any = [
-  { title: 'اسم الطالب', key: 'couresManagementName', align: 'start', sortable: false },
-  { title: 'السعر', key: 'price', align: 'center' },
-  { title: 'المدفوع ', key: 'payedprice', align: 'center' },
+  { title: 'اسم الطالب', key: 'studentName', align: 'start', sortable: false },
+
+  { title: 'المدفوع ', key: 'payedPrice', align: 'center' },
   { title: ' المتبقي', key: 'restPrice', align: 'center' },
   { title: 'الأجرائات', key: 'actions' }
 ]
@@ -70,12 +70,13 @@ onMounted(() => {
   getStudents()
 })
 
-const getStudents = () => {
+const getStudents = async () => {
   getCoursesById(TheID.value)
     .then((response) => {
       isloading.value = true
       console.log(response.data)
-      studentsInCoures.value = response.data
+      studentsInCoures.value = response.data.studentInfo
+
       return response.data
     })
     .finally(() => {

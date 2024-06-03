@@ -53,7 +53,7 @@
         class="fixed h-screen w-full top-0 left-0 bg-gray-500/50 z-[1005]"
         @click.self="studentPopUp = false"
       >
-        <AddStudent :trainingCouresReservationsId="courseId" />
+        <AddStudent :trainingCouresReservationsId="courseId" :price="coursesPrice" />
       </div>
 
       <!--  <<  [        The Edit start          ] >>       -->
@@ -110,7 +110,6 @@
             size="medium"
             :prepend-icon="mdiAccountEye"
             @click="OpenViewstudent(item)"
-            :trainingCouresReservationsId="courseId"
           >
             <v-tooltip activator="parent" location="bottom">عرض الطالبة </v-tooltip>
           </v-btn>
@@ -121,7 +120,6 @@
             size="medium"
             :prepend-icon="mdiAccountMultiplePlus"
             @click="OpenAddstudent(item)"
-            :trainingCouresReservationsId="courseId"
           >
             <v-tooltip activator="parent" location="bottom">اسناد طالب لدورة</v-tooltip>
           </v-btn>
@@ -170,7 +168,7 @@ const confirmDelete = ref(false)
 const viewStudents = ref(false)
 const courseId = ref<string>('')
 const totalCustomers = ref(0)
-
+const coursesPrice = ref<number>(0)
 const paginations = ref({
   page: 1,
   size: 10,
@@ -189,77 +187,77 @@ const headers: any = [
   { title: 'الأجرائات', key: 'actions', align: 'center' }
 ]
 
-// const test = [
-//   {
-//     couresManagementName: 'دورة طبخ ',
-//     teacherManagementName: 'الشيف العالم',
-//     hall_managementName: 'Top Chaf',
-//     serviceManagementName: 'فطور + غذاء',
-//     endDate: '3/3/2023',
-//     fromTime: '11',
-//     toTime: '2'
-//   },
+const test = [
+  {
+    couresManagementName: 'دورة طبخ ',
+    teacherManagementName: 'الشيف العالم',
+    hall_managementName: 'Top Chaf',
+    serviceManagementName: 'فطور + غذاء',
+    endDate: '3/3/2023',
+    fromTime: '11',
+    toTime: '2'
+  },
 
-//   {
-//     couresManagementName: 'دورة طبخ ',
-//     teacherManagementName: 'الشيف العالم',
-//     hall_managementName: 'Top Chaf',
-//     serviceManagementName: 'فطور + غذاء',
-//     endDate: '3/3/2023',
-//     fromTime: '11',
-//     toTime: '2'
-//   },
+  {
+    couresManagementName: 'دورة طبخ ',
+    teacherManagementName: 'الشيف العالم',
+    hall_managementName: 'Top Chaf',
+    serviceManagementName: 'فطور + غذاء',
+    endDate: '3/3/2023',
+    fromTime: '11',
+    toTime: '2'
+  },
 
-//   {
-//     couresManagementName: 'دورة طبخ ',
-//     teacherManagementName: 'الشيف العالم',
-//     hall_managementName: 'Top Chaf',
-//     serviceManagementName: 'فطور + غذاء',
-//     endDate: '3/3/2023',
-//     fromTime: '11',
-//     toTime: '2'
-//   },
+  {
+    couresManagementName: 'دورة طبخ ',
+    teacherManagementName: 'الشيف العالم',
+    hall_managementName: 'Top Chaf',
+    serviceManagementName: 'فطور + غذاء',
+    endDate: '3/3/2023',
+    fromTime: '11',
+    toTime: '2'
+  },
 
-//   {
-//     couresManagementName: 'دورة طبخ ',
-//     teacherManagementName: 'الشيف العالم',
-//     hall_managementName: 'Top Chaf',
-//     serviceManagementName: 'فطور + غذاء',
-//     endDate: '3/3/2023',
-//     fromTime: '11',
-//     toTime: '2'
-//   },
+  {
+    couresManagementName: 'دورة طبخ ',
+    teacherManagementName: 'الشيف العالم',
+    hall_managementName: 'Top Chaf',
+    serviceManagementName: 'فطور + غذاء',
+    endDate: '3/3/2023',
+    fromTime: '11',
+    toTime: '2'
+  },
 
-//   {
-//     couresManagementName: 'دورة طبخ ',
-//     teacherManagementName: 'الشيف العالم',
-//     hall_managementName: 'Top Chaf',
-//     serviceManagementName: 'فطور + غذاء',
-//     endDate: '3/3/2023',
-//     fromTime: '11',
-//     toTime: '2'
-//   },
+  {
+    couresManagementName: 'دورة طبخ ',
+    teacherManagementName: 'الشيف العالم',
+    hall_managementName: 'Top Chaf',
+    serviceManagementName: 'فطور + غذاء',
+    endDate: '3/3/2023',
+    fromTime: '11',
+    toTime: '2'
+  },
 
-//   {
-//     couresManagementName: 'دورة طبخ ',
-//     teacherManagementName: 'الشيف العالم',
-//     hall_managementName: 'Top Chaf',
-//     serviceManagementName: 'فطور + غذاء',
-//     endDate: '3/3/2023',
-//     fromTime: '11',
-//     toTime: '2'
-//   },
+  {
+    couresManagementName: 'دورة طبخ ',
+    teacherManagementName: 'الشيف العالم',
+    hall_managementName: 'Top Chaf',
+    serviceManagementName: 'فطور + غذاء',
+    endDate: '3/3/2023',
+    fromTime: '11',
+    toTime: '2'
+  },
 
-//   {
-//     couresManagementName: 'دورة طبخ ',
-//     teacherManagementName: 'الشيف العالم',
-//     hall_managementName: 'Top Chaf',
-//     serviceManagementName: 'فطور + غذاء',
-//     endDate: '3/3/2023',
-//     fromTime: '11',
-//     toTime: '2'
-//   }
-// ]
+  {
+    couresManagementName: 'دورة طبخ ',
+    teacherManagementName: 'الشيف العالم',
+    hall_managementName: 'Top Chaf',
+    serviceManagementName: 'فطور + غذاء',
+    endDate: '3/3/2023',
+    fromTime: '11',
+    toTime: '2'
+  }
+]
 
 const openEdit = () => {
   toggelEdit()
@@ -277,6 +275,7 @@ const toggelEdit = () => {
 const OpenAddstudent = (item: Coures) => {
   studentPopUp.value = true
   courseId.value = item.id
+  coursesPrice.value = item.price
 }
 const OpenViewstudent = (item: Coures) => {
   viewStudents.value = true

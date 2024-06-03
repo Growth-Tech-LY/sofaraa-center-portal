@@ -1,7 +1,7 @@
 <template>
   <v-form
     v-model="form"
-    class="mt-12 bg-white border-t-[20px] border-[#BF3B74] w-1/2 mx-auto py-16 px-16 rounded-lg shadow-lg overflow-y-scroll max-h-[75%]"
+    class="mt-12 bg-white border-t-[20px] border-[#BF3B74] w-3/5 mx-auto py-16 px-16 rounded-lg shadow-lg overflow-y-scroll max-h-[75%] scroll-container"
   >
     <p>اسناد طلبة الى الدورة</p>
     <div class="grid grid-cols-4 gap-2 p-4 mt-4" v-for="(item, index) in AllStudent" :key="index">
@@ -21,7 +21,7 @@
         label="المدفوع"
         prefix="د.ل"
         v-model="item.payedPrice"
-        :rules="[rules.required, rules.notZero]"
+        :rules="[rules.required, rules.notZero, rules.price]"
       ></v-text-field>
       <div class="flex items-center pb-4">
         <v-btn
@@ -47,17 +47,20 @@
 <script setup lang="ts">
 import { getStudent } from '@/core/services/mainServices'
 import type { postStudents, student } from '../models/courses'
-import { onMounted, reactive, ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { mdiAccountPlus, mdiDeleteOutline } from '@mdi/js'
 import type { Student } from '@/core/models/Mainmodels'
 import { postStudent } from '../CoursesService'
+import { ru } from 'vuetify/locale'
 
 const form = ref(false)
 const AllStudent = ref<student[]>([{ studentManagementId: null, payedPrice: 0 }])
 const students = ref<Student[]>()
 const showMessage = ref(false)
+
 const props = defineProps<{
   trainingCouresReservationsId: string
+  price: number
 }>()
 
 const emit = defineEmits<{
@@ -69,7 +72,8 @@ const closeModel = () => {
 
 const rules = {
   required: (v: string) => !!v || 'الحقل اجباري',
-  notZero: (v: number) => v != 0 || 'يجب ادخال قيمة'
+  notZero: (v: number) => v != 0 || 'يجب ادخال قيمة',
+  price: (n: number) => n <= props.price || 'أكبر من قيمة الدورة '
 }
 
 const onGetstudents = () => {
@@ -109,5 +113,25 @@ const deleteRow = (index: number) => {
 onMounted(async () => {
   onGetstudents()
   console.log(props.trainingCouresReservationsId)
+  console.log(props.price)
 })
 </script>
+<style>
+.scroll-container {
+  overflow-y: scroll;
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+}
+
+.scroll-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.scroll-container::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+
+.scroll-container::-webkit-scrollbar-thumb {
+  background-color: transparent;
+}
+</style>
