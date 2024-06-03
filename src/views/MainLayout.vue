@@ -38,10 +38,10 @@
                 ></v-list-item>
               </RouterLink>
 
-              <RouterLink to="/employess">
+              <!-- <RouterLink to="/employess">
                 <v-list-item :prepend-icon="mdiAccountTie" title="test" value="Staff"></v-list-item>
-              </RouterLink>
-              <RouterLink to="/teachers">
+              </RouterLink> -->
+              <!-- <RouterLink to="/teachers">
                 <v-list-item
                   :prepend-icon="mdiHumanMaleBoard"
                   title="test"
@@ -72,7 +72,7 @@
                 :prepend-icon="mdiRoomServiceOutline"
                 title="test"
                 value="services"
-              ></v-list-item>
+              ></v-list-item> -->
               <!-- <v-btn @click="LogOutbtn">
                   <v-list-item
                     :prepend-icon="mdiLogout"

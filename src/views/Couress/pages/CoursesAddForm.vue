@@ -71,7 +71,7 @@
         label="التاريخ من"
         variant="outlined"
         placeholder="ادخل التاريخ من ..."
-        type="number"
+        type="date"
       >
       </v-text-field>
       <v-text-field

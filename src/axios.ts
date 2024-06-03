@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 const apiClient = axios.create({
-  baseURL: 'https://sofaraa-clinte-back.growthtech.ly/api/',
+  baseURL: 'https://localhost:7085/api/',
   headers: {
     accept: '*/*',
     // 'Content-Type': 'multipart/form-data',
