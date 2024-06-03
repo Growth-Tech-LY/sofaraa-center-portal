@@ -90,6 +90,7 @@
         </div>
         <v-btn size="large" class="mx-3" color="red" @click="searchToggle"> إغلاق </v-btn>
         <v-btn size="large" class="mx-3" color="pink-darken-2" @click="onSearchFilter"> بحث </v-btn>
+        <v-btn size="large" class="mx-3" color="pink-darken-1" @click="clearFilter"> تصفيت فلتر </v-btn>
 
         <!-- //filter div Ends-->
       </div>
@@ -428,6 +429,18 @@ const onSearchFilter = () => {
   }
   onGetHallsRes(paginations.value)
 }
+
+const clearFilter = () => {
+  searchHall.value=undefined
+  searchCustomer.value=undefined
+  paginations.value.Hallname=''
+  paginations.value.customerName=''
+  paginations.value.endDate=''
+  paginations.value.startDate=''
+  paginations.value.phoneNumber=''
+  onGetHallsRes(paginations.value )
+}
+
 
 const openDeleteModal = (item: ReservationTable) => {
   console.log('delete', item)
