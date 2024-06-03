@@ -49,7 +49,8 @@ type ReservationTable = {
   paymentMethodId: number
   numberOfRquiredHours: number
   numberOfIndividuals: number
-  serviceManagementName: [string]
+  serviceManagementName: string[]
+  customerManegentPhonenumber:string
 }
 
 type Postcustomer = {
