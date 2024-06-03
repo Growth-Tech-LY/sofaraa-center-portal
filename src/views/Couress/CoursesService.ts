@@ -1,5 +1,5 @@
 import apiClient from '@/axios'
-import type { PostCoures, Coures } from './models/courses'
+import type { PostCoures, Coures, studentInfo } from './models/courses'
 import type { List } from './models/courses'
 import type { PaginationParamas } from '@/core/models/pagination-params'
 import type { postStudents } from './models/courses'
@@ -20,6 +20,8 @@ const postStudent = (body: postStudents) => {
 }
 
 const getCoursesById = (id: string) => {
-  return apiClient.get<Coures>(`TrainingCouresReservations/${id}`)
+  return apiClient.get<{ studentInfo: studentInfo[] }>(
+    `TrainingCouresReservations/Student?Id=${id}`
+  )
 }
 export { postCoures, getCourses, postStudent, getCoursesById }
