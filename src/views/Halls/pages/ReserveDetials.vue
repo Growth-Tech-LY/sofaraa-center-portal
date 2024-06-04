@@ -18,7 +18,7 @@
         <p class="ms-3 py-1 tetx-sm text-start pr-1 font-bold bg-gray-200 text-gray-900  mt-4">
           <span class="text-blue-500"> رقم الزبون : </span>{{ hallResInfo?.customerManegentPhonenumber }}
         </p>
-        <p class="ms-3 py-1 tetx-sm text-start pr-1 font-bold bg-gray-200 text-gray-900  mt-4">
+        <p   class="ms-3 py-1 tetx-sm text-start pr-1 font-bold bg-gray-200 text-gray-900  mt-4">
           <span class="text-blue-500"> الخدمات المختارة : </span>{{ hallResInfo?.serviceManagementName }}
         </p>
         <p class="ms-3 py-1 tetx-sm text-start pr-1 font-bold bg-gray-200 text-gray-900  mt-4">

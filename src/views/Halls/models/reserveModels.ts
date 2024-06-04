@@ -25,7 +25,7 @@ type PostReservationHalls = {
   restPrice: number
   fromTime: number
   toTime: number
-  startDate: string
+  startDate: string 
   endDate: string
   reservationsTypeId: number
   paymentMethodId: number

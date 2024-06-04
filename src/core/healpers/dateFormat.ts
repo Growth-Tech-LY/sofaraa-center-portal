@@ -4,6 +4,9 @@ import { ar } from 'date-fns/locale'
 export const formatDate = (date: string | null): string => {
   return date ? format(new Date(date), 'dd-MM-yyyy') : ''
 }
+export const formatPutDate = (date: string | null): string => {
+  return date ? format(new Date(date), 'yyyy-dd-MM') : ''
+}
 
 export const formatDateWithTime = (date: string | null): string => {
   return date ? format(new Date(date), 'dd-MM-yyyy | hh:mm aaaa', { locale: ar }) : ''

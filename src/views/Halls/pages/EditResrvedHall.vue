@@ -93,9 +93,8 @@
 
       <div class="flex item-center justify-center gap-8">
         <v-text-field
-          v-model="formDate"
-          dir="rtl"
-          
+          v-model="startDate"
+        
           :prepend-icon="mdiCalendarRange"
           clearable
           label="التاريخ من"
@@ -103,9 +102,10 @@
           variant="outlined"
           type="date"
         ></v-text-field>
+
         <v-text-field
-          v-model="toDate"
-          dir="rtl"
+          v-model="endDate"
+          
           :prepend-icon="mdiCalendarRange"
           clearable
           format="ampm"
@@ -188,8 +188,8 @@
             !countOfrequiedTime ||
             !services ||
             !individualNumber ||
-            !formDate ||
-            !toDate ||
+            !startDate ||
+            !endDate ||
             !fromTime ||
             !toTime ||
             !Payment ||
@@ -223,6 +223,15 @@ import type { Hall, Service, Customer } from '@/core/models/Mainmodels'
 import router from '@/router'
 import { useRoute } from 'vue-router'
 import type { ReservationTable } from '../models/reserveModels'
+import { formatPutDate } from '@/core/healpers/dateFormat'
+
+//date-fns function
+watchEffect(() => {
+  // formatPutDate(formDate.value)
+  // console.log(formDate.value)
+})
+
+//------------------------------
 
 const form = ref(false)
 
@@ -267,8 +276,8 @@ const fromTime = ref(0)
 const toTime = ref(0)
 const firstCheck = ref(1)
 
-const formDate = ref('')
-const toDate = ref('')
+const startDate = ref<string>('')
+const endDate = ref<string>('')
 const placeHolderNumber = ref('')
 //variables for the calculation of the total
 const services = ref<Service[]>([])
@@ -332,7 +341,6 @@ const calculatePaymrnt = () => {
 
 watchEffect(() => {
   calculatePaymrnt()
-
 })
 
 watchEffect(() => {
@@ -385,8 +393,8 @@ const submit = () => {
       restPrice: remainingPayment.value,
       fromTime: fromTime.value,
       toTime: toTime.value,
-      startDate: formDate.value,
-      endDate: toDate.value,
+      startDate: startDate.value,
+      endDate: endDate.value,
       reservationsTypeId: reserveType.value,
       paymentMethodId: Payment.value,
       numberOfRquiredHours: countOfrequiedTime.value,
@@ -400,28 +408,7 @@ const submit = () => {
       .catch((error) => {
         console.log(error)
       })
-      .finally(() => {
-        hallName.value = undefined
-
-        customer.value = undefined
-
-        packagePrice.value = null
-
-        countOfrequiedTime.value = undefined
-
-        services.value = []
-
-        individualNumber.value = 1
-
-        formDate.value = ''
-        toDate.value = ''
-
-        fromTime.value = 0
-        toTime.value = 0
-        Payment.value = 0
-        reserveType.value = 0
-        paid.value = 0
-      })
+      .finally(() => {})
   }
 }
 
@@ -464,8 +451,6 @@ watchEffect(() => {
   }
 })
 watchEffect(() => {
- 
-
   if (packagePrice.value) {
     switch (packagePrice.value.label) {
       case 'ساعة':
@@ -487,7 +472,8 @@ watchEffect(() => {
   }
 })
 
-watchEffect(() => {
+
+watchEffect(()=> {
   if (resToEdit.value) {
     hallData.value.forEach((item) => {
       if (item.name == resToEdit.value?.hall_ManagementName) {
@@ -495,7 +481,30 @@ watchEffect(() => {
         return
       }
     })
+    if (hallName.value) {
+      
+      if (resToEdit.value) {
+        paymentMethods.value.forEach((item) => {
+          if (item.label == resToEdit.value?.packageType) {
+            packagePrice.value = item
+            return
+          }
+        })
+      }
+    }
   }
+})
+
+
+watchEffect(() => {
+  // if (resToEdit.value) {
+  //   hallData.value.forEach((item) => {
+  //     if (item.name == resToEdit.value?.hall_ManagementName) {
+  //       hallName.value = item
+  //       return
+  //     }
+  //   })
+  // }
   if (resToEdit.value) {
     customerData.value.forEach((item) => {
       if (item.name == resToEdit.value?.customerManegentName) {
@@ -506,36 +515,27 @@ watchEffect(() => {
   }
 
 
-  if (resToEdit.value) {
-    PaymentMethods.forEach((item) => {
-      if (item.label == resToEdit.value?.packageType) {
-        packagePrice.value = item
-        return
-      }
-    })
-  }
-
-  if (resToEdit.value && ServicesData.value && firstCheck.value==1) {
-    services.value=[]
+  if (resToEdit.value && ServicesData.value && firstCheck.value == 1) {
+    services.value = []
     // Assuming serviceManagementName is a list of service names
     const serviceNames = Array.isArray(resToEdit.value.serviceManagementName)
       ? resToEdit.value.serviceManagementName
-      : [resToEdit.value.serviceManagementName];
-      
+      : [resToEdit.value.serviceManagementName]
+
     ServicesData.value.forEach((item) => {
       if (serviceNames.includes(item.name)) {
-        services.value.push(item);
+        services.value.push(item)
         firstCheck.value++
       }
     })
   }
 
-
   if (resToEdit.value) {
     fromTime.value = resToEdit.value.fromTime
     toTime.value = resToEdit.value.toTime
-    formDate.value = resToEdit.value.startDate
-    formDate.value = resToEdit.value.endDate
+
+    startDate.value = formatToDatePicker(resToEdit.value.startDate)
+    endDate.value = formatToDatePicker(resToEdit.value.endDate)
     countOfrequiedTime.value = resToEdit.value.numberOfRquiredHours
     individualNumber.value = resToEdit.value.numberOfIndividuals
     Payment.value = resToEdit.value.paymentMethodId
@@ -543,8 +543,21 @@ watchEffect(() => {
     paid.value = resToEdit.value.payedPrice
     totalPayment.value = resToEdit.value.totalPrice
     remainingPayment.value = resToEdit.value.restPrice
-
-
   }
 })
+
+
+watchEffect(()=>{
+  
+})
+
+const formatToDatePicker = (dateString: string) => {
+  const date = new Date(dateString)
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  return `${year}-${month}-${day}`
+}
+
+
 </script>
