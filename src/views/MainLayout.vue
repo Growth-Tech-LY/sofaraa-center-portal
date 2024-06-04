@@ -6,7 +6,7 @@
       <v-card>
         <v-layout>
           <v-navigation-drawer v-model="drawer" :rail="rail" permanent @click="rail = false">
-            <img width="120px" src="/src/assets/icons/sofaraaLogo.png" />
+            <img width="120px" src="@/src/assets/icons/sofaraaLogo.png" />
             <v-list-item
               prepend-avatar=""
               title="مركز سفراء العلم"
@@ -21,7 +21,7 @@
             <v-divider></v-divider>
 
             <v-list density="compact" nav>
-              <RouterLink to="/hall-list">
+              <RouterLink :to="{ name: 'reservations-list'}">
                 <v-list-item
                   :prepend-icon="mdiHomeCityOutline"
                   title="حجوزات القاعات "
@@ -38,10 +38,11 @@
                 ></v-list-item>
               </RouterLink>
 
-              <!-- <RouterLink to="/employess">
+              <!-- <RouterLink to="/hall-list">
                 <v-list-item :prepend-icon="mdiAccountTie" title="test" value="Staff"></v-list-item>
-              </RouterLink> -->
-              <!-- <RouterLink to="/teachers">
+              </RouterLink>
+              
+              <RouterLink to="/hall-list">
                 <v-list-item
                   :prepend-icon="mdiHumanMaleBoard"
                   title="test"
@@ -49,7 +50,7 @@
                 ></v-list-item>
               </RouterLink>
 
-              <RouterLink to="/students">
+              <RouterLink to="/hall-list">
                 <v-list-item
                   :prepend-icon="mdiAccountGroupOutline"
                   title="test"
@@ -61,14 +62,14 @@
                 title="test"
                 value="customers"
               ></v-list-item>
-              <RouterLink to="/packages">
+              <RouterLink to="/hall-list">
                 <v-list-item
                   :prepend-icon="mdiWalletGiftcard"
                   title="test"
                   value="packages"
                 ></v-list-item>
-              </RouterLink>
-              <v-list-item
+              </RouterLink> -->
+              <!-- <v-list-item
                 :prepend-icon="mdiRoomServiceOutline"
                 title="test"
                 value="services"

@@ -1,27 +1,25 @@
 <template>
   <div>
-    <v-btn color="red-darken-1" :prepend-icon="mdiArrowRightTop" to="/hall-list">الرجوع</v-btn>
+    <v-btn color="red-darken-1" :prepend-icon="mdiArrowRightTop" @click="closeModel">الرجوع</v-btn>
   </div>
   <div class="mt-20 bg-white border-t-8 border-[#BF3B74] mx-auto p-7 rounded-lg shadow-lg h-4/5">
     <p class="pr-8 text-lg">حجز قاعة</p>
     <v-form class="grid grid-cols-2 gap-3 p-4 items-center justify-center">
-      <div >
+      <div>
         <v-autocomplete
-        transition="slide-y-transition"
           v-model="hallName"
           :items="hallData"
           label="إسم القاعة"
           item-title="name"
-          item-value="value"
           placeholder="إسم القاعة"
           variant="outlined"
           :return-object="true"
         ></v-autocomplete>
       </div>
+
       <div class="flex items-center justify-center">
         <v-autocomplete
           v-model="customer"
-          transition="slide-y-transition"
           :items="customerData"
           label="إسم الزبون"
           item-title="name"
@@ -35,13 +33,12 @@
           color="green-accent-4"
           density="comfortable"
           :icon="mdiPlus"
-          @click="toggeAddCustomer"
         ></v-btn>
       </div>
+
       <div class="flex item-center justify-center gap-8">
         <v-autocomplete
           v-model="packagePrice"
-          transition="slide-y-transition"
           :items="paymentMethods"
           label="نوع الباقة"
           item-title="label"
@@ -59,8 +56,8 @@
       <div class="mb-2">
         <v-text-field
           v-model="countOfrequiedTime"
-          :label="placeHolderNumber"
           variant="outlined"
+          :label="placeHolderNumber"
           hide-details
           type="number"
         ></v-text-field>
@@ -68,7 +65,6 @@
       <div class="flex item-center justify-center gap-8">
         <v-autocomplete
           v-model="servicesPrice"
-          transition="slide-y-transition"
           :items="ServicesData"
           label="نوع الخدمة"
           multiple
@@ -111,6 +107,7 @@
           dir="rtl"
           :prepend-icon="mdiCalendarRange"
           clearable
+          format="ampm"
           label="التاريخ الى"
           placeholder="ادخل التاريخ الى ..."
           variant="outlined"
@@ -144,8 +141,7 @@
       <div class="flex item-center justify-center gap-8">
         <v-autocomplete
           v-model="Payment"
-          transition="slide-y-transition"
-          :items="PaymentMethods"     
+          :items="PaymentMethods"
           label="طريقة الدفع  "
           item-title="label"
           item-value="value"
@@ -156,7 +152,6 @@
         <v-autocomplete
           v-model="reserveType"
           :items="reserveTypes"
-          transition="slide-y-transition"
           label="نوع الحجز  "
           item-title="label"
           item-value="value"
@@ -203,11 +198,11 @@
           size="large"
           class="mx-3"
           color="pink-darken-1"
-          @click="submitHallData"
+          @click="submit"
         >
           إضافة
         </v-btn>
-        <v-btn size="large" class="mx-3" color="red" @click="closeModel"> ألغاء </v-btn>
+        <v-btn size="large" class="mx-3" color="red" @click="closeModel"> إلغاء </v-btn>
       </div>
     </v-form>
   </div>
@@ -216,27 +211,17 @@
       تمت الإضافة بنجاح
     </v-snackbar>
   </div>
-
-  <div
-    data-aos="fade-left"
-    v-if="popAddCustomer"
-    @click.self="toggeAddCustomer"
-    class="fixed h-screen w-full top-0 left-0 bg-gray-500/50 z-[1005]"
-  >
-    <AddCustomerRes @close="toggeAddCustomer" @refresh="OngetCustomers" />
-  </div>
-
-  
-
 </template>
 <script setup lang="ts">
 import { mdiPlus, mdiTimerOutline, mdiCalendarRange, mdiArrowRightTop } from '@mdi/js'
-import AddCustomerRes from './AddCustomerRes.vue'
 import { onMounted, ref, watchEffect } from 'vue'
 import { getHalls, getCustomers, getServices } from '@/core/services/mainServices'
 import { Postreservation } from '../hallReserve-services'
+import { putResHall, getResHallByID } from '../hallReserve-services'
 import type { Hall, Service, Customer } from '@/core/models/Mainmodels'
 import router from '@/router'
+import { useRoute } from 'vue-router'
+import type { ReservationTable } from '../models/reserveModels'
 
 const form = ref(false)
 
@@ -248,12 +233,21 @@ const Rules = {
 }
 
 const closeModel = () => {
-  router.replace({name:'reservations-list'})
+  router.replace({ name: 'reservations-list' })
 }
+
+// const route = useRoute()
+
+// const receivedID = Number(route.params.id)
+// console.log(receivedID)
+
+const route = useRoute()
+const receivedID = String(route.params.id)
 
 // const updateModel = () => {
 //   emit('update');
 // };
+const resToEdit = ref<ReservationTable>()
 const hallName = ref<Hall>()
 const oldHallName = ref<Hall>()
 const hallData = ref<Hall[]>([])
@@ -266,28 +260,11 @@ const reserveType = ref(1)
 const subscription = ref(1)
 const packagePrice = ref<PaymentMethod | null>(null)
 
-//popUps
-const popAddCustomer = ref(false)
-
-const toggeAddCustomer = () => {
-  popAddCustomer.value = !popAddCustomer.value
-}
-
-const OngetCustomers = () => {
-  getCustomers().then((response) => {
-    customerData.value = response
-    popAddCustomer.value = !popAddCustomer.value
-    showAddMessage.value = true
-  })
-}
-
-//--------------------
-
 const individualNumber = ref<number>(1)
 const showAddMessage = ref(false)
 const fromTime = ref(0)
 const toTime = ref(0)
-const totalTime = ref(0)
+
 const formDate = ref('')
 const toDate = ref('')
 const placeHolderNumber = ref('')
@@ -353,7 +330,6 @@ const calculatePaymrnt = () => {
 watchEffect(() => {
   calculatePaymrnt()
   remainingPayment.value = totalPayment.value - paid.value
-  console.log(hallName.value)
 })
 
 watchEffect(() => {
@@ -371,8 +347,8 @@ watchEffect(() => {
 })
 
 const onGetData = () => {
-  getHalls().then((response) => {
-    hallData.value = response
+  getResHallByID(receivedID).then((response) => {
+    resToEdit.value = response
   })
 
   getCustomers().then((response) => {
@@ -382,6 +358,10 @@ const onGetData = () => {
   getServices().then((response) => {
     ServicesData.value = response
   })
+
+  getHalls().then((response) => {
+    hallData.value = response
+  })
 }
 
 onMounted(() => {
@@ -390,7 +370,7 @@ onMounted(() => {
 
 //----------------------------------------------------------
 
-const submitHallData = () => {
+const submit = () => {
   if (hallName.value && countOfrequiedTime.value && packagePrice.value && customer.value) {
     const body = {
       hall_ManagementId: hallName.value.id,
@@ -412,7 +392,7 @@ const submitHallData = () => {
     Postreservation(body)
       .then(() => {
         showAddMessage.value = true
-        closeModel()
+        router.replace('/hall-list')
       })
       .catch((error) => {
         console.log(error)
@@ -502,6 +482,47 @@ watchEffect(() => {
     console.log('Placeholder:', placeHolderNumber.value)
   } else {
     placeHolderNumber.value = ''
+  }
+})
+
+watchEffect(() => {
+  if (resToEdit.value) {
+    hallData.value.forEach((item) => {
+      if (item.name == resToEdit.value?.hall_ManagementName) {
+        hallName.value = item
+        return
+      }
+    })
+  }
+  if (resToEdit.value) {
+    customerData.value.forEach((item) => {
+      if (item.name == resToEdit.value?.customerManegentName) {
+        customer.value = item
+        return
+      }
+    })
+  }
+
+  if (resToEdit.value) {
+    ServicesData.value.forEach((item) => {
+      if (item.name == resToEdit.value?.serviceManagementName) {
+        servicesPrice.value = item
+      }
+    })
+  }
+
+  if (resToEdit.value) {
+    fromTime.value = resToEdit.value.fromTime
+    toTime.value = resToEdit.value.toTime
+    formDate.value = resToEdit.value.startDate
+    formDate.value = resToEdit.value.endDate
+    countOfrequiedTime.value = resToEdit.value.numberOfRquiredHours
+    individualNumber.value = resToEdit.value.numberOfIndividuals
+    Payment.value = resToEdit.value.paymentMethodId
+    reserveType.value = resToEdit.value.reservationsTypeId
+    paid.value = resToEdit.value.payedPrice
+    totalPayment.value = resToEdit.value.totalPrice
+    remainingPayment.value = resToEdit.value.restPrice
   }
 })
 </script>

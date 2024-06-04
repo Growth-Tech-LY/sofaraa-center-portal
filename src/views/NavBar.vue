@@ -8,17 +8,13 @@
         :prepend-icon="mdiLogoutVariant"
         @click="LogOutbtn"
         variant="plain"
-        >اتسجيل الخروج</v-btn
+        >تسجيل الخروج</v-btn
       >
     </div>
     <div>
-      <h1 class="text-4xl font-bold text-gray-500 p-6">
-        <span class="block">
-          مركز
-          <span class="text-red-500">سفراء</span>
+      <h1 class="text-4xl font-bold text-gray-500 pr-20">
+        <v-img class="mx-auto" width="350" src="/src/assets/icons/sofaraaLogo2 .png"></v-img>
 
-          العلم
-        </span>
       </h1>
     </div>
     <div></div>

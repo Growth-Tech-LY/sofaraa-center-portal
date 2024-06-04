@@ -6,7 +6,7 @@
         color="green-accent-4"
         rounded="lg"
         :prepend-icon="mdiPlus"
-        @click="toggelPopUp"
+        @click="toggelForm"
         >اضافة حجز</v-btn
       >
       <div class="flex flex-col w-1/2">
@@ -19,17 +19,53 @@
           hide-details
         ></v-text-field>
       </div>
-      <!-- The Edit start  -->
+      <!--               The Coureses Add Form   Start       -->
+
+      <div
+        v-show="formPopUP"
+        @click.self="toggelForm"
+        class="fixed h-screen w-full top-0 left-0 bg-gray-500/50 z-[1005]"
+      >
+        <CoursesForm
+          @close="toggelForm"
+          @refresh="
+            onOptionsChange({
+              page: paginations.page,
+              itemsPerPage: paginations.size
+            })
+          "
+        />
+      </div>
+
+      <!-- The viewStudents start -->
+      <div
+        v-if="viewStudents"
+        @click.self="viewStudents = false"
+        class="fixed h-screen w-full top-0 left-0 bg-gray-500/50 z-[1005]"
+      >
+        <ViewStudents :trainingCouresReservationsId="courseId" @close="viewStudents = false" />
+      </div>
+
+      <!-- [     The Coureses Add Form Start           >>      ]  -->
+
+      <div
+        v-if="studentPopUp"
+        class="fixed h-screen w-full top-0 left-0 bg-gray-500/50 z-[1005]"
+        @click.self="studentPopUp = false"
+      >
+        <AddStudent :trainingCouresReservationsId="courseId" :price="coursesPrice" />
+      </div>
+
+      <!--  <<  [        The Edit start          ] >>       -->
       <div
         v-if="editPopUp"
-        @click.self="toggelPopUp2"
+        @click.self="toggelEdit"
         class="fixed h-screen w-full top-0 left-0 bg-gray-500/50 z-[1005]"
       >
         <CoursesEditForm />
       </div>
-      <!-- The Edit End  -->
 
-      <!-- The Delete Start -->
+      <!--              The Delete Start           -->
       <div
         @click.self="confirmDelete = false"
         v-show="confirmDelete"
@@ -53,10 +89,9 @@
           </v-card>
         </div>
       </div>
-      <!-- The Delete End -->
     </div>
     <v-data-table-server
-      v-model:items-per-page="paginations.page"
+      v-model:items-per-page="paginations.size"
       :headers="headers"
       :items="courses"
       :items-length="paginations.size"
@@ -67,23 +102,42 @@
       <!-- The  Actions  in the table  Start -->
 
       <template #[`item.actions`]="{ item }">
-        <div>
+        <div class="grid grid-cols-2 gap-y-2">
+          <v-btn
+            class=""
+            color="blue-darken-2"
+            variant="text"
+            size="medium"
+            :prepend-icon="mdiAccountEye"
+            @click="OpenViewstudent(item)"
+          >
+            <v-tooltip activator="parent" location="bottom">عرض الطالبة </v-tooltip>
+          </v-btn>
+          <v-btn
+            class=""
+            color="green"
+            variant="text"
+            size="medium"
+            :prepend-icon="mdiAccountMultiplePlus"
+            @click="OpenAddstudent(item)"
+          >
+            <v-tooltip activator="parent" location="bottom">اسناد طالب لدورة</v-tooltip>
+          </v-btn>
           <v-btn
             variant="text"
-            class="ml-3"
+            class=""
             color="yellow-darken-2"
             :prepend-icon="mdiPencil"
             size="medium"
-            @click="openEdit"
           >
             <v-tooltip activator="parent" location="bottom">تعديل</v-tooltip>
           </v-btn>
+
           <v-btn
             color="deep-orange-darken-1"
             variant="text"
             size="medium"
             :prepend-icon="mdiDelete"
-            @click="openDeleteModal(item)"
           >
             <v-tooltip activator="parent" location="bottom">حذف</v-tooltip>
           </v-btn>
@@ -92,126 +146,157 @@
 
       <!-- The  Actions  in the table  End !! -->
     </v-data-table-server>
-
-    <!--               The Coureses Add Form   Start       -->
-    <div
-      v-show="formPopUP"
-      @click.self="toggelPopUp"
-      class="fixed h-screen w-full top-0 left-0 bg-gray-500/50 z-[1005]"
-    >
-      <CoursesForm
-        @close="toggelPopUp"
-        @refresh="
-          onOptionsChange({
-            page: paginations.page,
-            itemsPerPage: paginations.size
-          })
-        "
-      />
-    </div>
-    <!--               The Coureses Add Form   End !!        -->
   </div>
 </template>
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, defineEmits } from 'vue'
 import CoursesForm from './CoursesAddForm.vue'
-import type { Coures } from '../models/courses'
-import { mdiPlus, mdiPencil, mdiDelete } from '@mdi/js'
-import { getCourses } from '../models/CoursesService'
+import type { Coures, postStudents } from '../models/courses'
+import { mdiPlus, mdiPencil, mdiDelete, mdiAccountMultiplePlus, mdiAccountEye } from '@mdi/js'
+import { getCourses } from '../CoursesService'
 import CoursesEditForm from './CoursesEditForm.vue'
-
+import type { PaginationParamas } from '@/core/models/pagination-params'
+import AddStudent from './AddStudent.vue'
+import ViewStudents from './ViewStudents.vue'
 const search = ref('')
 const loading = ref(false)
 const courses = ref<Coures[]>([])
+const studentPopUp = ref(false)
 const formPopUP = ref(false)
 const editPopUp = ref(false)
 const confirmDelete = ref(false)
-const courseIdDelete = ref<string>('')
-
+const viewStudents = ref(false)
+const courseId = ref<string>('')
+const totalCustomers = ref(0)
+const coursesPrice = ref<number>(0)
 const paginations = ref({
   page: 1,
   size: 10,
   Name: ''
 })
 const headers: any = [
-  { title: 'id', align: 'start', key: 'id' },
-  { title: 'اسم الدروة', align: 'start', sortable: false, key: '' },
-  { title: 'السعر', key: '', align: 'center' },
+  { title: 'اسم الدورة', key: 'couresManagementName', align: 'start', sortable: false },
+  { title: ' الأستاذ ', key: 'teacherManagementName', align: 'start' },
+  { title: ' سعر  ', key: 'price', align: 'start' },
+  { title: ' القاعة', key: 'hall_managementName', align: 'center' },
+  { title: ' الخدمة', key: 'serviceManagementName', align: 'center' },
   { title: 'تاريخ البدء', key: 'startDate', align: 'center' },
   { title: 'تاريخ الانتهاء', key: 'endDate', align: 'center' },
-  { title: 'من الساعة', key: 'fromTime', align: 'center' },
-  { title: 'الى الساعة', key: 'toTime', align: 'center' },
-  { title: 'الأجرائات', key: 'actions', align: 'start' }
+  { title: ' الساعات ', key: 'numberOfRquiredHours', align: 'center' },
+  { title: ' الطلبة ', key: 'numberOfIndividuals', align: 'center' },
+  { title: 'الأجرائات', key: 'actions', align: 'center' }
 ]
-const onOptionsChange = ({ page, itemsPerPage }: { page: number; itemsPerPage: number }) => {
-  paginations.value = {
-    page: page,
-    size: itemsPerPage,
-    Name: search.value
+
+const test = [
+  {
+    couresManagementName: 'دورة طبخ ',
+    teacherManagementName: 'الشيف العالم',
+    hall_managementName: 'Top Chaf',
+    serviceManagementName: 'فطور + غذاء',
+    endDate: '3/3/2023',
+    fromTime: '11',
+    toTime: '2'
+  },
+
+  {
+    couresManagementName: 'دورة طبخ ',
+    teacherManagementName: 'الشيف العالم',
+    hall_managementName: 'Top Chaf',
+    serviceManagementName: 'فطور + غذاء',
+    endDate: '3/3/2023',
+    fromTime: '11',
+    toTime: '2'
+  },
+
+  {
+    couresManagementName: 'دورة طبخ ',
+    teacherManagementName: 'الشيف العالم',
+    hall_managementName: 'Top Chaf',
+    serviceManagementName: 'فطور + غذاء',
+    endDate: '3/3/2023',
+    fromTime: '11',
+    toTime: '2'
+  },
+
+  {
+    couresManagementName: 'دورة طبخ ',
+    teacherManagementName: 'الشيف العالم',
+    hall_managementName: 'Top Chaf',
+    serviceManagementName: 'فطور + غذاء',
+    endDate: '3/3/2023',
+    fromTime: '11',
+    toTime: '2'
+  },
+
+  {
+    couresManagementName: 'دورة طبخ ',
+    teacherManagementName: 'الشيف العالم',
+    hall_managementName: 'Top Chaf',
+    serviceManagementName: 'فطور + غذاء',
+    endDate: '3/3/2023',
+    fromTime: '11',
+    toTime: '2'
+  },
+
+  {
+    couresManagementName: 'دورة طبخ ',
+    teacherManagementName: 'الشيف العالم',
+    hall_managementName: 'Top Chaf',
+    serviceManagementName: 'فطور + غذاء',
+    endDate: '3/3/2023',
+    fromTime: '11',
+    toTime: '2'
+  },
+
+  {
+    couresManagementName: 'دورة طبخ ',
+    teacherManagementName: 'الشيف العالم',
+    hall_managementName: 'Top Chaf',
+    serviceManagementName: 'فطور + غذاء',
+    endDate: '3/3/2023',
+    fromTime: '11',
+    toTime: '2'
   }
-  // getPackage(paginations.value)
-}
-// const desserts = [
-//   {
-//     id: '1',
-//     name: 'Frozen Yogurt',
-//     calories: 159,
-//     fat: 6,
-//     carbs: 24,
-//     protein: 4,
-//     iron: '1'
-//   },
-//   {
-//     id: '2',
-//     name: 'Jelly bean',
-//     calories: 375,
-//     fat: 0,
-//     carbs: 94,
-//     protein: 0,
-//     iron: '0'
-//   },
-//   {
-//     id: '3',
-//     name: 'KitKat',
-//     calories: 518,
-//     fat: 26,
-//     carbs: 65,
-//     protein: 7,
-//     iron: '6'
-//   },
-//   {
-//     id: '4',
-//     name: 'Eclair',
-//     calories: 262,
-//     fat: 16,
-//     carbs: 23,
-//     protein: 6,
-//     iron: '7'
-//   }
-// ]
+]
 
 const openEdit = () => {
-  toggelPopUp2()
+  toggelEdit()
 }
 
-const toggelPopUp = () => {
+// const toggelStudent = () => {
+//   formPopUP.value = !formPopUP.value
+// }
+const toggelForm = () => {
   formPopUP.value = !formPopUP.value
 }
-const toggelPopUp2 = () => {
+const toggelEdit = () => {
   editPopUp.value = !editPopUp.value
 }
-
-const openDeleteModal = (item: Coures) => {
-  console.log(item.id)
-
-  courseIdDelete.value = item.id
-  confirmDelete.value = true
+const OpenAddstudent = (item: Coures) => {
+  studentPopUp.value = true
+  courseId.value = item.id
+  coursesPrice.value = item.price
 }
-const getCourse = async () => {
+const OpenViewstudent = (item: Coures) => {
+  viewStudents.value = true
+  courseId.value = item.id
+}
+// const openDeleteModal = (item: Coures) => {
+//   console.log(item.id)
+
+//   courseIdDelete.value = item.id
+//   confirmDelete.value = true
+// }
+
+onMounted(async () => {
+  onGetCourse(paginations.value)
+})
+const onGetCourse = (paginations: PaginationParamas) => {
   loading.value = true
-  getCourses()
+  getCourses(paginations)
     .then((response) => {
-      courses.value = response
+      totalCustomers.value = response.total
+      courses.value = response.data
       console.log(response)
     })
     .finally(() => {
@@ -219,7 +304,12 @@ const getCourse = async () => {
     })
 }
 
-onMounted(async () => {
-  getCourse()
-})
+const onOptionsChange = ({ page, itemsPerPage }: { page: number; itemsPerPage: number }) => {
+  paginations.value = {
+    page: page,
+    size: itemsPerPage,
+    Name: search.value
+  }
+  // onGetCourse(paginations)
+}
 </script>
