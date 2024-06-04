@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-btn color="red-darken-1" :prepend-icon="mdiArrowRightTop" to="/hall-list">الرجوع</v-btn>
+    <v-btn color="red-darken-1" :prepend-icon="mdiArrowRightTop" @click="closeModel">الرجوع</v-btn>
   </div>
   <div class="mt-20 bg-white border-t-8 border-[#BF3B74] mx-auto p-7 rounded-lg shadow-lg h-4/5">
     <p class="pr-8 text-lg">حجز قاعة</p>
@@ -240,6 +240,19 @@ import router from '@/router'
 
 const form = ref(false)
 
+//date-fns function
+// watchEffect( () => {
+//   import { formatDate } from '@/core/healpers/dateFormat'
+//   const date = ref()
+//   formatDate(date.value)
+  
+//   console.log(date.value);
+  
+
+// })
+
+
+
 const Rules = {
   time: (value: number) => (value > 0 && value <= 24) || 'يجب التكون القيكة بين ال 1 إلي 24 ',
   timeDiffrince: (value: number) =>
@@ -353,7 +366,7 @@ const calculatePaymrnt = () => {
 watchEffect(() => {
   calculatePaymrnt()
   remainingPayment.value = totalPayment.value - paid.value
-  console.log(hallName.value)
+ 
 })
 
 watchEffect(() => {
@@ -363,12 +376,10 @@ watchEffect(() => {
     selectedServicesPrice.value = selectedServicesPrice.value + servicesPrice.value[i].servicePrice
     servicesId.value.push(servicesPrice.value[i].id)
   }
-  console.log('theids', servicesId.value)
+
 })
 
-watchEffect(() => {
-  console.log('the hallname value is ', hallName.value)
-})
+
 
 const onGetData = () => {
   getHalls().then((response) => {
@@ -481,8 +492,7 @@ watchEffect(() => {
   }
 })
 watchEffect(() => {
-  console.log('Payment Methods:', paymentMethods.value)
-  console.log('Selected Package Price:', packagePrice.value)
+
 
   if (packagePrice.value) {
     switch (packagePrice.value.label) {
@@ -499,7 +509,7 @@ watchEffect(() => {
       default:
         placeHolderNumber.value = ''
     }
-    console.log('Placeholder:', placeHolderNumber.value)
+  
   } else {
     placeHolderNumber.value = ''
   }

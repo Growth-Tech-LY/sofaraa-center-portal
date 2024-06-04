@@ -107,7 +107,7 @@ const LoginBtn = async () => {
   console.log(response.data.token)
   localStorage.setItem('token', response.data.token)
   isLoading.value = false
-  router.replace('/')
+  router.replace({ name: 'MainLayout' })
 }
 watchEffect(() => {
   console.log(UserData.value.Name)

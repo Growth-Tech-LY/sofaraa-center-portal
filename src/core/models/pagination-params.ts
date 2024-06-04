@@ -1,5 +1,9 @@
 export type PaginationParamas = {
   page: number
   size: number
-  Name: string
+  Hallname: string | undefined
+  customerName: string
+  startDate: string
+  endDate: string
+  phoneNumber: string
 }

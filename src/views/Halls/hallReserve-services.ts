@@ -3,7 +3,7 @@ import type {   PostReservationHalls  , ReservationTable , Postcustomer} from '.
 import type { Hall } from '@/core/models/Mainmodels'
 import type { List } from '../Couress/models/courses' 
 
-import type { PaginationParamas  } from '@/core/models/pagination-params'
+import type { PaginationParamas    } from '@/core/models/pagination-params'
 
 
 
@@ -12,7 +12,7 @@ import type { PaginationParamas  } from '@/core/models/pagination-params'
 }
 
 
-const getResHallTaple = (paginationParams: PaginationParamas) => {
+const getResHallTaple = (paginationParams : PaginationParamas) => {
   return apiClient
     .get<List<ReservationTable[]>>('HallReservations', { params: paginationParams })
     .then((response) => {
@@ -41,7 +41,9 @@ const postCustomer = (body: Postcustomer) => {
   return apiClient.post('HallReservations/AddCustomers', body)
 }
 
-export {  Postreservation ,getResHallTaple , getResHallByID , deleteResHall , putResHall , postCustomer  }
+
+
+export {  Postreservation ,getResHallTaple , getResHallByID , deleteResHall , putResHall , postCustomer   }
 
 
 

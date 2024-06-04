@@ -1,5 +1,5 @@
 <template>
-  <div class="mx-auto mt-12 px-4 relative">
+  <div class="mx-auto mt-12 px-4">
     <div class="flex justify-between items-center">
       <p class="text-2xl">حجوزات القاعات</p>
 
@@ -8,9 +8,8 @@
           >اضافة حجز
         </v-btn>
       </RouterLink>
-
     </div>
-    <div class="flex justify-between items-center">
+    <div class="flex justify-between items-center relative">
       <v-btn @click="searchToggle" size="large" variant="text" :prepend-icon="mdiFilter">
         <v-tooltip activator="parent" location="bottom">بحث</v-tooltip></v-btn
       >
@@ -18,15 +17,14 @@
       <!-- //filter div -->
       <div
         v-show="showSearch"
-        class="bg-white border-t-8 border-[#BF3B74] mx-auto p-7 rounded-lg shadow-lg w-3/4 z-50 right-52 top-40 fixed"
+        class="bg-white border-t-8 border-[#BF3B74] mx-auto p-7 rounded-lg shadow-lg w-3/4 z-50 left-40 top-64 fixed"
       >
         <p class="text-gray-700 mx-auto pr-3 mb-1">البحث</p>
         <div class="bg-white grid grid-cols-3 gap-4 justify-center items-center">
-          
           <div class="flex gap-1 justify-center items-center">
             <v-autocomplete
               transition="slide-y-transition"
-              v-model="hallName"
+              v-model="searchHall"
               :items="hallData"
               label="إسم القاعة"
               item-title="name"
@@ -39,6 +37,7 @@
 
           <div class="flex gap-1 justify-center items-center">
             <v-text-field
+              v-model="paginations.startDate"
               dir="rtl"
               :prepend-icon="mdiCalendarRange"
               clearable
@@ -51,6 +50,7 @@
 
           <div class="flex gap-1 justify-center items-center">
             <v-text-field
+              v-model="paginations.endDate"
               dir="rtl"
               :prepend-icon="mdiCalendarRange"
               clearable
@@ -63,7 +63,7 @@
 
           <div class="flex gap-1 justify-center items-center">
             <v-autocomplete
-              v-model="customer"
+            v-model="searchCustomer"
               transition="slide-y-transition"
               :items="customerData"
               label="إسم الزبون"
@@ -77,66 +77,20 @@
 
           <div class="flex gap-1 justify-center items-center">
             <v-text-field
-              label="التوقيت من"
+              v-model="paginations.phoneNumber"
+              label="رقم الزبون"
               item-title="label"
               item-value="value"
-              placeholder="التوقيت من"
+              placeholder="رقم الزبون"
               variant="outlined"
-              type="number"
-            ></v-text-field>
-          </div>
-          <div class="flex gap-1 justify-center items-center">
-            <v-text-field
-              label="التوقيت إلي"
-              item-title="label"
-              item-value="value"
-              placeholder="التوقيت إلي"
-              variant="outlined"
-              type="number"
             ></v-text-field>
           </div>
 
-          <div class="flex gap-1 justify-center items-center">
-            <v-autocomplete
-              
-              transition="slide-y-transition"
-              :items="packageType"
-              label="نوع الباقة"
-              item-title="label"
-              item-value="value"
-              :return-object="true"
-              placeholder="نوع الباقة"
-              variant="outlined"
-            ></v-autocomplete>
-          </div>
-
-          <div class="flex gap-1 justify-center items-center">
-            <v-autocomplete
-              v-model="reserveType"
-              :items="reserveTypes"
-              transition="slide-y-transition"
-              label="نوع الحجز  "
-              item-title="label"
-              item-value="value"
-              placeholder=" نوع الحجز"
-              variant="outlined"
-            ></v-autocomplete>
-          </div>
-
-          <div class="flex gap-1 justify-center items-center">
-            <v-autocomplete
-              v-model="Payment"
-              transition="slide-y-transition"
-              :items="PaymentMethods"
-              label="طريقة الدفع  "
-              item-title="label"
-              item-value="value"
-              placeholder=" طريقة الدفع"
-              variant="outlined"
-            ></v-autocomplete>
-          </div>
+          
         </div>
         <v-btn size="large" class="mx-3" color="red" @click="searchToggle"> إغلاق </v-btn>
+        <v-btn size="large" class="mx-3" color="pink-darken-2" @click="onSearchFilter"> بحث </v-btn>
+        <v-btn size="large" class="mx-3" color="pink-darken-1" @click="clearFilter"> تصفيت فلتر </v-btn>
 
         <!-- //filter div Ends-->
       </div>
@@ -202,7 +156,7 @@
         </v-btn>
         <RouterLink :to="{ name: 'edit-reserved', params: { id: item.id } }">
           <v-btn
-          :disabled="true"
+            :disabled="true"
             variant="text"
             class="me-2"
             size="medium"
@@ -287,7 +241,7 @@ import { onMounted, ref } from 'vue'
 import { mdiDelete, mdiPencil, mdiPlus, mdiFilter, mdiNote, mdiCalendarRange } from '@mdi/js'
 
 import ReserveHall from './ReserveHall.vue'
-import type { Hall, Customer , Service } from '@/core/models/Mainmodels'
+import type { Hall, Customer, Service } from '@/core/models/Mainmodels'
 import { deleteResHall, getResHallTaple } from '../hallReserve-services'
 import type { PaginationParamas } from '@/core/models/pagination-params'
 import type { ReservationTable } from '@/views/Halls/models/reserveModels'
@@ -321,6 +275,16 @@ const HallDeleteId = ref<string>('')
 const popDetials = ref(false)
 const idToEdit = ref('')
 
+//filterParams
+
+const searchHall = ref<Hall>()
+const searchCustomer = ref<Customer>()
+const SearchStartDate = ref('')
+const SearchEndDate = ref('')
+const phoneNumber = ref('')
+
+//------------------------
+
 const hallName = ref<Hall>()
 
 const hallData = ref<Hall[]>([])
@@ -330,7 +294,11 @@ const ServicesData = ref<Service[]>([])
 const paginations = ref<PaginationParamas>({
   page: 1,
   size: 10,
-  Name: ''
+  customerName: '',
+  Hallname:'',
+  startDate: '',
+  endDate: '',
+  phoneNumber: ''
 })
 
 const PaymentMethods = [
@@ -383,7 +351,6 @@ const packageType = [
   }
 ] as const
 
-
 const searchToggle = () => {
   showSearch.value = !showSearch.value
 }
@@ -418,13 +385,12 @@ const onGetHallsRes = (paginations: PaginationParamas) => {
       totalHalls.value = response.total
       hallsRes.value = response.data
       errorCheck.value = false
-      getHalls() .then((response) => {
-        hallData.value =response
+      getHalls().then((response) => {
+        hallData.value = response
       })
 
-
-      getCustomers()  .then((response) => {
-        customerData.value =response
+      getCustomers().then((response) => {
+        customerData.value = response
       })
 
       getServices()
@@ -442,11 +408,39 @@ const onOptionsChange = ({ page, itemsPerPage }: { page: number; itemsPerPage: n
   paginations.value = {
     page: page,
     size: itemsPerPage,
-    Name: search.value
+    Hallname: '',
+    customerName: '',
+    startDate: '',
+    endDate: '',
+    phoneNumber: ''
   }
   onGetHallsRes(paginations.value)
   console.log('OnOptionsChange')
 }
+
+const onSearchFilter = () => {
+  if (searchHall.value?.id) {
+    
+    paginations.value.Hallname=searchHall.value.id
+  } 
+  if (searchCustomer.value?.id) {
+    
+    paginations.value.customerName=searchCustomer.value.id
+  }
+  onGetHallsRes(paginations.value)
+}
+
+const clearFilter = () => {
+  searchHall.value=undefined
+  searchCustomer.value=undefined
+  paginations.value.Hallname=''
+  paginations.value.customerName=''
+  paginations.value.endDate=''
+  paginations.value.startDate=''
+  paginations.value.phoneNumber=''
+  onGetHallsRes(paginations.value )
+}
+
 
 const openDeleteModal = (item: ReservationTable) => {
   console.log('delete', item)

@@ -64,7 +64,7 @@
       </div>
       <div class="flex item-center justify-center gap-8">
         <v-autocomplete
-          v-model="servicesPrice"
+          v-model="services"
           :items="ServicesData"
           label="نوع الخدمة"
           multiple
@@ -95,6 +95,7 @@
         <v-text-field
           v-model="formDate"
           dir="rtl"
+          
           :prepend-icon="mdiCalendarRange"
           clearable
           label="التاريخ من"
@@ -185,7 +186,7 @@
             !customer ||
             !packagePrice ||
             !countOfrequiedTime ||
-            !servicesPrice ||
+            !services ||
             !individualNumber ||
             !formDate ||
             !toDate ||
@@ -264,12 +265,13 @@ const individualNumber = ref<number>(1)
 const showAddMessage = ref(false)
 const fromTime = ref(0)
 const toTime = ref(0)
+const firstCheck = ref(1)
 
 const formDate = ref('')
 const toDate = ref('')
 const placeHolderNumber = ref('')
 //variables for the calculation of the total
-const servicesPrice = ref<Service[]>([])
+const services = ref<Service[]>([])
 const selectedServicesPrice = ref(0)
 const totalPayment = ref(0)
 const paid = ref(0)
@@ -317,7 +319,7 @@ const reserveTypes = [
 ] as const
 
 const calculatePaymrnt = () => {
-  if (servicesPrice.value) {
+  if (services.value) {
     totalServicesPrice.value = selectedServicesPrice.value * individualNumber.value
   }
 
@@ -325,19 +327,20 @@ const calculatePaymrnt = () => {
     totalPackagePrice.value = packagePrice.value.value * countOfrequiedTime.value
     totalPayment.value = totalServicesPrice.value + totalPackagePrice.value
   }
+  remainingPayment.value = totalPayment.value - paid.value
 }
 
 watchEffect(() => {
   calculatePaymrnt()
-  remainingPayment.value = totalPayment.value - paid.value
+
 })
 
 watchEffect(() => {
   servicesId.value = []
   selectedServicesPrice.value = 0
-  for (let i = 0; i < servicesPrice.value.length; i++) {
-    selectedServicesPrice.value = selectedServicesPrice.value + servicesPrice.value[i].servicePrice
-    servicesId.value.push(servicesPrice.value[i].id)
+  for (let i = 0; i < services.value.length; i++) {
+    selectedServicesPrice.value = selectedServicesPrice.value + services.value[i].servicePrice
+    servicesId.value.push(services.value[i].id)
   }
   console.log('theids', servicesId.value)
 })
@@ -406,7 +409,7 @@ const submit = () => {
 
         countOfrequiedTime.value = undefined
 
-        servicesPrice.value = []
+        services.value = []
 
         individualNumber.value = 1
 
@@ -461,8 +464,7 @@ watchEffect(() => {
   }
 })
 watchEffect(() => {
-  console.log('Payment Methods:', paymentMethods.value)
-  console.log('Selected Package Price:', packagePrice.value)
+ 
 
   if (packagePrice.value) {
     switch (packagePrice.value.label) {
@@ -503,13 +505,31 @@ watchEffect(() => {
     })
   }
 
+
   if (resToEdit.value) {
-    ServicesData.value.forEach((item) => {
-      if (item.name == resToEdit.value?.serviceManagementName) {
-        servicesPrice.value = item
+    PaymentMethods.forEach((item) => {
+      if (item.label == resToEdit.value?.packageType) {
+        packagePrice.value = item
+        return
       }
     })
   }
+
+  if (resToEdit.value && ServicesData.value && firstCheck.value==1) {
+    services.value=[]
+    // Assuming serviceManagementName is a list of service names
+    const serviceNames = Array.isArray(resToEdit.value.serviceManagementName)
+      ? resToEdit.value.serviceManagementName
+      : [resToEdit.value.serviceManagementName];
+      
+    ServicesData.value.forEach((item) => {
+      if (serviceNames.includes(item.name)) {
+        services.value.push(item);
+        firstCheck.value++
+      }
+    })
+  }
+
 
   if (resToEdit.value) {
     fromTime.value = resToEdit.value.fromTime
@@ -523,6 +543,8 @@ watchEffect(() => {
     paid.value = resToEdit.value.payedPrice
     totalPayment.value = resToEdit.value.totalPrice
     remainingPayment.value = resToEdit.value.restPrice
+
+
   }
 })
 </script>
