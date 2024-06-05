@@ -60,4 +60,14 @@ type Postcustomer = {
 
 }
 
-export type { packages, PostReservationHalls, ReservationTable , Postcustomer }
+type CheckHallReservation = {
+  hallManagementId: string
+  fromTime: string
+  toTime: string
+  startDate: string
+  endDate: string
+
+}
+
+
+export type { packages, PostReservationHalls, ReservationTable , Postcustomer , CheckHallReservation }

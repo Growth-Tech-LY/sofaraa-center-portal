@@ -5,6 +5,7 @@
   <div class="mt-20 bg-white border-t-8 border-[#BF3B74] mx-auto p-7 rounded-lg shadow-lg h-4/5">
     <p class="pr-8 text-lg">حجز قاعة</p>
     <v-form class="grid grid-cols-2 gap-3 p-4 items-center justify-center">
+     
       <div>
         <v-autocomplete
           v-model="hallName"
@@ -94,25 +95,23 @@
       <div class="flex item-center justify-center gap-8">
         <v-text-field
           v-model="startDate"
-        
           :prepend-icon="mdiCalendarRange"
           clearable
           label="التاريخ من"
           placeholder="ادخل التاريخ من ..."
           variant="outlined"
-          type="date"
+          type="text"
         ></v-text-field>
 
         <v-text-field
           v-model="endDate"
-          
           :prepend-icon="mdiCalendarRange"
           clearable
           format="ampm"
           label="التاريخ الى"
           placeholder="ادخل التاريخ الى ..."
           variant="outlined"
-          type="date"
+          type="text"
         ></v-text-field>
       </div>
 
@@ -201,7 +200,7 @@
           color="pink-darken-1"
           @click="submit"
         >
-          إضافة
+          تعديل
         </v-btn>
         <v-btn size="large" class="mx-3" color="red" @click="closeModel"> إلغاء </v-btn>
       </div>
@@ -209,7 +208,7 @@
   </div>
   <div>
     <v-snackbar v-model="showAddMessage" :timeout="2000" color="success" :location="'top left'">
-      تمت الإضافة بنجاح
+      تم التعديل بنجاح
     </v-snackbar>
   </div>
 </template>
@@ -266,8 +265,6 @@ const ServicesData = ref<Service[]>([])
 const customer = ref<Customer>()
 const Payment = ref(1)
 const reserveType = ref(1)
-
-const subscription = ref(1)
 const packagePrice = ref<PaymentMethod | null>(null)
 
 const individualNumber = ref<number>(1)
@@ -276,9 +273,12 @@ const fromTime = ref(0)
 const toTime = ref(0)
 const firstCheck = ref(1)
 
+//variables of date
 const startDate = ref<string>('')
 const endDate = ref<string>('')
 const placeHolderNumber = ref('')
+const reForrmatStartDate = ref('')
+//-----------------------------
 //variables for the calculation of the total
 const services = ref<Service[]>([])
 const selectedServicesPrice = ref(0)
@@ -381,6 +381,12 @@ onMounted(() => {
 
 //----------------------------------------------------------
 
+// Function to reformat the date
+const reformatDate = (dateStr: string): string => {
+  const parts = dateStr.split('/')
+  return `${parts[2]}/${parts[1]}/${parts[0]}`
+}
+
 const submit = () => {
   if (hallName.value && countOfrequiedTime.value && packagePrice.value && customer.value) {
     const body = {
@@ -400,7 +406,7 @@ const submit = () => {
       numberOfRquiredHours: countOfrequiedTime.value,
       numberOfIndividuals: individualNumber.value
     }
-    Postreservation(body)
+    putResHall(body)
       .then(() => {
         showAddMessage.value = true
         router.replace('/hall-list')
@@ -472,8 +478,7 @@ watchEffect(() => {
   }
 })
 
-
-watchEffect(()=> {
+watchEffect(() => {
   if (resToEdit.value) {
     hallData.value.forEach((item) => {
       if (item.name == resToEdit.value?.hall_ManagementName) {
@@ -482,7 +487,6 @@ watchEffect(()=> {
       }
     })
     if (hallName.value) {
-      
       if (resToEdit.value) {
         paymentMethods.value.forEach((item) => {
           if (item.label == resToEdit.value?.packageType) {
@@ -494,7 +498,6 @@ watchEffect(()=> {
     }
   }
 })
-
 
 watchEffect(() => {
   // if (resToEdit.value) {
@@ -513,7 +516,6 @@ watchEffect(() => {
       }
     })
   }
-
 
   if (resToEdit.value && ServicesData.value && firstCheck.value == 1) {
     services.value = []
@@ -534,8 +536,8 @@ watchEffect(() => {
     fromTime.value = resToEdit.value.fromTime
     toTime.value = resToEdit.value.toTime
 
-    startDate.value = formatToDatePicker(resToEdit.value.startDate)
-    endDate.value = formatToDatePicker(resToEdit.value.endDate)
+    startDate.value = resToEdit.value.startDate
+    endDate.value = resToEdit.value.endDate
     countOfrequiedTime.value = resToEdit.value.numberOfRquiredHours
     individualNumber.value = resToEdit.value.numberOfIndividuals
     Payment.value = resToEdit.value.paymentMethodId
@@ -546,18 +548,21 @@ watchEffect(() => {
   }
 })
 
-
-watchEffect(()=>{
-  
+watchEffect(() => {
+  reForrmatStartDate.value = endDate.value
 })
 
-const formatToDatePicker = (dateString: string) => {
-  const date = new Date(dateString)
-  const year = date.getFullYear()
-  const month = String(date.getMonth() + 1).padStart(2, '0')
-  const day = String(date.getDate()).padStart(2, '0')
-  return `${year}-${month}-${day}`
-}
+// WatchEffect to update reForrmatStartDate when endDate changes
+watchEffect(() => {
+  reForrmatStartDate.value = reformatDate(endDate.value)
+})
 
-
+// Function to format the date for date picker
+// const formatToDatePicker = (dateString: string): string => {
+//   const date = new Date(dateString)
+//   const year = date.getFullYear()
+//   const month = String(date.getMonth() + 1).padStart(2, '0')
+//   const day = String(date.getDate()).padStart(2, '0')
+//   return `${year}-${month}-${day}`
+// }
 </script>

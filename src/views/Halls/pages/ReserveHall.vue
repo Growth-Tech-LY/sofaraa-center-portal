@@ -139,6 +139,7 @@
           :rules="[Rules.time]"
           :prepend-icon="mdiTimerOutline"
         ></v-text-field>
+      <v-btn>test</v-btn>
       </div>
 
       <div class="flex item-center justify-center gap-8">
@@ -234,7 +235,7 @@ import { mdiPlus, mdiTimerOutline, mdiCalendarRange, mdiArrowRightTop } from '@m
 import AddCustomerRes from './AddCustomerRes.vue'
 import { onMounted, ref, watchEffect } from 'vue'
 import { getHalls, getCustomers, getServices } from '@/core/services/mainServices'
-import { Postreservation } from '../hallReserve-services'
+import { CheckHallReserved, Postreservation } from '../hallReserve-services'
 import type { Hall, Service, Customer } from '@/core/models/Mainmodels'
 import router from '@/router'
 
@@ -385,6 +386,7 @@ const onGetData = () => {
   getHalls().then((response) => {
     hallData.value = response
   })
+  
 
   getCustomers().then((response) => {
     customerData.value = response

@@ -1,6 +1,6 @@
 <template>
   <div
-    class="mt-20 bg-white border-t-8 border-[#BF3B74] mx-auto p-7 rounded-lg shadow-lg w-1/2 h-3/4"
+    class="mt-20 bg-white border-t-8 border-[#BF3B74] mx-auto p-7 rounded-lg shadow-lg w-1/2 max-h-screen "
   >
     <div class="flex justify-between">
       <p class="text-2xl">-تفاصيل الحجز</p>
