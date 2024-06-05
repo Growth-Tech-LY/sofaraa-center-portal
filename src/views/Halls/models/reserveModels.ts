@@ -62,8 +62,8 @@ type Postcustomer = {
 
 type CheckHallReservation = {
   hallManagementId: string
-  fromTime: string
-  toTime: string
+  fromTime: number
+  toTime: number
   startDate: string
   endDate: string
 
