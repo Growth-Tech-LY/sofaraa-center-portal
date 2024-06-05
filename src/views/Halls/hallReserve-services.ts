@@ -42,7 +42,9 @@ const postCustomer = (body: Postcustomer) => {
 }
 
 const CheckHallReserved = (body: CheckHallReservation) => {
-  return apiClient.post('HallReservations/CheckHallReservations', body)
+  return apiClient.post< {message: string} >('HallReservations/CheckHallReservations', body).then((response ) => {
+    return response.data
+  })
 }
 
 

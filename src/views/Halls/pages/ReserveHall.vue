@@ -142,7 +142,7 @@
         <div class="relative">
           <v-btn
             color="blue accent-4"
-            :disabled="!toDate || !formDate || !toTime || !fromTime"
+            :disabled="!toDate || !formDate || !toTime || !fromTime || !hallName"
             :loading="loadingbtn"
             class="mt-2"
             @click="checkTime"
@@ -225,7 +225,17 @@
   </div>
   <div>
     <v-snackbar v-model="showAddMessage" :timeout="2000" color="success" :location="'top left'">
-      تمت الإضافة بنجاح
+      تمت الإضافة بنجاح </v-snackbar
+    >
+    
+
+    <v-snackbar
+      v-model="snackbar.show"
+      :timeout="2000"
+      color="blue-darken-2"
+      :location="'top center'"
+    >
+     {{ snackbar.message }}
     </v-snackbar>
   </div>
 
@@ -295,6 +305,14 @@ const packagePrice = ref<PaymentMethod | null>(null)
 const popAddCustomer = ref(false)
 const reservationsChecked = ref(false)
 const loadingbtn = ref(false)
+const availableCheckMessage = ref(false)
+const notAvailableCheckMessage = ref(false)
+const reservedCheckMessage = ref(false)
+
+const snackbar = ref({
+  show: false,
+  message: ""
+})
 
 const toggeAddCustomer = () => {
   popAddCustomer.value = !popAddCustomer.value
@@ -536,8 +554,17 @@ const checkTime = () => {
     CheckHallReserved(body).then((response) => {
       console.log(response)
       loadingbtn.value = false
-      reservationsChecked.value = true
+      if (response.message == "تاريخ الحجز متاح") {
+        snackbar.value.message = "الحجز متاح"
+        
+        reservationsChecked.value = true
+      } else {
+        snackbar.value.message = "الحجز غير متاح"
+      }
+
+      snackbar.value.show = true
     })
   }
-}
+} 
+
 </script>

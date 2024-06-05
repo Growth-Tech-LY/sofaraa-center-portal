@@ -156,7 +156,7 @@
         </v-btn>
         <RouterLink :to="{ name: 'edit-reserved', params: { id: item.id } }">
           <v-btn
-            :disabled="true"
+              
             variant="text"
             class="me-2"
             size="medium"
