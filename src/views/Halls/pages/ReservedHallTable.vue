@@ -63,7 +63,7 @@
 
           <div class="flex gap-1 justify-center items-center">
             <v-autocomplete
-            v-model="searchCustomer"
+              v-model="searchCustomer"
               transition="slide-y-transition"
               :items="customerData"
               label="إسم الزبون"
@@ -85,12 +85,12 @@
               variant="outlined"
             ></v-text-field>
           </div>
-
-          
         </div>
         <v-btn size="large" class="mx-3" color="red" @click="searchToggle"> إغلاق </v-btn>
         <v-btn size="large" class="mx-3" color="pink-darken-2" @click="onSearchFilter"> بحث </v-btn>
-        <v-btn size="large" class="mx-3" color="pink-darken-1" @click="clearFilter"> تصفيت فلتر </v-btn>
+        <v-btn size="large" class="mx-3" color="pink-darken-1" @click="clearFilter">
+          تصفيت فلتر
+        </v-btn>
 
         <!-- //filter div Ends-->
       </div>
@@ -154,9 +154,18 @@
         >
           <v-tooltip activator="parent" location="bottom">عرض التفاصيل</v-tooltip>
         </v-btn>
+        <v-btn
+          color="green-darken-2"
+          variant="text"
+          size="medium"
+          class="me-2"
+          :append-icon="mdiPrinter"
+          @click="openPrint(item)"
+        >
+          <v-tooltip activator="parent" location="bottom">إيصال قبض </v-tooltip>
+        </v-btn>
         <RouterLink :to="{ name: 'edit-reserved', params: { id: item.id } }">
           <v-btn
-              
             variant="text"
             class="me-2"
             size="medium"
@@ -166,7 +175,6 @@
             <v-tooltip activator="parent" location="bottom">تعديل</v-tooltip>
           </v-btn>
         </RouterLink>
-        <!-- :to="{ name: 'edit-hall', params: { id: item.id } }" -->
 
         <v-btn
           variant="text"
@@ -227,19 +235,29 @@
     </v-snackbar>
   </div>
   <div
+    data-aos="fade-left"
     v-if="popDetials"
     @click.self="toggeDetials"
     class="fixed h-screen w-full top-0 left-0 bg-gray-500/50 z-[1005]"
   >
-    <ReserveDetials @closeIt="toggeDetials" :id="idToEdit" />
+    <ReserveDetials :id="idToPrint" @closeIt="toggeDetials" />
+  </div>
+
+  <div
+    data-aos="fade-left"
+    v-if="popReceipt"
+    @click.self="toggelReceipt"
+    class="fixed h-screen w-full top-0 left-0 bg-gray-500/50 z-[1005]"
+  >
+    <ReceiptView :id="idToPrint" @close="toggelReceipt" />
   </div>
 </template>
 
 <script lang="ts" setup>
 import { onMounted, ref } from 'vue'
 
-import { mdiDelete, mdiPencil, mdiPlus, mdiFilter, mdiNote, mdiCalendarRange } from '@mdi/js'
-
+import { mdiDelete, mdiPencil, mdiPlus, mdiFilter, mdiNote, mdiCalendarRange , mdiReceipt ,mdiPrinter } from '@mdi/js'
+import ReceiptView from './ReceiptView.vue'
 import ReserveHall from './ReserveHall.vue'
 import type { Hall, Customer, Service } from '@/core/models/Mainmodels'
 import { deleteResHall, getResHallTaple } from '../hallReserve-services'
@@ -274,6 +292,7 @@ const showDeleteMessage = ref(false)
 const HallDeleteId = ref<string>('')
 const popDetials = ref(false)
 const idToEdit = ref('')
+const idToPrint = ref('')
 
 //filterParams
 
@@ -290,12 +309,13 @@ const hallName = ref<Hall>()
 const hallData = ref<Hall[]>([])
 const customerData = ref<Customer[]>([])
 const ServicesData = ref<Service[]>([])
+const popReceipt = ref(false)
 
 const paginations = ref<PaginationParamas>({
   page: 1,
   size: 10,
   customerName: '',
-  Hallname:'',
+  Hallname: '',
   startDate: '',
   endDate: '',
   phoneNumber: ''
@@ -355,12 +375,15 @@ const searchToggle = () => {
   showSearch.value = !showSearch.value
 }
 
+const toggelReceipt = () => {
+  popReceipt.value = !popReceipt.value
+}
+
 const toggeDetials = () => {
   popDetials.value = !popDetials.value
 }
-// const EditMessage = () => {
-//   showEditMessage.value = !showEditMessage.value
-// }
+
+
 
 const openDetials = (item: ReservationTable) => {
   idToEdit.value = item.id
@@ -368,11 +391,15 @@ const openDetials = (item: ReservationTable) => {
   console.log('this is :  ', idToEdit.value)
 }
 
-// const toggelPopUp2 = () => {
-//   popUp2.value = !popUp2.value
+const receipt = ref<ReservationTable>()
 
-//   // console.log(idToEdit.value)
-// }
+const openPrint = (item: ReservationTable) => {
+  idToPrint.value = item.id
+  toggelReceipt()
+  console.log('this is :  ', idToEdit.value)
+}
+
+
 
 onMounted(async () => {
   onGetHallsRes(paginations.value)
@@ -420,27 +447,24 @@ const onOptionsChange = ({ page, itemsPerPage }: { page: number; itemsPerPage: n
 
 const onSearchFilter = () => {
   if (searchHall.value?.id) {
-    
-    paginations.value.Hallname=searchHall.value.id
-  } 
+    paginations.value.Hallname = searchHall.value.id
+  }
   if (searchCustomer.value?.id) {
-    
-    paginations.value.customerName=searchCustomer.value.id
+    paginations.value.customerName = searchCustomer.value.id
   }
   onGetHallsRes(paginations.value)
 }
 
 const clearFilter = () => {
-  searchHall.value=undefined
-  searchCustomer.value=undefined
-  paginations.value.Hallname=''
-  paginations.value.customerName=''
-  paginations.value.endDate=''
-  paginations.value.startDate=''
-  paginations.value.phoneNumber=''
-  onGetHallsRes(paginations.value )
+  searchHall.value = undefined
+  searchCustomer.value = undefined
+  paginations.value.Hallname = ''
+  paginations.value.customerName = ''
+  paginations.value.endDate = ''
+  paginations.value.startDate = ''
+  paginations.value.phoneNumber = ''
+  onGetHallsRes(paginations.value)
 }
-
 
 const openDeleteModal = (item: ReservationTable) => {
   console.log('delete', item)

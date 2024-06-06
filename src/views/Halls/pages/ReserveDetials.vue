@@ -35,6 +35,7 @@
         <p class="ms-3 py-2 tetx-sm text-start pr-1 font-bold bg-gray-200 text-gray-900  mt-4">
           <span class="text-blue-500"> التاريخ إلي : </span>{{ hallResInfo?.endDate }}
         </p>
+        
         <p class="ms-3 py-2 tetx-sm text-start pr-1 font-bold bg-gray-200 text-gray-900  mt-4">
           <span class="text-blue-500"> عدد الساعات/الأسابيع / الأشهر : </span
           >{{ hallResInfo?.numberOfRquiredHours }}

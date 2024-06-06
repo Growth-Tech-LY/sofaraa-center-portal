@@ -225,9 +225,8 @@
   </div>
   <div>
     <v-snackbar v-model="showAddMessage" :timeout="2000" color="success" :location="'top left'">
-      تمت الإضافة بنجاح </v-snackbar
-    >
-    
+      تمت الإضافة بنجاح
+    </v-snackbar>
 
     <v-snackbar
       v-model="snackbar.show"
@@ -235,7 +234,7 @@
       color="blue-darken-2"
       :location="'top center'"
     >
-     {{ snackbar.message }}
+      {{ snackbar.message }}
     </v-snackbar>
   </div>
 
@@ -247,8 +246,10 @@
   >
     <AddCustomerRes @close="toggeAddCustomer" @refresh="OngetCustomers" />
   </div>
+ 
 </template>
 <script setup lang="ts">
+
 import {
   mdiPlus,
   mdiTimerOutline,
@@ -286,9 +287,7 @@ const closeModel = () => {
   router.replace({ name: 'reservations-list' })
 }
 
-// const updateModel = () => {
-//   emit('update');
-// };
+
 const hallName = ref<Hall>()
 const oldHallName = ref<Hall>()
 const hallData = ref<Hall[]>([])
@@ -297,7 +296,7 @@ const ServicesData = ref<Service[]>([])
 const customer = ref<Customer>()
 const Payment = ref(1)
 const reserveType = ref(1)
-
+const idToEdit = ref('')
 const subscription = ref(1)
 const packagePrice = ref<PaymentMethod | null>(null)
 
@@ -305,9 +304,6 @@ const packagePrice = ref<PaymentMethod | null>(null)
 const popAddCustomer = ref(false)
 const reservationsChecked = ref(false)
 const loadingbtn = ref(false)
-const availableCheckMessage = ref(false)
-const notAvailableCheckMessage = ref(false)
-const reservedCheckMessage = ref(false)
 
 const snackbar = ref({
   show: false,
@@ -317,6 +313,7 @@ const snackbar = ref({
 const toggeAddCustomer = () => {
   popAddCustomer.value = !popAddCustomer.value
 }
+
 
 const OngetCustomers = () => {
   getCustomers().then((response) => {
@@ -556,7 +553,7 @@ const checkTime = () => {
       loadingbtn.value = false
       if (response.message == "تاريخ الحجز متاح") {
         snackbar.value.message = "الحجز متاح"
-        
+
         reservationsChecked.value = true
       } else {
         snackbar.value.message = "الحجز غير متاح"
@@ -565,6 +562,5 @@ const checkTime = () => {
       snackbar.value.show = true
     })
   }
-} 
-
+}
 </script>
