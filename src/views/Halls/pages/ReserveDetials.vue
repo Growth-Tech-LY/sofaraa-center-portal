@@ -90,6 +90,8 @@ const props = defineProps<{
 }>()
 const receivedID = ref<string>('')
 
+receivedID.value =props.id
+
 const emit = defineEmits<{
   closeIt: []
 }>()

@@ -203,7 +203,7 @@
     v-show="confirmDelete"
     class="fixed h-screen w-full top-0 left-0 bg-gray-500/50 z-[1005] flex justify-center items-center"
   >
-    <div>
+    <div data-aos="zoom-in">
       <v-card>
         <v-card-title class="text-h5">هل أنت متأكد من حذف القاعة؟ </v-card-title>
         <v-card-actions>
@@ -235,12 +235,12 @@
     </v-snackbar>
   </div>
   <div
-    data-aos="fade-left"
+    data-aos="flip-down"
     v-if="popDetials"
     @click.self="toggeDetials"
     class="fixed h-screen w-full top-0 left-0 bg-gray-500/50 z-[1005]"
   >
-    <ReserveDetials :id="idToPrint" @closeIt="toggeDetials" />
+    <ReserveDetials :id="idToEdit" @closeIt="toggeDetials" />
   </div>
 
   <div

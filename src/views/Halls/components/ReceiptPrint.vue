@@ -15,7 +15,7 @@
         <p>المسلم :</p>
         <p class="mt-2">الختم :</p>
       </div>
-    </div>
+    </div>  
   </div>
 </template>
 
@@ -51,7 +51,7 @@ watchEffect(() => {
 
 </script>
 
-<style>
+<style >
 @page {
   size: A4;
   margin: 0;
@@ -62,8 +62,9 @@ watchEffect(() => {
   .toPrint {
     width: 210mm;
     height: 297mm;
+   
   }
-
+  
   /* ... the rest of the rules ... */
 }
 </style>

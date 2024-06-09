@@ -390,21 +390,22 @@ const reformatDate = (dateStr: string): string => {
 const submit = () => {
   if (hallName.value && countOfrequiedTime.value && packagePrice.value && customer.value) {
     const body = {
+      id :receivedID,
       hall_ManagementId: hallName.value.id,
       packageType: packagePrice.value.label,
       customerManegentId: customer.value.id,
-      serviceManagementId: servicesId.value,
-      totalPrice: totalPayment.value,
-      payedPrice: paid.value,
-      restPrice: remainingPayment.value,
       fromTime: fromTime.value,
       toTime: toTime.value,
       startDate: startDate.value,
       endDate: endDate.value,
       reservationsTypeId: reserveType.value,
       paymentMethodId: Payment.value,
+      serviceManagementId: servicesId.value,
       numberOfRquiredHours: countOfrequiedTime.value,
-      numberOfIndividuals: individualNumber.value
+      numberOfIndividuals: individualNumber.value,
+      totalPrice: totalPayment.value,
+      payedPrice: paid.value,
+      restPrice: remainingPayment.value,
     }
     putResHall(body)
       .then(() => {
