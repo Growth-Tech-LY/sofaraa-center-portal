@@ -5,9 +5,9 @@
   <div class="mt-20 bg-white border-t-8 border-[#BF3B74] mx-auto p-7 rounded-lg shadow-lg h-4/5">
     <p class="pr-8 text-lg">حجز قاعة</p>
     <v-form class="grid grid-cols-2 gap-3 p-4 items-center justify-center">
-      <div >
+      <div>
         <v-autocomplete
-        transition="slide-y-transition"
+          transition="slide-y-transition"
           v-model="hallName"
           :items="hallData"
           label="إسم القاعة"
@@ -118,7 +118,7 @@
         ></v-text-field>
       </div>
 
-      <div class="flex item-center justify-center gap-8">
+      <div class="flex item-center justify-center gap-4 mb-2">
         <v-text-field
           v-model="fromTime"
           :prepend-icon="mdiTimerOutline"
@@ -139,13 +139,25 @@
           :rules="[Rules.time]"
           :prepend-icon="mdiTimerOutline"
         ></v-text-field>
+        <div class="relative">
+          <v-btn
+            color="blue accent-4"
+            :disabled="!toDate || !formDate || !toTime || !fromTime || !hallName"
+            :loading="loadingbtn"
+            class="mt-2"
+            @click="checkTime"
+            >تحقق من القاعة</v-btn
+          >
+          <span v-show="reservationsChecked" class="absolute top-3 -left-8"
+            ><v-icon size="large" color="green accent-3" :icon="mdiCheckCircle"></v-icon
+          ></span>
+        </div>
       </div>
-
       <div class="flex item-center justify-center gap-8">
         <v-autocomplete
           v-model="Payment"
           transition="slide-y-transition"
-          :items="PaymentMethods"     
+          :items="PaymentMethods"
           label="طريقة الدفع  "
           item-title="label"
           item-value="value"
@@ -215,6 +227,15 @@
     <v-snackbar v-model="showAddMessage" :timeout="2000" color="success" :location="'top left'">
       تمت الإضافة بنجاح
     </v-snackbar>
+
+    <v-snackbar
+      v-model="snackbar.show"
+      :timeout="2000"
+      color="blue-darken-2"
+      :location="'top center'"
+    >
+      {{ snackbar.message }}
+    </v-snackbar>
   </div>
 
   <div
@@ -225,16 +246,21 @@
   >
     <AddCustomerRes @close="toggeAddCustomer" @refresh="OngetCustomers" />
   </div>
-
-  
-
+ 
 </template>
 <script setup lang="ts">
-import { mdiPlus, mdiTimerOutline, mdiCalendarRange, mdiArrowRightTop } from '@mdi/js'
+
+import {
+  mdiPlus,
+  mdiTimerOutline,
+  mdiCalendarRange,
+  mdiArrowRightTop,
+  mdiCheckCircle
+} from '@mdi/js'
 import AddCustomerRes from './AddCustomerRes.vue'
 import { onMounted, ref, watchEffect } from 'vue'
 import { getHalls, getCustomers, getServices } from '@/core/services/mainServices'
-import { Postreservation } from '../hallReserve-services'
+import { CheckHallReserved, Postreservation } from '../hallReserve-services'
 import type { Hall, Service, Customer } from '@/core/models/Mainmodels'
 import router from '@/router'
 
@@ -245,28 +271,23 @@ const form = ref(false)
 //   import { formatDate } from '@/core/healpers/dateFormat'
 //   const date = ref()
 //   formatDate(date.value)
-  
+
 //   console.log(date.value);
-  
 
 // })
 
-
-
 const Rules = {
-  time: (value: number) => (value > 0 && value <= 24) || 'يجب التكون القيكة بين ال 1 إلي 24 ',
+  time: (value: number) => (value > 0 && value <= 24) || 'يجب التكون القيمة بين ال 1 إلي 24 ',
   timeDiffrince: (value: number) =>
     value > fromTime.value || ' يجب أن يكون قيمة الحقل أكبر من الوقت من',
   paymentCount: (value: number) => value <= totalPayment.value || 'قيمة المدخلة اكبر من الإجمالي '
 }
 
 const closeModel = () => {
-  router.replace({name:'reservations-list'})
+  router.replace({ name: 'reservations-list' })
 }
 
-// const updateModel = () => {
-//   emit('update');
-// };
+
 const hallName = ref<Hall>()
 const oldHallName = ref<Hall>()
 const hallData = ref<Hall[]>([])
@@ -275,16 +296,24 @@ const ServicesData = ref<Service[]>([])
 const customer = ref<Customer>()
 const Payment = ref(1)
 const reserveType = ref(1)
-
+const idToEdit = ref('')
 const subscription = ref(1)
 const packagePrice = ref<PaymentMethod | null>(null)
 
 //popUps
 const popAddCustomer = ref(false)
+const reservationsChecked = ref(false)
+const loadingbtn = ref(false)
+
+const snackbar = ref({
+  show: false,
+  message: ""
+})
 
 const toggeAddCustomer = () => {
   popAddCustomer.value = !popAddCustomer.value
 }
+
 
 const OngetCustomers = () => {
   getCustomers().then((response) => {
@@ -366,7 +395,6 @@ const calculatePaymrnt = () => {
 watchEffect(() => {
   calculatePaymrnt()
   remainingPayment.value = totalPayment.value - paid.value
- 
 })
 
 watchEffect(() => {
@@ -376,10 +404,7 @@ watchEffect(() => {
     selectedServicesPrice.value = selectedServicesPrice.value + servicesPrice.value[i].servicePrice
     servicesId.value.push(servicesPrice.value[i].id)
   }
-
 })
-
-
 
 const onGetData = () => {
   getHalls().then((response) => {
@@ -492,8 +517,6 @@ watchEffect(() => {
   }
 })
 watchEffect(() => {
-
-
   if (packagePrice.value) {
     switch (packagePrice.value.label) {
       case 'ساعة':
@@ -509,9 +532,35 @@ watchEffect(() => {
       default:
         placeHolderNumber.value = ''
     }
-  
   } else {
     placeHolderNumber.value = ''
   }
 })
+
+//checking if hall is available function
+const checkTime = () => {
+  loadingbtn.value = true
+  if (hallName.value) {
+    const body = {
+      hallManagementId: hallName.value.id,
+      fromTime: fromTime.value,
+      toTime: toTime.value,
+      startDate: formDate.value,
+      endDate: toDate.value
+    }
+    CheckHallReserved(body).then((response) => {
+      console.log(response)
+      loadingbtn.value = false
+      if (response.message == "تاريخ الحجز متاح") {
+        snackbar.value.message = "الحجز متاح"
+
+        reservationsChecked.value = true
+      } else {
+        snackbar.value.message = "الحجز غير متاح"
+      }
+
+      snackbar.value.show = true
+    })
+  }
+}
 </script>

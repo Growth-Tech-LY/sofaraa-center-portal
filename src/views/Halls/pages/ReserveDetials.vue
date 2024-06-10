@@ -1,6 +1,6 @@
 <template>
   <div
-    class="mt-20 bg-white border-t-8 border-[#BF3B74] mx-auto p-7 rounded-lg shadow-lg w-1/2 h-3/4"
+    class="mt-20 bg-white border-t-8 border-[#BF3B74] mx-auto p-7 rounded-lg shadow-lg w-1/2 max-h-screen "
   >
     <div class="flex justify-between">
       <p class="text-2xl">-تفاصيل الحجز</p>
@@ -9,46 +9,57 @@
 
     <div class="mt-10 rounded-md pt-8 py-8">
       <div class="grid grid-cols-3 justify-center items-center w-11/12 mx-auto">
-        <p class="ms-3 py-1 tetx-sm text-start pr-1 font-bold bg-gray-200 text-gray-900  mt-4">
+        <p class="ms-3 py-2 tetx-sm text-start pr-1 font-bold bg-gray-200 text-gray-900  mt-4">
           <span class="text-blue-500">أسم القاعة: </span> {{ hallResInfo?.customerManegentName }}
         </p>
-        <p class="ms-3 py-1 tetx-sm text-start pr-1 font-bold bg-gray-200 text-gray-900  mt-4">
+        <p class="ms-3 py-2 tetx-sm text-start pr-1 font-bold bg-gray-200 text-gray-900  mt-4">
           <span class="text-blue-500"> أسم الزبون : </span>{{ hallResInfo?.customerManegentName }}
         </p>
-        <p class="ms-3 py-1 tetx-sm text-start pr-1 font-bold bg-gray-200 text-gray-900  mt-4">
+        <p class="  ms-3 py-2 tetx-sm text-start pr-1 font-bold bg-gray-200 text-gray-900  mt-4">
           <span class="text-blue-500"> رقم الزبون : </span>{{ hallResInfo?.customerManegentPhonenumber }}
         </p>
-        <p class="ms-3 py-1 tetx-sm text-start pr-1 font-bold bg-gray-200 text-gray-900  mt-4">
-          <span class="text-blue-500"> الخدمات المختارة : </span>{{ hallResInfo?.serviceManagementName }}
-        </p>
-        <p class="ms-3 py-1 tetx-sm text-start pr-1 font-bold bg-gray-200 text-gray-900  mt-4">
+   
+        
+        <p class="ms-3 py-2 tetx-sm text-start pr-1 font-bold bg-gray-200 text-gray-900  mt-4">
           <span class="text-blue-500"> عدد الأفراد : </span>{{ hallResInfo?.numberOfIndividuals }}
         </p>
-        <p class="ms-3 py-1 tetx-sm text-start pr-1 font-bold bg-gray-200 text-gray-900  mt-4">
+        <p class="ms-3 py-2 tetx-sm text-start pr-1 font-bold bg-gray-200 text-gray-900  mt-4">
           <span class="text-blue-500"> التوقيت من : </span>{{ hallResInfo?.fromTime }}
         </p>
-        <p class="ms-3 py-1 tetx-sm text-start pr-1 font-bold bg-gray-200 text-gray-900  mt-4">
+        <p class="ms-3 py-2 tetx-sm text-start pr-1 font-bold bg-gray-200 text-gray-900  mt-4">
           <span class="text-blue-500"> التوقيت إلي : </span>{{ hallResInfo?.toTime }}
         </p>
-        <p class="ms-3 py-1 tetx-sm text-start pr-1 font-bold bg-gray-200 text-gray-900  mt-4">
+        <p class="ms-3 py-2 tetx-sm text-start pr-1 font-bold bg-gray-200 text-gray-900  mt-4">
           <span class="text-blue-500"> التاريخ من : </span>{{ hallResInfo?.startDate }}
         </p>
-        <p class="ms-3 py-1 tetx-sm text-start pr-1 font-bold bg-gray-200 text-gray-900  mt-4">
+        <p class="ms-3 py-2 tetx-sm text-start pr-1 font-bold bg-gray-200 text-gray-900  mt-4">
           <span class="text-blue-500"> التاريخ إلي : </span>{{ hallResInfo?.endDate }}
         </p>
-        <p class="ms-3 py-1 tetx-sm text-start pr-1 font-bold bg-gray-200 text-gray-900  mt-4">
+        
+        <p class="ms-3 py-2 tetx-sm text-start pr-1 font-bold bg-gray-200 text-gray-900  mt-4">
           <span class="text-blue-500"> عدد الساعات/الأسابيع / الأشهر : </span
           >{{ hallResInfo?.numberOfRquiredHours }}
         </p>
-        <p class="ms-3 py-1 tetx-sm text-start pr-1 font-bold bg-gray-200 text-gray-900  mt-4">
+        <p class="ms-3 py-2 tetx-sm text-start pr-1 font-bold bg-gray-200 text-gray-900  mt-4">
           <span class="text-blue-500"> نوع الحجز : </span>{{ typeOfRes }}
         </p>
-        <p class="ms-3 py-1 tetx-sm text-start pr-1 font-bold bg-gray-200 text-gray-900  mt-4">
+        <p class="ms-3 py-2 tetx-sm text-start pr-1 font-bold bg-gray-200 text-gray-900  mt-4">
           <span class="text-blue-500"> طريقة الدفع : </span>{{ typeOfPayment }}
         </p>
-        <p class="ms-3 py-1 tetx-sm text-start pr-1 font-bold bg-gray-200 text-gray-900  mt-4">
+        <p class="ms-3 py-2 tetx-sm text-start pr-1 font-bold bg-gray-200 text-gray-900  mt-4">
           <span class="text-blue-500"> نوع الباقة : </span>{{ hallResInfo?.packageType }}        </p>
   
+          <div>
+        <p class="ms-3 py-2 text-sm text-start pr-1 font-bold bg-gray-200 text-gray-900 mt-4">
+      <span class="text-blue-500"> الخدمات المختارة : </span>
+      <div class="ms-3 py-2 text-sm text-start pr-1 font-bold bg-gray-200 text-gray-900 ">
+      <div class="flex" v-for="(service, index) in hallResInfo?.serviceManagementName" :key="index">
+       <p> {{ service }}</p>
+       
+      </div>
+    </div>   
+    </p>
+      </div>
       </div>
       <div class="mt-8">
         <p class="ms-3 py-1 text-2xl font-bold bg-gray-100 text-gray-800 text-center mt-4">
@@ -78,6 +89,8 @@ const props = defineProps<{
   id: string
 }>()
 const receivedID = ref<string>('')
+
+receivedID.value =props.id
 
 const emit = defineEmits<{
   closeIt: []

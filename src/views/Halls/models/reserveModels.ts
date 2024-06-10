@@ -50,14 +50,40 @@ type ReservationTable = {
   numberOfRquiredHours: number
   numberOfIndividuals: number
   serviceManagementName: string[]
-  customerManegentPhonenumber:string
+  customerManegentPhonenumber: string
+} 
+
+type PutReservation = {
+  id: string
+  hall_ManagementId: string
+  packageType: string
+  customerManegentId: string
+  fromTime: number
+  toTime: number
+  startDate: string
+  endDate: string
+  reservationsTypeId: number
+  paymentMethodId: number
+  numberOfRquiredHours: number
+  numberOfIndividuals: number
+  totalPrice: number
+  payedPrice: number
+  restPrice: number
+  serviceManagementId: string[]
 }
 
 type Postcustomer = {
   name: string
   phoneNumber: string
   email: string
-
 }
 
-export type { packages, PostReservationHalls, ReservationTable , Postcustomer }
+type CheckHallReservation = {
+  hallManagementId: string
+  fromTime: number
+  toTime: number
+  startDate: string
+  endDate: string
+}
+
+export type { packages, PostReservationHalls, ReservationTable, Postcustomer, CheckHallReservation , PutReservation }
