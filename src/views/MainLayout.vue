@@ -6,7 +6,7 @@
       <v-card>
         <v-layout>
           <v-navigation-drawer v-model="drawer" :rail="rail" permanent @click="rail = false">
-            <img width="120px" src="@/src/assets/icons/sofaraaLogo.png" />
+            <!-- <img width="120px" src="/src/assets/icons/sofaraaLogo.png" /> -->
             <v-list-item
               prepend-avatar=""
               title="مركز سفراء العلم"

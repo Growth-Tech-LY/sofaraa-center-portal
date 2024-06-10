@@ -65,10 +65,7 @@
         variant="outlined"
         placeholder="ادخل التاريخ من ..."
         type="date"
-<<<<<<< HEAD
-=======
         :rules="[rules.required]"
->>>>>>> be3bf314c364e024f4981945a659e0acad62a99e
       >
       </v-text-field>
       <v-text-field
