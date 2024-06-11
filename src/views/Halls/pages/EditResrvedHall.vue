@@ -238,7 +238,8 @@ const Rules = {
   time: (value: number) => (value > 0 && value <= 24) || 'يجب التكون القيكة بين ال 1 إلي 24 ',
   timeDiffrince: (value: number) =>
     value > fromTime.value || ' يجب أن يكون قيمة الحقل أكبر من الوقت من',
-  paymentCount: (value: number) => value <= totalPayment.value || 'قيمة المدخلة اكبر من الإجمالي '
+  paymentCount: (value: number) => value <= totalPayment.value || 'قيمة المدخلة اكبر من الإجمالي ',
+  
 }
 
 const closeModel = () => {

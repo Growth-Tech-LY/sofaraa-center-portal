@@ -6,6 +6,7 @@ import MainLayout from '@/views/MainLayout.vue'
 import { createRouter, createWebHistory } from 'vue-router'
 import LoginPage from '@/views/LoginPage.vue'
 import EditResrvedHall from '@/views/Halls/pages/EditResrvedHall.vue'
+import ScheduleView from '../views/Halls/pages/ScheduleView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -31,7 +32,7 @@ const router = createRouter({
             {
               path: '',
               name: 'reservations-list',
-              component: ReservedHallTable,
+              component: ReservedHallTable
             },
             {
               path: 'add',
@@ -42,6 +43,11 @@ const router = createRouter({
               path: ':id/edit',
               name: 'edit-reserved',
               component: EditResrvedHall
+            },
+            {
+              path: 'schedule',
+              name: 'schedule',
+              component: ScheduleView
             }
           ]
         },
@@ -63,7 +69,7 @@ router.beforeEach(async (to) => {
   // if (!isAuthenticated && to.name !== 'Login' && to.name !== 'landingPage') {
   //   return { name: 'landingPage' }
   // }
-    if (!isAuthenticated && to.name !== 'Login') {
+  if (!isAuthenticated && to.name !== 'Login') {
     return { name: 'Login' }
   }
 
@@ -71,7 +77,7 @@ router.beforeEach(async (to) => {
   //   return { name: 'MainLayout' }
   // }
 
-  if (isAuthenticated && (to.name == 'Login' )) {
+  if (isAuthenticated && to.name == 'Login') {
     return { name: 'MainLayout' }
   }
 })

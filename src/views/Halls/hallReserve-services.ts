@@ -8,7 +8,7 @@ import type { PaginationParamas    } from '@/core/models/pagination-params'
 
 
   const Postreservation = (body: PostReservationHalls) => {
-  return apiClient.post<ReservationTable>('HallReservations', body)
+  return apiClient.post<ReservationTable>('HallReservations/CreateHallReservation', body)
 }
 
 
@@ -38,7 +38,7 @@ const getResHallByID = (id: string) => {
 }
 
 const postCustomer = (body: Postcustomer) => {
-  return apiClient.post('HallReservations/AddCustomers', body)
+  return apiClient.post('HallReservations/CreateCustomer', body)
 }
 
 const CheckHallReserved = (body: CheckHallReservation) => {
@@ -47,8 +47,14 @@ const CheckHallReserved = (body: CheckHallReservation) => {
   })
 }
 
-
-
+const HallScheduleByMonth = (paginationParams : PaginationParamas) => {
+  return apiClient
+    .get<List<ReservationTable[]>>('HallReservations', { params: paginationParams })
+    .then((response) => {
+      return response.data
+    })
+}
+  
 export {  Postreservation ,getResHallTaple , getResHallByID , deleteResHall , putResHall , postCustomer , CheckHallReserved  }
 
 

@@ -53,7 +53,7 @@ watchEffect(() => {
 
 <style >
 @page {
-  size: A4;
+  size: A5;
   margin: 0;
   page-break-inside: avoid;
 }
