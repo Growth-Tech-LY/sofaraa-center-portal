@@ -45,8 +45,8 @@ const router = createRouter({
               component: EditResrvedHall
             },
             {
-              path: 'schedule',
-              name: 'schedule',
+              path: ':id/schedule',
+              name: 'schedule-table',
               component: ScheduleView
             }
           ]

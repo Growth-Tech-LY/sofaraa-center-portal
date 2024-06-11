@@ -7,3 +7,8 @@ export type PaginationParamas = {
   endDate: string
   phoneNumber: string
 }
+
+export type DatePaginationParamas = {
+  HId: string
+  Date: string
+}

@@ -3,7 +3,7 @@ import type {   PostReservationHalls  , ReservationTable , Postcustomer , CheckH
 import type { Hall } from '@/core/models/Mainmodels'
 import type { List } from '../Couress/models/courses' 
 
-import type { PaginationParamas    } from '@/core/models/pagination-params'
+import type { DatePaginationParamas, PaginationParamas    } from '@/core/models/pagination-params'
 
 
 
@@ -47,7 +47,7 @@ const CheckHallReserved = (body: CheckHallReservation) => {
   })
 }
 
-const HallScheduleByMonth = (paginationParams : PaginationParamas) => {
+const HallScheduleByMonth = (paginationParams : DatePaginationParamas) => {
   return apiClient
     .get<List<ReservationTable[]>>('HallReservations', { params: paginationParams })
     .then((response) => {
@@ -55,7 +55,7 @@ const HallScheduleByMonth = (paginationParams : PaginationParamas) => {
     })
 }
   
-export {  Postreservation ,getResHallTaple , getResHallByID , deleteResHall , putResHall , postCustomer , CheckHallReserved  }
+export {  Postreservation ,getResHallTaple , getResHallByID , deleteResHall , putResHall , postCustomer , CheckHallReserved ,HallScheduleByMonth }
 
 
 

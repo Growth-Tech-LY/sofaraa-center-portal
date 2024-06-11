@@ -3,11 +3,9 @@
     <div class="flex justify-between items-center">
       <p class="text-2xl">حجوزات القاعات</p>
 
-      <RouterLink :to="{ name: 'hall-reserve' }">
-        <v-btn class="mt-4 text-white" color="pink-darken-2" rounded="lg" :prepend-icon="mdiPlus"
+        <v-btn :to="{ name: 'hall-reserve' }" class="mt-4 text-white" color="pink-darken-2" rounded="lg" :prepend-icon="mdiPlus"
           >اضافة حجز
         </v-btn>
-      </RouterLink>
     </div>
     <div class="flex justify-between items-center relative">
       <v-btn @click="searchToggle" size="large" variant="text" :prepend-icon="mdiFilter">

@@ -149,17 +149,16 @@
             @click="checkTime"
             >تحقق من القاعة</v-btn
           >
-          <div v-show="showSchedule">
-            <RouterLink :to="{ name: 'schedule' , params: { date: fromTime , hallId : hallName?.id }  }">
+          <div v-show="showSchedule" v-if="hallName">
               <v-btn
+              :to="{ name: 'schedule-table' , params: { id: hallName.id }  }"
                 color="yellow-darken-2"
-                :disabled="!toDate || !formDate || !toTime || !fromTime || !hallName"
+                :disabled="!hallName"
                 :loading="loadingbtn"
                 class="mt-2 mr-4 text-white"
                 @click="checkTime"
                 >عرض جدول</v-btn
               >
-            </RouterLink>
           </div>
           <span v-show="reservationsChecked" class="absolute top-3 -left-8"
             ><v-icon size="large" color="green accent-3" :icon="mdiCheckCircle"></v-icon
@@ -306,6 +305,7 @@ const closeModel = () => {
 }
 
 const hallName = ref<Hall>()
+const hallId = ref('')
 const oldHallName = ref<Hall>()
 const hallData = ref<Hall[]>([])
 const customerData = ref<Customer[]>([])
@@ -607,4 +607,7 @@ const checkTime = () => {
       })
   }
 }
+
+
+
 </script>
