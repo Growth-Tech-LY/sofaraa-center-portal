@@ -3,11 +3,9 @@
     <div class="flex justify-between items-center">
       <p class="text-2xl">حجوزات القاعات</p>
 
-      <RouterLink :to="{ name: 'hall-reserve' }">
-        <v-btn class="mt-4 text-white" color="pink-darken-2" rounded="lg" :prepend-icon="mdiPlus"
+        <v-btn :to="{ name: 'hall-reserve' }" class="mt-4 text-white" color="pink-darken-2" rounded="lg" :prepend-icon="mdiPlus"
           >اضافة حجز
         </v-btn>
-      </RouterLink>
     </div>
     <div class="flex justify-between items-center relative">
       <v-btn @click="searchToggle" size="large" variant="text" :prepend-icon="mdiFilter">
@@ -192,8 +190,8 @@
       </template>
       <template v-slot:[`item.paymentMethodId`]="{ value }">
         <p v-if="value == 1">نقدا</p>
-        <p v-else-if="value == 2">شيك</p>
-        <p v-else-if="value == 3">بطاقة مصرفية</p>
+        <p v-else-if="value == 2">بطاقة مصرفية</p>
+        <p v-else-if="value == 3">شيك</p>
       </template>
     </v-data-table-server>
   </div>
@@ -235,7 +233,7 @@
     </v-snackbar>
   </div>
   <div
-    data-aos="flip-down"
+    data-aos="fade-left"
     v-if="popDetials"
     @click.self="toggeDetials"
     class="fixed h-screen w-full top-0 left-0 bg-gray-500/50 z-[1005]"
@@ -256,7 +254,7 @@
 <script lang="ts" setup>
 import { onMounted, ref } from 'vue'
 
-import { mdiDelete, mdiPencil, mdiPlus, mdiFilter, mdiNote, mdiCalendarRange , mdiReceipt ,mdiPrinter } from '@mdi/js'
+import { mdiDelete, mdiPencil, mdiPlus, mdiFilter, mdiNote, mdiCalendarRange , mdiReceipt ,mdiPrinter  } from '@mdi/js'
 import ReceiptView from './ReceiptView.vue'
 import ReserveHall from './ReserveHall.vue'
 import type { Hall, Customer, Service } from '@/core/models/Mainmodels'

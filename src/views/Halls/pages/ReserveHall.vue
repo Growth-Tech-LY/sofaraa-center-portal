@@ -110,6 +110,7 @@
           v-model="toDate"
           dir="rtl"
           :prepend-icon="mdiCalendarRange"
+          :rules="[Rules.dateRange]"
           clearable
           label="التاريخ الى"
           placeholder="ادخل التاريخ الى ..."
@@ -139,7 +140,7 @@
           :rules="[Rules.time]"
           :prepend-icon="mdiTimerOutline"
         ></v-text-field>
-        <div class="relative">
+        <div class="relative flex">
           <v-btn
             color="blue accent-4"
             :disabled="!toDate || !formDate || !toTime || !fromTime || !hallName"
@@ -148,6 +149,17 @@
             @click="checkTime"
             >تحقق من القاعة</v-btn
           >
+          <div v-show="showSchedule" v-if="hallName">
+              <v-btn
+              :to="{ name: 'schedule-table' , params: { id: hallName.id }  }"
+                color="yellow-darken-2"
+                :disabled="!hallName"
+                :loading="loadingbtn"
+                class="mt-2 mr-4 text-white"
+                @click="checkTime"
+                >عرض جدول</v-btn
+              >
+          </div>
           <span v-show="reservationsChecked" class="absolute top-3 -left-8"
             ><v-icon size="large" color="green accent-3" :icon="mdiCheckCircle"></v-icon
           ></span>
@@ -219,6 +231,7 @@
         >
           إضافة
         </v-btn>
+
         <v-btn size="large" class="mx-3" color="red" @click="closeModel"> ألغاء </v-btn>
       </div>
     </v-form>
@@ -246,10 +259,8 @@
   >
     <AddCustomerRes @close="toggeAddCustomer" @refresh="OngetCustomers" />
   </div>
- 
 </template>
 <script setup lang="ts">
-
 import {
   mdiPlus,
   mdiTimerOutline,
@@ -263,6 +274,8 @@ import { getHalls, getCustomers, getServices } from '@/core/services/mainService
 import { CheckHallReserved, Postreservation } from '../hallReserve-services'
 import type { Hall, Service, Customer } from '@/core/models/Mainmodels'
 import router from '@/router'
+
+import type { AxiosError } from 'axios'
 
 const form = ref(false)
 
@@ -278,8 +291,12 @@ const form = ref(false)
 
 const Rules = {
   time: (value: number) => (value > 0 && value <= 24) || 'يجب التكون القيمة بين ال 1 إلي 24 ',
-  timeDiffrince: (value: number) =>
-    value > fromTime.value || ' يجب أن يكون قيمة الحقل أكبر من الوقت من',
+  dateRange: (value: string) => {
+    if (!formDate.value) return true
+    const fromDate = new Date(formDate.value)
+    const toDate = new Date(value)
+    return toDate >= fromDate || 'تاريخ النهاية يجب أن يكون أكبر من تاريخ البداية'
+  },
   paymentCount: (value: number) => value <= totalPayment.value || 'قيمة المدخلة اكبر من الإجمالي '
 }
 
@@ -287,8 +304,8 @@ const closeModel = () => {
   router.replace({ name: 'reservations-list' })
 }
 
-
 const hallName = ref<Hall>()
+const hallId = ref('')
 const oldHallName = ref<Hall>()
 const hallData = ref<Hall[]>([])
 const customerData = ref<Customer[]>([])
@@ -304,16 +321,20 @@ const packagePrice = ref<PaymentMethod | null>(null)
 const popAddCustomer = ref(false)
 const reservationsChecked = ref(false)
 const loadingbtn = ref(false)
+const showSchedule = ref(false)
 
 const snackbar = ref({
   show: false,
-  message: ""
+  message: ''
 })
 
 const toggeAddCustomer = () => {
   popAddCustomer.value = !popAddCustomer.value
 }
 
+const toggleSchedule = () => {
+  showSchedule.value = !showSchedule.value
+}
 
 const OngetCustomers = () => {
   getCustomers().then((response) => {
@@ -322,6 +343,7 @@ const OngetCustomers = () => {
     showAddMessage.value = true
   })
 }
+
 
 //--------------------
 
@@ -501,8 +523,8 @@ watchEffect(() => {
           value: hallName.value.hourPrice
         },
         {
-          label: 'نصف يوم',
-          value: hallName.value.halfDayPrice
+          label: ' يوم',
+          value: hallName.value.dayPrice
         },
         {
           label: 'أسبوع',
@@ -520,8 +542,8 @@ watchEffect(() => {
   if (packagePrice.value) {
     switch (packagePrice.value.label) {
       case 'ساعة':
-      case 'نصف يوم':
-        placeHolderNumber.value = 'عدد الساعات المطلوبة'
+      case ' يوم':
+        placeHolderNumber.value = 'عدد الأيام المطلوبة'
         break
       case 'أسبوع':
         placeHolderNumber.value = 'عدد الأسابيع المطلوبة'
@@ -542,25 +564,50 @@ const checkTime = () => {
   loadingbtn.value = true
   if (hallName.value) {
     const body = {
-      hallManagementId: hallName.value.id,
+      hall_ManagementId: hallName.value.id,
       fromTime: fromTime.value,
       toTime: toTime.value,
       startDate: formDate.value,
       endDate: toDate.value
     }
-    CheckHallReserved(body).then((response) => {
-      console.log(response)
-      loadingbtn.value = false
-      if (response.message == "تاريخ الحجز متاح") {
-        snackbar.value.message = "الحجز متاح"
+    CheckHallReserved(body)
+      .then((response) => {
+        console.log(response)
+        loadingbtn.value = false
 
-        reservationsChecked.value = true
-      } else {
-        snackbar.value.message = "الحجز غير متاح"
-      }
+        if (response.message === 'Hall is available for the requested time.') {
+          snackbar.value.message = 'الحجز متاح'
+          reservationsChecked.value = true
+        } else {
+          snackbar.value.message = 'الحجز غير متاح'
+          reservationsChecked.value = false
+        }
 
-      snackbar.value.show = true
-    })
+        snackbar.value.show = true
+      })
+      .catch((error: AxiosError) => {
+        console.log(error)
+        loadingbtn.value = false
+
+        if (error.response && error.response.data && error.response.data.message) {
+          const errorMessage = error.response.data.message
+
+          if (errorMessage === 'Hall is already reserved during the requested time.') {
+            snackbar.value.message = 'الحجز غير متاح'
+            reservationsChecked.value = false
+          } else {
+            snackbar.value.message = 'حدث خطأ ما. حاول مرة أخرى.'
+          }
+        } else {
+          snackbar.value.message = 'حدث خطأ ما. حاول مرة أخرى.'
+        }
+
+        snackbar.value.show = true
+        toggleSchedule()
+      })
   }
 }
+
+
+
 </script>

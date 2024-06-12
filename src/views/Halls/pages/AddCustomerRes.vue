@@ -94,7 +94,7 @@
         reload()
         customerName.value = ''
         customerEmail.value = ''
-        PhoneNumber.value = '0'
+        PhoneNumber.value = ''
       })
   }
   </script>

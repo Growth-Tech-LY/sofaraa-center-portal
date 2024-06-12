@@ -235,10 +235,11 @@ watchEffect(() => {
 const form = ref(false)
 
 const Rules = {
-  time: (value: number) => (value > 0 && value <= 24) || 'يجب التكون القيكة بين ال 1 إلي 24 ',
+  time: (value: number) => (value > 0 && value <= 24) || 'يجب التكون القيمة بين ال 1 إلي 24 ',
   timeDiffrince: (value: number) =>
     value > fromTime.value || ' يجب أن يكون قيمة الحقل أكبر من الوقت من',
-  paymentCount: (value: number) => value <= totalPayment.value || 'قيمة المدخلة اكبر من الإجمالي '
+  paymentCount: (value: number) => value <= totalPayment.value || 'قيمة المدخلة اكبر من الإجمالي ',
+  
 }
 
 const closeModel = () => {
@@ -442,8 +443,8 @@ watchEffect(() => {
           value: hallName.value.hourPrice
         },
         {
-          label: 'نصف يوم',
-          value: hallName.value.halfDayPrice
+          label: ' يوم',
+          value: hallName.value.dayPrice
         },
         {
           label: 'أسبوع',
@@ -461,8 +462,8 @@ watchEffect(() => {
   if (packagePrice.value) {
     switch (packagePrice.value.label) {
       case 'ساعة':
-      case 'نصف يوم':
-        placeHolderNumber.value = 'عدد الساعات المطلوبة'
+      case ' يوم':
+        placeHolderNumber.value = 'عدد الأيام المطلوبة'
         break
       case 'أسبوع':
         placeHolderNumber.value = 'عدد الأسابيع المطلوبة'

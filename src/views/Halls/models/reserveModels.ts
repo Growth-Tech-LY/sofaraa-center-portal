@@ -79,7 +79,7 @@ type Postcustomer = {
 }
 
 type CheckHallReservation = {
-  hallManagementId: string
+  hall_ManagementId: string
   fromTime: number
   toTime: number
   startDate: string
