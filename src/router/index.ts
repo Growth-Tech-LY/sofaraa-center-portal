@@ -7,6 +7,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import LoginPage from '@/views/LoginPage.vue'
 import EditResrvedHall from '@/views/Halls/pages/EditResrvedHall.vue'
 import ScheduleView from '../views/Halls/pages/ScheduleView.vue'
+import CalanderView from '@/views/Halls/pages/CalanderView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -48,7 +49,14 @@ const router = createRouter({
               path: ':id/schedule',
               name: 'schedule-table',
               component: ScheduleView
-            }
+            } ,
+            
+            {
+              path: 'calander',
+              name: 'calander',
+              component: CalanderView
+            } ,
+            
           ]
         },
 
@@ -56,7 +64,7 @@ const router = createRouter({
           path: '/Courses',
           name: 'Courses',
           component: CoursesTable
-        }
+        } 
       ]
     }
   ]

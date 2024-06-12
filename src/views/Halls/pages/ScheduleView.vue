@@ -2,6 +2,14 @@
   <!-- component -->
   <div class="bg-white md:py-8 px-4 lg:max-w-7xl lg:mx-auto lg:px-8 flex gap-8">
     <p class="text-2xl font-bold text-gray-800 mb-8">قاعة : {{ 'Test' }}</p>
+    <DatePicker
+    
+    locale="en-Us"
+    firstDayOfWeek="sunday"
+    :disable-dates="disableDates"
+    :default-date="new Date(2024, 6, 12)"
+    @updated="handleUpdate"
+  />
     <div class="w-1/2 flex gap-8 justify-center items-center">
         <v-autocomplete
           transition="slide-y-transition"
@@ -227,6 +235,7 @@
       </div>
     </div>
   </div>
+  
 </template>
 <script setup lang="ts">
 import type { DatePaginationParamas } from '@/core/models/pagination-params'
@@ -234,6 +243,28 @@ import { onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { HallScheduleByMonth } from '../hallReserve-services'
 import {monthCalander} from '../models/MonthCalander'
+import { DatePicker, DatePickerPayload } from 'qalendar'
+
+//trying Qalender DatePicker
+const disableDates = {
+  before: new Date(2024, 6, 1),
+  after: new Date(2024, 6, 31)
+}
+
+const date=ref('')
+const defaultDate = ref(new Date(2022, 5, 1))
+// Event handler function
+const handleUpdate = (payload: DatePickerPayload) => {
+  const { year, month, date } = payload
+  
+
+  // Do something with the updated date
+  console.log(payload)
+  console.log(date.value)
+  
+}
+
+//--------------------------
 
 const route = useRoute()
 const receivedHallID = String(route.params.id)

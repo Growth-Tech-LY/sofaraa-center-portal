@@ -190,8 +190,8 @@
       </template>
       <template v-slot:[`item.paymentMethodId`]="{ value }">
         <p v-if="value == 1">نقدا</p>
-        <p v-else-if="value == 2">شيك</p>
-        <p v-else-if="value == 3">بطاقة مصرفية</p>
+        <p v-else-if="value == 2">بطاقة مصرفية</p>
+        <p v-else-if="value == 3">شيك</p>
       </template>
     </v-data-table-server>
   </div>

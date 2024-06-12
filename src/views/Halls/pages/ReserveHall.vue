@@ -523,8 +523,8 @@ watchEffect(() => {
           value: hallName.value.hourPrice
         },
         {
-          label: 'نصف يوم',
-          value: hallName.value.halfDayPrice
+          label: ' يوم',
+          value: hallName.value.dayPrice
         },
         {
           label: 'أسبوع',
@@ -542,8 +542,8 @@ watchEffect(() => {
   if (packagePrice.value) {
     switch (packagePrice.value.label) {
       case 'ساعة':
-      case 'نصف يوم':
-        placeHolderNumber.value = 'عدد الساعات المطلوبة'
+      case ' يوم':
+        placeHolderNumber.value = 'عدد الأيام المطلوبة'
         break
       case 'أسبوع':
         placeHolderNumber.value = 'عدد الأسابيع المطلوبة'
