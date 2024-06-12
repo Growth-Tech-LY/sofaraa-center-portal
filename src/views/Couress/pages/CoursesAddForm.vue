@@ -115,7 +115,7 @@
       ></v-text-field>
       <v-text-field
         v-model="numOfstudents"
-        class="col-span-2"
+        class="col-span-1"
         :prepend-icon="mdiAccountMultipleOutline"
         :rules="[rules.required]"
         clearable
@@ -124,6 +124,18 @@
         variant="outlined"
         type="number"
       ></v-text-field>
+      <v-autocomplete
+        v-model="reserveType"
+        class="col-span-1"
+        :prepend-icon="mdiAccountMultipleOutline"
+        :rules="[rules.required]"
+        item-title="label"
+        item-value="value"
+        label=" نوع الحجز"
+        placeholder="اختر نوع الحجز  ..."
+        variant="outlined"
+        :items="reserveTypes"
+      ></v-autocomplete>
       <v-text-field
         v-model="Price"
         class="col-span-2"
@@ -136,7 +148,7 @@
         type="number"
       ></v-text-field>
 
-      <div class="pr-20 col-start-2 row-start-6 col-span-2">
+      <div class="pr-20 col-start-2 row-start-5 col-span-2 mt-10">
         <v-btn
           size="large"
           class="p-4 mt-4 w-2/6 ml-3"
@@ -148,7 +160,7 @@
         <v-btn size="large" class="p-4 mt-4 w-2/6" color="red" @click="closeModel">الغاء </v-btn>
       </div>
 
-      <v-snackbar :timeout="2000" color="success" :location="'top left'">
+      <v-snackbar :timeout="2000" color="success" :location="'top left'" v-model="AddMsg">
         تمت الإضافة بنجاح
       </v-snackbar>
     </v-form>
@@ -176,7 +188,7 @@ import type { Coures, Hall, Service, Teacher } from '@/core/models/Mainmodels'
 import type { PostCoures } from '../models/courses'
 
 const form = ref(false)
-
+const AddMsg = ref(false)
 const emit = defineEmits<{
   close: []
 }>()
@@ -203,7 +215,20 @@ const numOfstudents = ref<number>()
 const numOfHours = ref<number>()
 const timeFrom = ref<number>()
 const timeTo = ref<number>()
+const reserveType = ref<number>()
 
+const reserveTypes = [
+  {
+    label: 'مبدئ',
+    value: 1,
+    index: 1
+  },
+  {
+    label: 'نهائي',
+    value: 2,
+    index: 2
+  }
+] as const
 // **************************
 
 const closeModel = () => {
@@ -243,16 +268,17 @@ const submitCoures = async () => {
     serviceManagementId: ServiceId.value,
     Price: Price.value,
     numberOfRquiredHours: numOfHours.value,
-    numberOfIndividuals: numOfstudents.value,
+    numberOfMaximumIndividuals: numOfstudents.value,
     startDate: StartDate.value,
     endDate: EndDate.value,
     fromTime: timeFrom.value,
-    toTime: timeTo.value
+    toTime: timeTo.value,
+    reservationsTypeId: reserveType.value
   }
 
   postCoures(body)
     .then(() => {
-      console.log(body)
+      AddMsg.value = true
     })
     .catch((error) => {
       console.log(error)

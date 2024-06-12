@@ -10,31 +10,120 @@
         >اضافة حجز</v-btn
       >
       <div class="flex flex-col w-1/2">
-        <p class="w-3/4 text-gray-700 mx-auto pr-3">البحث</p>
-        <v-text-field
-          v-model="search"
-          class="w-3/4 mx-auto"
-          density="compact"
-          placeholder="بحث اسم الباقة ..... "
-          hide-details
-        ></v-text-field>
+        <div class="flex justify-between items-center relative">
+          <v-btn @click="searchToggle" size="large" variant="text" :prepend-icon="mdiFilter">
+            <v-tooltip activator="parent" location="bottom">بحث</v-tooltip></v-btn
+          >
+
+          <!-- //filter div -->
+          <div
+            data-aos="zoom-in-up"
+            v-if="showSearch"
+            class="bg-white border-t-[12px] border-[#BF3B74] mx-auto p-7 rounded-lg shadow-lg w-1/4 z-50 left-1/2 top-10 fixed"
+          >
+            <p class="text-gray-700 mx-auto pr-3 mb-2 text-xl py-2">فلتر البحث</p>
+            <div class="bg-white grid grid-cols-1 gap-4 justify-center items-center">
+              <div class="flex gap-1 justify-center items-center">
+                <v-autocomplete
+                  :prepend-icon="mdiOfficeBuildingMarker"
+                  transition="slide-y-transition"
+                  v-model="search.Hall"
+                  :items="AllHalls"
+                  label="إسم القاعة"
+                  item-title="name"
+                  item-value="id"
+                  placeholder="إسم القاعة"
+                  variant="outlined"
+                ></v-autocomplete>
+              </div>
+              <div class="flex gap-1 justify-center items-center">
+                <v-autocomplete
+                  :prepend-icon="mdiHumanMaleBoard"
+                  transition="slide-y-transition"
+                  v-model="search.Teacher"
+                  :items="AllTeachers"
+                  label="إسم المعلم"
+                  item-title="name"
+                  item-value="id"
+                  placeholder="إسم المعلم"
+                  variant="outlined"
+                ></v-autocomplete>
+              </div>
+              <div class="flex gap-1 justify-center items-center">
+                <v-autocomplete
+                  :prepend-icon="mdiOrderAlphabeticalAscending"
+                  transition="slide-y-transition"
+                  v-model="search.Coures"
+                  :items="AllCoureses"
+                  label="إسم الدورة"
+                  item-title="name"
+                  item-value="id"
+                  placeholder="بحث بإسم الدروة "
+                  variant="outlined"
+                  clearable
+                ></v-autocomplete>
+              </div>
+
+              <div class="flex gap-1 justify-center items-center">
+                <v-text-field
+                  v-model="paginations.startDate"
+                  dir="rtl"
+                  :prepend-icon="mdiCalendarRange"
+                  clearable
+                  label="التاريخ من"
+                  placeholder="ادخل التاريخ من ..."
+                  variant="outlined"
+                  type="date"
+                ></v-text-field>
+              </div>
+
+              <div class="flex gap-1 justify-center items-center">
+                <v-text-field
+                  v-model="paginations.endDate"
+                  dir="rtl"
+                  :prepend-icon="mdiCalendarRange"
+                  clearable
+                  label="التاريخ الى"
+                  placeholder="ادخل التاريخ الى ..."
+                  variant="outlined"
+                  type="date"
+                ></v-text-field>
+              </div>
+            </div>
+            <v-btn size="large" class="mx-3" color="red" @click="searchToggle"> إغلاق </v-btn>
+            <v-btn size="large" class="mx-3" color="light-blue-accent-4" @click="onSearchFilter">
+              بحث
+            </v-btn>
+            <v-btn
+              size="large"
+              class="text-white"
+              color="light-blue-accent-4 "
+              variant="outlined"
+              @click="clearFilter"
+            >
+              إلغاء البحث
+            </v-btn>
+          </div>
+        </div>
       </div>
       <!--               The Coureses Add Form   Start       -->
 
       <div
-        v-show="formPopUP"
+        v-if="formPopUP"
         @click.self="toggelForm"
         class="fixed h-screen w-full top-0 left-0 bg-gray-500/50 z-[1005]"
       >
-        <CoursesForm
-          @close="toggelForm"
-          @refresh="
-            onOptionsChange({
-              page: paginations.page,
-              itemsPerPage: paginations.size
-            })
-          "
-        />
+        <div data-aos="zoom-in-up">
+          <CoursesForm
+            @close="toggelForm"
+            @refresh="
+              onOptionsChange({
+                page: paginations.page,
+                itemsPerPage: paginations.size
+              })
+            "
+          />
+        </div>
       </div>
 
       <!-- The viewStudents start -->
@@ -43,7 +132,9 @@
         @click.self="viewStudents = false"
         class="fixed h-screen w-full top-0 left-0 bg-gray-500/50 z-[1005]"
       >
-        <ViewStudents :trainingCouresReservationsId="courseId" @close="viewStudents = false" />
+        <div data-aos="zoom-in-right">
+          <ViewStudents :trainingCouresReservationsId="courseId" @close="viewStudents = false" />
+        </div>
       </div>
 
       <!-- [     The Coureses Add Form Start           >>      ]  -->
@@ -53,7 +144,9 @@
         class="fixed h-screen w-full top-0 left-0 bg-gray-500/50 z-[1005]"
         @click.self="studentPopUp = false"
       >
-        <AddStudent :trainingCouresReservationsId="courseId" :price="coursesPrice" />
+        <div data-aos="zoom-in-right">
+          <AddStudent :trainingCouresReservationsId="courseId" :price="coursesPrice" />
+        </div>
       </div>
 
       <!--  <<  [        The Edit start          ] >>       -->
@@ -62,7 +155,7 @@
         @click.self="toggelEdit"
         class="fixed h-screen w-full top-0 left-0 bg-gray-500/50 z-[1005]"
       >
-        <CoursesEditForm />
+        <CoursesEditForm :trainingCouresReservationsId="courseId" />
       </div>
 
       <!--              The Delete Start           -->
@@ -83,7 +176,9 @@
                 @click="confirmDelete = false"
                 >إلغاء</v-btn
               >
-              <v-btn class="mt-4 text-white" color="red-darken-2" rounded="lg">نعم</v-btn>
+              <v-btn class="mt-4 text-white" color="red-darken-2" rounded="lg" @click="onDelete"
+                >نعم</v-btn
+              >
               <v-spacer></v-spacer>
             </v-card-actions>
           </v-card>
@@ -96,7 +191,7 @@
       :items="courses"
       :items-length="paginations.size"
       :loading="loading"
-      :search="search"
+      :search="searcher"
       item-value="name"
     >
       <!-- The  Actions  in the table  Start -->
@@ -123,25 +218,31 @@
           >
             <v-tooltip activator="parent" location="bottom">اسناد طالب لدورة</v-tooltip>
           </v-btn>
-          <v-btn
-            variant="text"
-            class=""
-            color="yellow-darken-2"
-            :prepend-icon="mdiPencil"
-            size="medium"
+          <RouterLink :to="{ name: 'edit-courese', params: { id: item.id } }"
+            ><v-btn
+              variant="text"
+              class=""
+              color="yellow-darken-2"
+              :prepend-icon="mdiPencil"
+              size="medium"
+            >
+              <v-tooltip activator="parent" location="bottom">تعديل</v-tooltip>
+            </v-btn></RouterLink
           >
-            <v-tooltip activator="parent" location="bottom">تعديل</v-tooltip>
-          </v-btn>
 
           <v-btn
             color="deep-orange-darken-1"
             variant="text"
             size="medium"
             :prepend-icon="mdiDelete"
+            @click="openDeleteModal(item.id)"
           >
             <v-tooltip activator="parent" location="bottom">حذف</v-tooltip>
           </v-btn>
         </div>
+        <v-snackbar v-model="DeleteMsg" :timeout="2000" color="red" :location="'top right'">
+          تم الحذف حجز الدورة
+        </v-snackbar>
       </template>
 
       <!-- The  Actions  in the table  End !! -->
@@ -149,30 +250,64 @@
   </div>
 </template>
 <script setup lang="ts">
-import { onMounted, ref, defineEmits } from 'vue'
+import { onMounted, ref } from 'vue'
 import CoursesForm from './CoursesAddForm.vue'
-import type { Coures, postStudents } from '../models/courses'
-import { mdiPlus, mdiPencil, mdiDelete, mdiAccountMultiplePlus, mdiAccountEye } from '@mdi/js'
-import { getCourses } from '../CoursesService'
+
+import {
+  mdiPlus,
+  mdiPencil,
+  mdiDelete,
+  mdiAccountMultiplePlus,
+  mdiAccountEye,
+  mdiFilter
+} from '@mdi/js'
+import { deleteCoures, getCourses } from '../CoursesService'
 import CoursesEditForm from './CoursesEditForm.vue'
 import type { PaginationParamas } from '@/core/models/pagination-params'
 import AddStudent from './AddStudent.vue'
 import ViewStudents from './ViewStudents.vue'
-const search = ref('')
+import {
+  mdiCalendarRange,
+  mdiOrderAlphabeticalAscending,
+  mdiHumanMaleBoard,
+  mdiOfficeBuildingMarker
+} from '@mdi/js'
+import type { Hall, Teacher, Coures } from '@/core/models/Mainmodels'
+import { getCouresesFromMang, getHalls, getTeacher } from '@/core/services/mainServices'
+import type { Couress } from '../models/courses'
+
+// const searchHall = ref<Hall>()
+
+const searcher = ref()
+const search = ref({
+  Hall: '',
+  Teacher: '',
+  Coures: ''
+})
 const loading = ref(false)
-const courses = ref<Coures[]>([])
+const courses = ref<Couress[]>([])
+const AllTeachers = ref<Teacher[]>()
+const AllCoureses = ref<Coures[]>()
+const AllHalls = ref<Hall[]>()
 const studentPopUp = ref(false)
+const showSearch = ref(false)
 const formPopUP = ref(false)
 const editPopUp = ref(false)
 const confirmDelete = ref(false)
 const viewStudents = ref(false)
 const courseId = ref<string>('')
+const courseIdDelete = ref<string>('')
+const DeleteMsg = ref(false)
 const totalCustomers = ref(0)
 const coursesPrice = ref<number>(0)
 const paginations = ref({
   page: 1,
   size: 10,
-  Name: ''
+  customerName: '',
+  Hallname: '',
+  startDate: '',
+  endDate: '',
+  phoneNumber: ''
 })
 const headers: any = [
   { title: 'اسم الدورة', key: 'couresManagementName', align: 'start', sortable: false },
@@ -183,121 +318,149 @@ const headers: any = [
   { title: 'تاريخ البدء', key: 'startDate', align: 'center' },
   { title: 'تاريخ الانتهاء', key: 'endDate', align: 'center' },
   { title: ' الساعات ', key: 'numberOfRquiredHours', align: 'center' },
-  { title: ' الطلبة ', key: 'numberOfIndividuals', align: 'center' },
+  { title: ' الطلاب المسجلين ', key: 'numberOfIndividuals', align: 'center' },
+  { title: '   حجم القاعة', key: 'numberOfMaximumIndividuals', align: 'center' },
   { title: 'الأجرائات', key: 'actions', align: 'center' }
 ]
 
-const test = [
-  {
-    couresManagementName: 'دورة طبخ ',
-    teacherManagementName: 'الشيف العالم',
-    hall_managementName: 'Top Chaf',
-    serviceManagementName: 'فطور + غذاء',
-    endDate: '3/3/2023',
-    fromTime: '11',
-    toTime: '2'
-  },
+// const test = [
+//   {
+//     id: '001',
+//     couresManagementName: 'دورة طبخ ',
+//     teacherManagementName: 'الشيف العالم',
+//     hall_managementName: 'Top Chaf',
+//     serviceManagementName: 'فطور + غذاء',
+//     endDate: '3/3/2023',
+//     fromTime: '11',
+//     toTime: '2'
+//   },
 
-  {
-    couresManagementName: 'دورة طبخ ',
-    teacherManagementName: 'الشيف العالم',
-    hall_managementName: 'Top Chaf',
-    serviceManagementName: 'فطور + غذاء',
-    endDate: '3/3/2023',
-    fromTime: '11',
-    toTime: '2'
-  },
-
-  {
-    couresManagementName: 'دورة طبخ ',
-    teacherManagementName: 'الشيف العالم',
-    hall_managementName: 'Top Chaf',
-    serviceManagementName: 'فطور + غذاء',
-    endDate: '3/3/2023',
-    fromTime: '11',
-    toTime: '2'
-  },
-
-  {
-    couresManagementName: 'دورة طبخ ',
-    teacherManagementName: 'الشيف العالم',
-    hall_managementName: 'Top Chaf',
-    serviceManagementName: 'فطور + غذاء',
-    endDate: '3/3/2023',
-    fromTime: '11',
-    toTime: '2'
-  },
-
-  {
-    couresManagementName: 'دورة طبخ ',
-    teacherManagementName: 'الشيف العالم',
-    hall_managementName: 'Top Chaf',
-    serviceManagementName: 'فطور + غذاء',
-    endDate: '3/3/2023',
-    fromTime: '11',
-    toTime: '2'
-  },
-
-  {
-    couresManagementName: 'دورة طبخ ',
-    teacherManagementName: 'الشيف العالم',
-    hall_managementName: 'Top Chaf',
-    serviceManagementName: 'فطور + غذاء',
-    endDate: '3/3/2023',
-    fromTime: '11',
-    toTime: '2'
-  },
-
-  {
-    couresManagementName: 'دورة طبخ ',
-    teacherManagementName: 'الشيف العالم',
-    hall_managementName: 'Top Chaf',
-    serviceManagementName: 'فطور + غذاء',
-    endDate: '3/3/2023',
-    fromTime: '11',
-    toTime: '2'
-  }
-]
-
-const openEdit = () => {
-  toggelEdit()
-}
+//   {
+//     id: '002',
+//     couresManagementName: 'دورة طبخ ',
+//     teacherManagementName: 'الشيف العالم',
+//     hall_managementName: 'Top Chaf',
+//     serviceManagementName: 'فطور + غذاء',
+//     endDate: '3/3/2023',
+//     fromTime: '11',
+//     toTime: '2'
+//   },
+//   {
+//     id: '003',
+//     couresManagementName: 'دورة طبخ ',
+//     teacherManagementName: 'الشيف العالم',
+//     hall_managementName: 'Top Chaf',
+//     serviceManagementName: 'فطور + غذاء',
+//     endDate: '3/3/2023',
+//     fromTime: '11',
+//     toTime: '2'
+//   },
+//   {
+//     id: '004',
+//     couresManagementName: 'دورة طبخ ',
+//     teacherManagementName: 'الشيف العالم',
+//     hall_managementName: 'Top Chaf',
+//     serviceManagementName: 'فطور + غذاء',
+//     endDate: '3/3/2023',
+//     fromTime: '11',
+//     toTime: '2'
+//   },
+//   {
+//     id: '005',
+//     couresManagementName: 'دورة طبخ ',
+//     teacherManagementName: 'الشيف العالم',
+//     hall_managementName: 'Top Chaf',
+//     serviceManagementName: 'فطور + غذاء',
+//     endDate: '3/3/2023',
+//     fromTime: '11',
+//     toTime: '2'
+//   },
+//   {
+//     id: '006',
+//     couresManagementName: 'دورة طبخ ',
+//     teacherManagementName: 'الشيف العالم',
+//     hall_managementName: 'Top Chaf',
+//     serviceManagementName: 'فطور + غذاء',
+//     endDate: '3/3/2023',
+//     fromTime: '11',
+//     toTime: '2'
+//   },
+//   {
+//     id: '007',
+//     couresManagementName: 'دورة طبخ ',
+//     teacherManagementName: 'الشيف العالم',
+//     hall_managementName: 'Top Chaf',
+//     serviceManagementName: 'فطور + غذاء',
+//     endDate: '3/3/2023',
+//     fromTime: '11',
+//     toTime: '2'
+//   }
+// ]
 
 // const toggelStudent = () => {
 //   formPopUP.value = !formPopUP.value
 // }
+const searchToggle = () => {
+  showSearch.value = !showSearch.value
+}
 const toggelForm = () => {
   formPopUP.value = !formPopUP.value
 }
 const toggelEdit = () => {
   editPopUp.value = !editPopUp.value
 }
-const OpenAddstudent = (item: Coures) => {
+const OpenAddstudent = (item: Couress) => {
   studentPopUp.value = true
   courseId.value = item.id
   coursesPrice.value = item.price
 }
-const OpenViewstudent = (item: Coures) => {
+const OpenViewstudent = (item: Couress) => {
   viewStudents.value = true
   courseId.value = item.id
 }
-// const openDeleteModal = (item: Coures) => {
-//   console.log(item.id)
+const openDeleteModal = (id: string) => {
+  courseIdDelete.value = id
+  confirmDelete.value = true
 
-//   courseIdDelete.value = item.id
-//   confirmDelete.value = true
-// }
+  console.log(confirmDelete.value)
+}
 
+const getALLdeta = () => {
+  getCouresesFromMang().then((response) => {
+    AllCoureses.value = response
+  })
+
+  getHalls().then((response) => {
+    AllHalls.value = response
+  })
+  getTeacher().then((response) => {
+    AllTeachers.value = response
+  })
+}
+
+const onDelete = () => {
+  deleteCoures(courseIdDelete.value)
+    .then(() => {
+      confirmDelete.value = false
+      onOptionsChange({
+        page: paginations.value.page,
+        itemsPerPage: paginations.value.size
+      })
+    })
+    .finally(() => {
+      DeleteMsg.value = true
+    })
+}
 onMounted(async () => {
   onGetCourse(paginations.value)
+  getALLdeta()
 })
-const onGetCourse = (paginations: PaginationParamas) => {
+const onGetCourse = (paginations: PaginationParamas | any) => {
   loading.value = true
   getCourses(paginations)
     .then((response) => {
       totalCustomers.value = response.total
       courses.value = response.data
-      console.log(response)
     })
     .finally(() => {
       loading.value = false
@@ -308,8 +471,40 @@ const onOptionsChange = ({ page, itemsPerPage }: { page: number; itemsPerPage: n
   paginations.value = {
     page: page,
     size: itemsPerPage,
-    Name: search.value
+    customerName: '',
+    endDate: '',
+    Hallname: '',
+    phoneNumber: '',
+    startDate: ''
   }
-  // onGetCourse(paginations)
+  onGetCourse(paginations.value)
+}
+const onSearchFilter = () => {
+  // if (search.value.Coures != null) {
+  //   paginations.value.customerName = search.value.Coures
+  // }
+  if (search.value.Hall != null) {
+    paginations.value.Hallname = search.value.Hall
+  }
+  // if (search.value.Teacher != null) {
+  //   paginations.value. = search.value.Coures
+  // }
+  console.log(search.value.Coures)
+  console.log(search.value.Hall)
+  console.log(search.value.Teacher)
+
+  onGetCourse(paginations.value)
+}
+
+const clearFilter = () => {
+  search.value.Coures = ''
+  search.value.Hall = ''
+  search.value.Teacher = ''
+  paginations.value.Hallname = ''
+  paginations.value.customerName = ''
+  paginations.value.endDate = ''
+  paginations.value.startDate = ''
+  paginations.value.phoneNumber = ''
+  onGetCourse(paginations.value)
 }
 </script>

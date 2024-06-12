@@ -28,6 +28,7 @@ type Coures = {
   subscriptionPrice: number
   curriculum: string
   level: string
+  price: number
 }
 
 type Teacher = {

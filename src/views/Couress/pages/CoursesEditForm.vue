@@ -2,100 +2,282 @@
   <div
     class="mt-16 bg-white border-t-[20px] border-[#BF3B74] w-3/4 mx-auto py-16 px-16 rounded-lg shadow-lg"
   >
-    <v-form class="grid grid-cols-4 gap-4 mt-8">
-      <v-text-field
-        class="w-5/6 col-span-2"
-        clearable
-        label="اسم دورة"
-        variant="outlined"
-        placeholder="ادخل إسم الباقة..."
-      ></v-text-field>
+    <v-form v-model="form" class="grid grid-cols-4 gap-4 mt-8">
       <v-autocomplete
+        :prepend-icon="mdiHumanMaleBoard"
+        v-model="coures.teacherManagementId"
+        class="col-span-2"
+        chips
+        label="اسم المعلم"
+        variant="outlined"
+        :items="AllTeachers"
+        item-title="name"
+        item-value="id"
+        :rules="[rules.required]"
+        clearable
+      ></v-autocomplete>
+
+      <v-autocomplete
+        :prepend-icon="mdiOfficeBuildingMarker"
+        v-model="coures.hall_managementId"
         class="col-span-2"
         chips
         label="اسم القاعة"
         variant="outlined"
         placeholder="اسم القاعة "
-        :items="['قاعة الخورزمي', 'معمل الحاسوب 1', 'معمل الحاسوب 2 (الكبير)']"
-        item-title="lable"
-        item-value="value"
+        :items="AllHalls"
+        item-title="name"
+        item-value="id"
         clearable
+        :rules="[rules.required]"
+      ></v-autocomplete>
+      <v-autocomplete
+        :prepend-icon="mdiOrderAlphabeticalAscending"
+        v-model="coures.couresManagementId"
+        class="col-span-1"
+        chips
+        label="اسم الدورة"
+        variant="outlined"
+        :items="AllCoureses"
+        item-title="name"
+        item-value="id"
+        clearable
+        :rules="[rules.required]"
+      ></v-autocomplete>
+      <v-autocomplete
+        v-model="coures.serviceManagementId"
+        class="col-span-1"
+        multiple
+        chips
+        label="اسم الخدمة"
+        variant="outlined"
+        :items="AllService"
+        item-title="name"
+        item-value="id"
+        clearable
+        :rules="[rules.required]"
       ></v-autocomplete>
       <v-text-field
-        class="col-span-2 col-start-1 w-5/6"
-        clearable
-        label="اسم الأستاذ"
-        placeholder="ادخل سعر الساعة ..."
-        variant="outlined"
-      ></v-text-field>
-
-      <v-text-field
-        :prepend-icon="mdiTimerEditOutline"
-        label="الساعة من"
-        variant="outlined"
-        placeholder="ادخل الساعة من ..."
-        type="number"
-      >
-      </v-text-field>
-      <v-text-field
-        v-model="weekPrice"
-        :prepend-icon="mdiTimerEditOutline"
-        clearable
-        label="الساعة الى"
-        placeholder="ادخل الساعة الى ..."
-        variant="outlined"
-        prefix="د.ل"
-        type="number"
-      ></v-text-field>
-
-      <v-text-field
-        v-model="monthPrice"
-        class="col-span-2 w-5/6"
-        clearable
-        label="سعر  الاسبوع"
-        placeholder="ادخل سعر  الشهر ..."
-        variant="outlined"
-        prefix="د.ل"
-        type="number"
-      ></v-text-field>
-
-      <v-text-field
+        v-model="coures.startDate"
         class="col-start-3"
         :prepend-icon="mdiCalendarRange"
         label="التاريخ من"
         variant="outlined"
         placeholder="ادخل التاريخ من ..."
-        type="number"
+        type="date"
+        :rules="[rules.required]"
       >
       </v-text-field>
       <v-text-field
-        v-model="weekPrice"
+        v-model="coures.endDate"
         :prepend-icon="mdiCalendarRange"
         clearable
         label="التاريخ الى"
         placeholder="ادخل التاريخ الى ..."
         variant="outlined"
         type="date"
+        :rules="[rules.required]"
       ></v-text-field>
-      <div class="pr-20 col-start-1">
+      <v-text-field
+        class="col-span-2"
+        v-modle="coures.numberOfRquiredHours"
+        :prepend-icon="mdiTimerEditOutline"
+        clearable
+        label="عدد الساعات "
+        placeholder="ادخل عدد الساعات  ..."
+        variant="outlined"
+        prefix="د.ل"
+        type="number"
+        :rules="[rules.required]"
+      ></v-text-field>
+
+      <v-text-field
+        v-model="coures.fromTime"
+        class=""
+        :prepend-icon="mdiTimerEditOutline"
+        :rules="[rules.required]"
+        clearable
+        label=" الوقت من "
+        placeholder="بداية الكورس ..."
+        variant="outlined"
+        type="number"
+      ></v-text-field>
+      <v-text-field
+        v-model="coures.toTime"
+        class=""
+        :prepend-icon="mdiTimerEditOutline"
+        :rules="[rules.required]"
+        clearable
+        label=" الوقت الى  "
+        placeholder="  نهاية الكورس  ..."
+        variant="outlined"
+        type="number"
+      ></v-text-field>
+      <v-text-field
+        v-model="coures.numberOfMaximumIndividuals"
+        class="col-span-2"
+        :prepend-icon="mdiAccountMultipleOutline"
+        :rules="[rules.required]"
+        clearable
+        label=" عدد الأفراد"
+        placeholder="ادخل عدد الافراد  ..."
+        variant="outlined"
+        type="number"
+      ></v-text-field>
+
+      <v-autocomplete
+        v-model="coures.reservationsTypeId"
+        class="col-span-1"
+        :prepend-icon="mdiAccountMultipleOutline"
+        :rules="[rules.required]"
+        item-title="label"
+        item-value="value"
+        label=" نوع الحجز"
+        placeholder="اختر نوع الحجز  ..."
+        variant="outlined"
+        :items="reserveTypes"
+      ></v-autocomplete>
+      <v-text-field
+        v-model="coures.Price"
+        class="col-span-2"
+        :prepend-icon="mdiCash"
+        :rules="[rules.required]"
+        clearable
+        label="سعر الدورة"
+        placeholder="ادخل السعر  ..."
+        variant="outlined"
+        type="number"
+      ></v-text-field>
+
+      <div class="pr-20 col-start-2 row-start-6 col-span-2">
         <v-btn
           size="large"
-          class="p-4 mt-4 w-2/6 ml-3"
-          color="green"
-          type="submit"
-          @click="submitPackage"
+          class="p-4 mt-4 w-2/6 ml-3 text-white"
+          color="yellow-accent-4"
           :disabled="!form"
-          >اضافة</v-btn
+          @click="submit"
+          >تعديل</v-btn
         >
-        <v-btn size="large" class="p-4 mt-4 w-2/6" color="red" @click="closeModel">الغاء </v-btn>
+        <v-btn size="large" class="p-4 mt-4 w-2/6" color="red" :to="{ name: 'coureses-list' }"
+          >الغاء
+        </v-btn>
       </div>
-      <v-snackbar :timeout="2000" color="success" :location="'top left'">
-        تمت الإضافة بنجاح
+
+      <v-snackbar
+        :timeout="2000"
+        color="yellow-accent-3"
+        v-model="UpdateMsg"
+        :location="'top right'"
+      >
+        تم تعديل بنجاح
       </v-snackbar>
     </v-form>
   </div>
 </template>
 
 <script setup lang="ts">
-import { mdiTimerEditOutline, mdiCalendarRange } from '@mdi/js'
+import type { Coures, Hall, Service, Teacher } from '@/core/models/Mainmodels'
+
+import { onMounted, ref } from 'vue'
+import type { PostCoures } from '../models/courses'
+import {
+  mdiTimerEditOutline,
+  mdiCalendarRange,
+  mdiCash,
+  mdiAccountMultipleOutline,
+  mdiOfficeBuildingMarker,
+  mdiHumanMaleBoard,
+  mdiOrderAlphabeticalAscending
+} from '@mdi/js'
+import {
+  getCouresesFromMang,
+  getHalls,
+  getServices,
+  getTeacher
+} from '@/core/services/mainServices'
+import { useRoute } from 'vue-router'
+import { UpdateCoures, getCourseByID } from '../CoursesService'
+
+const form = ref(false)
+const UpdateMsg = ref(false)
+const route = useRoute()
+const receivedID = ref(String(route.params.id))
+const rules = {
+  required: (v: string) => !!v || 'الحقل اجباري'
+}
+const reserveTypes = [
+  {
+    label: 'مبدئ',
+    value: 1,
+    index: 1
+  },
+  {
+    label: 'نهائي',
+    value: 2,
+    index: 2
+  }
+] as const
+
+const getAlldeta = () => {
+  getServices().then((response) => {
+    AllService.value = response
+  })
+  getCouresesFromMang().then((response) => {
+    AllCoureses.value = response
+  })
+  getHalls().then((response) => {
+    AllHalls.value = response
+  })
+  getTeacher().then((response) => {
+    AllTeachers.value = response
+  })
+}
+
+onMounted(async () => {
+  getAlldeta()
+})
+
+const AllTeachers = ref<Teacher[]>()
+const AllCoureses = ref<Coures[]>()
+const AllHalls = ref<Hall[]>()
+const AllService = ref<Service[]>()
+
+const coures = ref<PostCoures>({
+  couresManagementId: undefined,
+  teacherManagementId: undefined,
+  hall_managementId: undefined,
+  serviceManagementId: [],
+  Price: undefined,
+  numberOfRquiredHours: undefined,
+  numberOfMaximumIndividuals: undefined,
+  fromTime: undefined,
+  toTime: undefined,
+  startDate: '',
+  endDate: '',
+  reservationsTypeId: 0
+})
+
+const submit = () => {
+  UpdateCoures(coures.value).then(() => {
+    UpdateMsg.value = true
+  })
+}
+const getCurrentData = () => {
+  getCourseByID(receivedID.value).then((response) => {
+    coures.value.couresManagementId = response.couresManagementName
+    coures.value.hall_managementId = response.hall_managementName
+    coures.value.teacherManagementId = response.teacherManagementName
+    coures.value.serviceManagementId = response.serviceManagementName
+    coures.value.reservationsTypeId = response.reservationsTypeId
+    coures.value.numberOfMaximumIndividuals = response.numberOfMaximumIndividuals
+    coures.value.numberOfRquiredHours = response.numberOfRquiredHours
+
+    // coures.value.startDate = response.startDate
+    // coures.value.endDate = response.endDate
+    coures.value.Price = response.price
+  })
+}
+onMounted(() => {
+  getCurrentData()
+})
 </script>

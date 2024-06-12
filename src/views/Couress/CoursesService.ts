@@ -1,5 +1,5 @@
 import apiClient from '@/axios'
-import type { PostCoures, Coures, studentInfo } from './models/courses'
+import type { PostCoures, Couress, studentInfo } from './models/courses'
 import type { List } from './models/courses'
 import type { PaginationParamas } from '@/core/models/pagination-params'
 import type { postStudents } from './models/courses'
@@ -10,7 +10,7 @@ const postCoures = (body: PostCoures) => {
 
 const getCourses = (paginationParams: PaginationParamas) => {
   return apiClient
-    .get<List<Coures[]>>('TrainingCouresReservations', { params: paginationParams })
+    .get<List<Couress[]>>('TrainingCouresReservations', { params: paginationParams })
     .then((response) => {
       return response.data
     })
@@ -19,9 +19,29 @@ const postStudent = (body: postStudents) => {
   return apiClient.post<postStudents>('TrainingCouresReservations/AddStudentAttributing', body)
 }
 
-const getCoursesById = (id: string) => {
+const getStudentsByID = (id: string) => {
   return apiClient.get<{ studentInfo: studentInfo[] }>(
     `TrainingCouresReservations/Student?Id=${id}`
   )
 }
-export { postCoures, getCourses, postStudent, getCoursesById }
+const getCourseByID = (id: string) => {
+  return apiClient.get<Couress>(`TrainingCouresReservations/${id}`).then((response) => {
+    return response.data
+  })
+}
+
+const deleteCoures = (ID: string) => {
+  return apiClient.delete(`TrainingCouresReservations/${ID}`)
+}
+const UpdateCoures = (body: PostCoures) => {
+  return apiClient.put<postStudents>(`TrainingCouresReservations`, body)
+}
+export {
+  postCoures,
+  getCourses,
+  postStudent,
+  getStudentsByID,
+  deleteCoures,
+  UpdateCoures,
+  getCourseByID
+}
