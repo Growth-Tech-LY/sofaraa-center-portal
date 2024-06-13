@@ -271,6 +271,7 @@ const getCurrentData = () => {
     coures.value.reservationsTypeId = response.reservationsTypeId
     coures.value.numberOfMaximumIndividuals = response.numberOfMaximumIndividuals
     coures.value.numberOfRquiredHours = response.numberOfRquiredHours
+    coures.value.numberOfRquiredHours = response.numberOfRquiredHours
 
     // coures.value.startDate = response.startDate
     // coures.value.endDate = response.endDate

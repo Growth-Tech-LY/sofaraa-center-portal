@@ -44,6 +44,14 @@ type studentInfo = {
   payedPrice: number
   restPrice: number
 }
+
+export type reservationDate = {
+  hall_managementId: string
+  fromTime: number
+  toTime: number
+  startDate: string
+  endDate: string
+}
 export type List<T> = {
   total: number
   data: T

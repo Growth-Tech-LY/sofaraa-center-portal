@@ -27,20 +27,20 @@
                 <v-autocomplete
                   :prepend-icon="mdiOfficeBuildingMarker"
                   transition="slide-y-transition"
-                  v-model="search.Hall"
+                  v-model="search.Hall.id"
                   :items="AllHalls"
                   label="إسم القاعة"
                   item-title="name"
-                  item-value="id"
                   placeholder="إسم القاعة"
                   variant="outlined"
+                  item-value="id"
                 ></v-autocomplete>
               </div>
               <div class="flex gap-1 justify-center items-center">
                 <v-autocomplete
                   :prepend-icon="mdiHumanMaleBoard"
                   transition="slide-y-transition"
-                  v-model="search.Teacher"
+                  v-model="search.Teacher.id"
                   :items="AllTeachers"
                   label="إسم المعلم"
                   item-title="name"
@@ -53,7 +53,7 @@
                 <v-autocomplete
                   :prepend-icon="mdiOrderAlphabeticalAscending"
                   transition="slide-y-transition"
-                  v-model="search.Coures"
+                  v-model="search.Coures.id"
                   :items="AllCoureses"
                   label="إسم الدورة"
                   item-title="name"
@@ -91,7 +91,13 @@
               </div>
             </div>
             <v-btn size="large" class="mx-3" color="red" @click="searchToggle"> إغلاق </v-btn>
-            <v-btn size="large" class="mx-3" color="light-blue-accent-4" @click="onSearchFilter">
+            <v-btn
+              size="large"
+              class="mx-3"
+              color="light-blue-accent-4"
+              @click="onSearchFilter"
+              @keydown.enter="onSearchFilter"
+            >
               بحث
             </v-btn>
             <v-btn
@@ -263,7 +269,7 @@ import {
 } from '@mdi/js'
 import { deleteCoures, getCourses } from '../CoursesService'
 import CoursesEditForm from './CoursesEditForm.vue'
-import type { PaginationParamas } from '@/core/models/pagination-params'
+import type { PaginationCoures } from '@/core/models/pagination-params'
 import AddStudent from './AddStudent.vue'
 import ViewStudents from './ViewStudents.vue'
 import {
@@ -279,10 +285,21 @@ import type { Couress } from '../models/courses'
 // const searchHall = ref<Hall>()
 
 const searcher = ref()
-const search = ref({
-  Hall: '',
-  Teacher: '',
-  Coures: ''
+type SRH = {
+  Hall: { id: string }
+  Teacher: { id: string }
+  Coures: { id: string }
+}
+const search = ref<SRH>({
+  Hall: {
+    id: ''
+  },
+  Teacher: {
+    id: ''
+  },
+  Coures: {
+    id: ''
+  }
 })
 const loading = ref(false)
 const courses = ref<Couress[]>([])
@@ -300,14 +317,14 @@ const courseIdDelete = ref<string>('')
 const DeleteMsg = ref(false)
 const totalCustomers = ref(0)
 const coursesPrice = ref<number>(0)
-const paginations = ref({
+const paginations = ref<PaginationCoures>({
   page: 1,
   size: 10,
-  customerName: '',
-  Hallname: '',
+  TeacherId: '',
+  CouresID: '',
+  HallID: '',
   startDate: '',
-  endDate: '',
-  phoneNumber: ''
+  endDate: ''
 })
 const headers: any = [
   { title: 'اسم الدورة', key: 'couresManagementName', align: 'start', sortable: false },
@@ -455,7 +472,7 @@ onMounted(async () => {
   onGetCourse(paginations.value)
   getALLdeta()
 })
-const onGetCourse = (paginations: PaginationParamas | any) => {
+const onGetCourse = (paginations: PaginationCoures | any) => {
   loading.value = true
   getCourses(paginations)
     .then((response) => {
@@ -471,40 +488,37 @@ const onOptionsChange = ({ page, itemsPerPage }: { page: number; itemsPerPage: n
   paginations.value = {
     page: page,
     size: itemsPerPage,
-    customerName: '',
+    TeacherId: '',
     endDate: '',
-    Hallname: '',
-    phoneNumber: '',
+    HallID: '',
+    CouresID: '',
     startDate: ''
   }
   onGetCourse(paginations.value)
 }
 const onSearchFilter = () => {
-  // if (search.value.Coures != null) {
-  //   paginations.value.customerName = search.value.Coures
-  // }
-  if (search.value.Hall != null) {
-    paginations.value.Hallname = search.value.Hall
+  if (search.value.Coures != null) {
+    paginations.value.CouresID = search.value.Coures.id
   }
-  // if (search.value.Teacher != null) {
-  //   paginations.value. = search.value.Coures
-  // }
-  console.log(search.value.Coures)
-  console.log(search.value.Hall)
-  console.log(search.value.Teacher)
+  if (search.value.Hall != null) {
+    paginations.value.HallID = search.value.Hall.id
+  }
+  if (search.value.Teacher != null) {
+    paginations.value.TeacherId = search.value.Teacher.id
+  }
 
   onGetCourse(paginations.value)
 }
 
 const clearFilter = () => {
-  search.value.Coures = ''
-  search.value.Hall = ''
-  search.value.Teacher = ''
-  paginations.value.Hallname = ''
-  paginations.value.customerName = ''
+  search.value.Hall.id = ''
+  search.value.Teacher.id = ''
+  search.value.Coures.id = ''
+  paginations.value.HallID = ''
+  paginations.value.CouresID = ''
   paginations.value.endDate = ''
   paginations.value.startDate = ''
-  paginations.value.phoneNumber = ''
+  paginations.value.TeacherId = ''
   onGetCourse(paginations.value)
 }
 </script>

@@ -58,6 +58,7 @@
         :rules="[rules.required]"
       ></v-autocomplete>
       <v-text-field
+        id="Date"
         v-model="StartDate"
         class="col-start-3"
         :prepend-icon="mdiCalendarRange"
@@ -86,7 +87,6 @@
         label="عدد الساعات "
         placeholder="ادخل عدد الساعات  ..."
         variant="outlined"
-        prefix="د.ل"
         type="number"
         :rules="[rules.required]"
       ></v-text-field>
@@ -143,24 +143,36 @@
         :rules="[rules.required]"
         clearable
         label="سعر الدورة"
+        prefix="د.ل"
         placeholder="ادخل السعر  ..."
         variant="outlined"
         type="number"
       ></v-text-field>
 
-      <div class="pr-20 col-start-2 row-start-5 col-span-2 mt-10">
+      <div class="pr-20 col-start-1 row-start-5 col-span-2 mt-10 flex">
+        <v-btn
+          size="large"
+          class="p-4 mt-4 w-2/6 ml-3"
+          color="blue"
+          @click="checkdate"
+          :prepend-icon="mdiTimerEditOutline"
+          >تحقق</v-btn
+        >
         <v-btn
           size="large"
           class="p-4 mt-4 w-2/6 ml-3"
           color="green"
           :disabled="!form"
           @click="submitCoures"
-          >اضافة</v-btn
+          >حجز</v-btn
         >
         <v-btn size="large" class="p-4 mt-4 w-2/6" color="red" @click="closeModel">الغاء </v-btn>
       </div>
 
       <v-snackbar :timeout="2000" color="success" :location="'top left'" v-model="AddMsg">
+        تمت الإضافة بنجاح
+      </v-snackbar>
+      <v-snackbar :timeout="2000" color="success" :location="'top left'" v-model="ReservMsg">
         تمت الإضافة بنجاح
       </v-snackbar>
     </v-form>
@@ -177,7 +189,7 @@ import {
   mdiHumanMaleBoard,
   mdiOrderAlphabeticalAscending
 } from '@mdi/js'
-import { postCoures } from '../CoursesService'
+import { checkReservation, postCoures } from '../CoursesService'
 import {
   getCouresesFromMang,
   getHalls,
@@ -186,9 +198,12 @@ import {
 } from '@/core/services/mainServices'
 import type { Coures, Hall, Service, Teacher } from '@/core/models/Mainmodels'
 import type { PostCoures } from '../models/courses'
+import { toDate } from 'date-fns/fp'
+import { formatDateServer } from '@/core/healpers/dateFormat'
 
 const form = ref(false)
 const AddMsg = ref(false)
+const ReservMsg = ref(false)
 const emit = defineEmits<{
   close: []
 }>()
@@ -205,16 +220,16 @@ const rules = {
 
 // Vars using for body request
 const Price = ref<number>()
-const StartDate = ref<string>()
-const EndDate = ref<string>()
+const StartDate = ref<string>('')
+const EndDate = ref<string>('')
 const couresId = ref<string>()
 const ServiceId = ref<string[]>()
-const HallId = ref<string>()
+const HallId = ref<string>('')
 const TeacherId = ref<string>()
 const numOfstudents = ref<number>()
 const numOfHours = ref<number>()
-const timeFrom = ref<number>()
-const timeTo = ref<number>()
+const timeFrom = ref<number>(0)
+const timeTo = ref<number>(0)
 const reserveType = ref<number>()
 
 const reserveTypes = [
@@ -254,11 +269,27 @@ onMounted(async () => {
   getAllData()
 })
 watchEffect(() => {
-  console.log(couresId.value)
-  console.log(TeacherId.value)
-  console.log(ServiceId.value)
-  console.log(HallId.value)
+  console.log(StartDate.value)
+  // if (StartDate.value != undefined) {
+  //   console.log(formatDateServer(StartDate.value))
+  // }
 })
+
+const checkBtn = ref(false)
+
+const checkdate = () => {
+  checkReservation({
+    hall_managementId: HallId.value,
+    fromTime: Number(timeFrom.value),
+    toTime: Number(timeTo.value),
+    startDate: StartDate.value,
+    endDate: EndDate.value
+  }).then((response) => {
+    if (response.message === 'Hall is available for the requested time.') {
+      ReservMsg.value = true
+    }
+  })
+}
 
 const submitCoures = async () => {
   const body: PostCoures = {

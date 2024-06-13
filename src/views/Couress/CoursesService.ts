@@ -1,14 +1,14 @@
 import apiClient from '@/axios'
-import type { PostCoures, Couress, studentInfo } from './models/courses'
+import type { PostCoures, Couress, studentInfo, reservationDate } from './models/courses'
 import type { List } from './models/courses'
-import type { PaginationParamas } from '@/core/models/pagination-params'
+import type { PaginationCoures } from '@/core/models/pagination-params'
 import type { postStudents } from './models/courses'
-import { id } from 'vuetify/locale'
+
 const postCoures = (body: PostCoures) => {
   return apiClient.post<PostCoures>('TrainingCouresReservations', body)
 }
 
-const getCourses = (paginationParams: PaginationParamas) => {
+const getCourses = (paginationParams: PaginationCoures) => {
   return apiClient
     .get<List<Couress[]>>('TrainingCouresReservations', { params: paginationParams })
     .then((response) => {
@@ -36,6 +36,14 @@ const deleteCoures = (ID: string) => {
 const UpdateCoures = (body: PostCoures) => {
   return apiClient.put<postStudents>(`TrainingCouresReservations`, body)
 }
+
+const checkReservation = (body: reservationDate) => {
+  return apiClient
+    .post('TrainingCouresReservations/CheckTrainingCouresReservations', body)
+    .then((response) => {
+      return response.data
+    })
+}
 export {
   postCoures,
   getCourses,
@@ -43,5 +51,6 @@ export {
   getStudentsByID,
   deleteCoures,
   UpdateCoures,
-  getCourseByID
+  getCourseByID,
+  checkReservation
 }

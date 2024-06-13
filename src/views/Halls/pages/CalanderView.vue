@@ -2,12 +2,11 @@
   <div class="calendar-container is-light-mode">
     <Qalendar :events="events" :config="config" />
   </div>
- 
 </template>
 
 <script setup lang="ts">
 import { onMounted, ref, watchEffect } from 'vue'
-import { Qalendar } from 'qalendar'
+// import { Qalendar } from 'qalendar'
 import { getResHallTaple } from '../hallReserve-services'
 import type { PaginationParamas } from '@/core/models/pagination-params'
 import type { ReservationTable } from '../models/reserveModels'
@@ -36,8 +35,7 @@ interface Config {
     dayNames: string[]
     dayNameFormat?: (dayName: string) => string
   }
-  locale: string,
-  
+  locale: string
 }
 
 // Events data
@@ -93,9 +91,8 @@ onMounted(() => {
 })
 
 const getRandomColor = () => {
-    const colors = ['red', 'blue', 'yellow', 'green'];
-  return colors[Math.floor(Math.random() * colors.length)];
-
+  const colors = ['red', 'blue', 'yellow', 'green']
+  return colors[Math.floor(Math.random() * colors.length)]
 }
 
 const convertDateFormat = (dateStr: any) => {
@@ -116,11 +113,10 @@ console.log(formattedDateStr) // Outputs: 2024-06-12 13:35
 </script>
 
 <style>
-
 @import 'qalendar/dist/style.css';
 .calendar-container {
   width: 100%;
   height: 800px;
-  padding-block:2rem; 
+  padding-block: 2rem;
 }
 </style>
