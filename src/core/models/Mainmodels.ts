@@ -2,6 +2,7 @@ type Service = {
   id: string
   name: string
   servicePrice: number
+  descreption: string
 }
 
 type Customer = {

@@ -81,7 +81,7 @@ watchEffect(() => {
         end: convertDateFormat('2024/6/12 13:35')
       },
       color: getRandomColor(),
-      isEditable: false,
+      isEditable: true,
       id: reservation.id || 'unknown-id',
       description: `CustomerName : ${reservation.customerManegentName}, CustomerPhoneNumber: ${reservation.customerManegentPhonenumber}`
     }))

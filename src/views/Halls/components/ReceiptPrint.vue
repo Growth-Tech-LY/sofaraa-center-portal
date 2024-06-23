@@ -39,12 +39,13 @@ const props = defineProps<{
 watchEffect(() => {
   toPrint.value= props.printContent
 })
+
 watchEffect(() => {
-  if (toPrint.value?.reservationsTypeId == 1) {
+  if (toPrint.value?.paymentMethodId == 1) {
     typeOfPayment.value= 'نقدا'
-  } else if (toPrint.value?.reservationsTypeId == 2) {
+  } else if (toPrint.value?.paymentMethodId == 2) {
     typeOfPayment.value= 'بطاقة مصرفية'
-  } else if (toPrint.value?.reservationsTypeId == 3)  {
+  } else if (toPrint.value?.paymentMethodId == 3)  {
     typeOfPayment.value= 'شيك'
   }
 })
