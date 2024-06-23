@@ -51,7 +51,6 @@ import { onMounted, ref } from 'vue'
 import { mdiAccountPlus, mdiDeleteOutline } from '@mdi/js'
 import type { Student } from '@/core/models/Mainmodels'
 import { postStudent } from '../CoursesService'
-import { ru } from 'vuetify/locale'
 
 const form = ref(false)
 const AllStudent = ref<student[]>([{ studentManagementId: null, payedPrice: 0 }])
