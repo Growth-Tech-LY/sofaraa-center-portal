@@ -19,8 +19,10 @@ import { Qalendar } from 'qalendar'
 import { getResHallTaple } from '../hallReserve-services'
 import type { PaginationParamas } from '@/core/models/pagination-params'
 import type { ReservationTable } from '../models/reserveModels'
+import { watch } from 'vue'
 
 const hallsReservation = ref<ReservationTable[]>([])
+// const currentMode = ref('week')
 
 // Define types for events and config
 interface Event {
@@ -34,11 +36,9 @@ interface Event {
   isEditable: boolean
   id: string
   description?: string
-
 }
 
 interface Config {
-  
   week: {
     startsOn: string
     nDays: number
@@ -46,7 +46,7 @@ interface Config {
     dayNames: string[]
     dayNameFormat?: (dayName: string) => string
   }
-  locale: string , 
+  locale: string
   // showCurrentTime: Boolean
 }
 
@@ -58,11 +58,11 @@ const config = ref<Config>({
   week: {
     startsOn: 'sunday',
     nDays: 7,
-    scrollToHour: 5|7,
+    scrollToHour: 5 | 7,
     dayNames: ['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'],
     dayNameFormat: (dayNames: string) => dayNames // If the library allows formatting function
   },
-  locale: 'ar-AR' ,
+  locale: 'ar-AR'
   // showCurrentTime: true
 })
 
@@ -94,7 +94,7 @@ watchEffect(() => {
       color: getRandomColor(),
       isEditable: false,
       id: reservation.id || 'unknown-id',
-      description:  ` رقم الزبون :${reservation.customerManegentPhonenumber}
+      description: ` رقم الزبون :${reservation.customerManegentPhonenumber}
      <p>  سعر الإجمالي : ${reservation.totalPrice}</p>
      <p>   المتبقي: ${reservation.restPrice}</p>
       `
@@ -118,13 +118,12 @@ const convertDateFormat = (dateStr: string) => {
     console.error('Invalid date format:', dateStr)
     return '0000-00-00 00:00'
   }
-  
+
   const [datePart, timePart] = dateParts
-  const [day, month, year] = datePart.split('/').map(part => part.padStart(2, '0'))
-  
+  const [day, month, year] = datePart.split('/').map((part) => part.padStart(2, '0'))
+
   const date = new Date(`${year}-${month}-${day} ${timePart}`)
 
-  
   if (isNaN(date.getTime())) {
     console.error('Invalid date:', dateStr)
     return '0000-00-00 00:00'
@@ -135,8 +134,7 @@ const convertDateFormat = (dateStr: string) => {
   const formattedDay = String(date.getDate()).padStart(2, '0')
   const hours = String(date.getHours()).padStart(2, '0')
   const minutes = String(date.getMinutes()).padStart(2, '0')
- 
- 
+
   return `${formattedYear}-${formattedMonth}-${formattedDay} ${hours}:${minutes}`
 }
 
@@ -145,11 +143,13 @@ const originalDateStr = '27/06/2024 11:00'
 const formattedDateStr = convertDateFormat(originalDateStr)
 console.log(formattedDateStr) // Outputs: 2024-06-27 11:00
 
-watchEffect(() => {
-  console.log(config.value);
-  
-})
-
+// watch(
+//   () => currentMode.value,
+//   (newMode, oldMode) => {
+//     console.log('Calendar mode changed from', oldMode, 'to', newMode)
+//     // Add any additional logic you want to execute when the mode changes
+//   }
+// )
 </script>
 
 <style>
@@ -159,5 +159,4 @@ watchEffect(() => {
   height: 800px;
   padding-block: 2rem;
 }
-
 </style>

@@ -6,7 +6,6 @@ import MainLayout from '@/views/MainLayout.vue'
 import { createRouter, createWebHistory } from 'vue-router'
 import LoginPage from '@/views/LoginPage.vue'
 import EditResrvedHall from '@/views/Halls/pages/EditResrvedHall.vue'
-import ScheduleView from '../views/Halls/pages/ScheduleView.vue'
 import CalanderView from '@/views/Halls/pages/CalanderView.vue'
 import CoursesEditForm from '@/views/Couress/pages/CoursesEditForm.vue'
 
@@ -46,12 +45,7 @@ const router = createRouter({
               name: 'edit-reserved',
               component: EditResrvedHall
             },
-            {
-              path: ':id/schedule',
-              name: 'schedule-table',
-              component: ScheduleView
-            },
-
+            
             {
               path: 'calander',
               name: 'calander',

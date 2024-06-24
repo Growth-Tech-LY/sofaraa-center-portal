@@ -307,7 +307,6 @@ import type { Hall, Service, Customer } from '@/core/models/Mainmodels'
 import router from '@/router'
 
 import type { AxiosError } from 'axios'
-import ScheduleView from './ScheduleView.vue'
 import ServiceDetials from './ServiceDetials.vue'
 
 const form = ref(false)
@@ -623,7 +622,7 @@ const checkTime = () => {
 
         snackbar.value.show = true
       })
-      .catch((error: AxiosError) => {
+      .catch((error: any) => {
         console.log(error)
         loadingbtn.value = false
 
