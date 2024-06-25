@@ -5,7 +5,6 @@
   <div class="mt-20 bg-white border-t-8 border-[#BF3B74] mx-auto p-7 rounded-lg shadow-lg h-4/5">
     <p class="pr-8 text-lg">حجز قاعة</p>
     <v-form class="grid grid-cols-2 gap-3 p-4 items-center justify-center">
-     
       <div>
         <v-autocomplete
           v-model="hallName"
@@ -93,26 +92,24 @@
       </div>
 
       <div class="flex item-center justify-center gap-8">
-        <v-text-field
+        <v-date-input
           v-model="startDate"
-          :prepend-icon="mdiCalendarRange"
-          clearable
+          class="col-start-3"
           label="التاريخ من"
-          placeholder="ادخل التاريخ من ..."
           variant="outlined"
-          type="text"
-        ></v-text-field>
+          placeholder="ادخل التاريخ من ..."
+          :rules="[rules.required]"
+        >
+        </v-date-input>
 
-        <v-text-field
+        <v-date-input
           v-model="endDate"
-          :prepend-icon="mdiCalendarRange"
-          clearable
-          format="ampm"
+          :rules="[rules.required]"
           label="التاريخ الى"
           placeholder="ادخل التاريخ الى ..."
           variant="outlined"
-          type="text"
-        ></v-text-field>
+          :hide-actions="true"
+        ></v-date-input>
       </div>
 
       <div class="flex item-center justify-center gap-8">
@@ -222,7 +219,11 @@ import type { Hall, Service, Customer } from '@/core/models/Mainmodels'
 import router from '@/router'
 import { useRoute } from 'vue-router'
 import type { ReservationTable } from '../models/reserveModels'
-import { formatPutDate } from '@/core/healpers/dateFormat'
+import { VDateInput } from 'vuetify/labs/components'
+
+const rules = {
+  required: (v: string) => !!v || 'الحقل اجباري'
+}
 
 //date-fns function
 watchEffect(() => {
@@ -238,8 +239,7 @@ const Rules = {
   time: (value: number) => (value > 0 && value <= 24) || 'يجب التكون القيمة بين ال 1 إلي 24 ',
   timeDiffrince: (value: number) =>
     value > fromTime.value || ' يجب أن يكون قيمة الحقل أكبر من الوقت من',
-  paymentCount: (value: number) => value <= totalPayment.value || 'قيمة المدخلة اكبر من الإجمالي ',
-  
+  paymentCount: (value: number) => value <= totalPayment.value || 'قيمة المدخلة اكبر من الإجمالي '
 }
 
 const closeModel = () => {
@@ -275,8 +275,8 @@ const toTime = ref(0)
 const firstCheck = ref(1)
 
 //variables of date
-const startDate = ref<string>('')
-const endDate = ref<string>('')
+const startDate = ref<Date>()
+const endDate = ref<Date>()
 const placeHolderNumber = ref('')
 const reForrmatStartDate = ref('')
 //-----------------------------
@@ -361,6 +361,8 @@ watchEffect(() => {
 const onGetData = () => {
   getResHallByID(receivedID).then((response) => {
     resToEdit.value = response
+    startDate.value = formatDate(response.startDate)
+    endDate.value = formatDate(response.endDate)
   })
 
   getCustomers().then((response) => {
@@ -391,7 +393,7 @@ const reformatDate = (dateStr: string): string => {
 const submit = () => {
   if (hallName.value && countOfrequiedTime.value && packagePrice.value && customer.value) {
     const body = {
-      id :receivedID,
+      id: receivedID,
       hall_ManagementId: hallName.value.id,
       packageType: packagePrice.value.label,
       customerManegentId: customer.value.id,
@@ -406,7 +408,7 @@ const submit = () => {
       numberOfIndividuals: individualNumber.value,
       totalPrice: totalPayment.value,
       payedPrice: paid.value,
-      restPrice: remainingPayment.value,
+      restPrice: remainingPayment.value
     }
     putResHall(body)
       .then(() => {
@@ -538,8 +540,8 @@ watchEffect(() => {
     fromTime.value = resToEdit.value.fromTime
     toTime.value = resToEdit.value.toTime
 
-    startDate.value = resToEdit.value.startDate
-    endDate.value = resToEdit.value.endDate
+    // startDate.value = resToEdit.value.startDate
+    // endDate.value = resToEdit.value.endDate
     countOfrequiedTime.value = resToEdit.value.numberOfRquiredHours
     individualNumber.value = resToEdit.value.numberOfIndividuals
     Payment.value = resToEdit.value.paymentMethodId
@@ -550,14 +552,14 @@ watchEffect(() => {
   }
 })
 
-watchEffect(() => {
-  reForrmatStartDate.value = endDate.value
-})
+// watchEffect(() => {
+//   reForrmatStartDate.value = endDate.value
+// })
 
-// WatchEffect to update reForrmatStartDate when endDate changes
-watchEffect(() => {
-  reForrmatStartDate.value = reformatDate(endDate.value)
-})
+// // WatchEffect to update reForrmatStartDate when endDate changes
+// watchEffect(() => {
+//   reForrmatStartDate.value = reformatDate(endDate.value)
+// })
 
 // Function to format the date for date picker
 // const formatToDatePicker = (dateString: string): string => {
@@ -567,4 +569,15 @@ watchEffect(() => {
 //   const day = String(date.getDate()).padStart(2, '0')
 //   return `${year}-${month}-${day}`
 // }
+
+watchEffect(() => {
+  if (resToEdit.value) {
+  }
+})
+
+const formatDate = (dateString: string) => {
+  const [day, month, year] = dateString.split('/')
+
+  return new Date(`${month}/${day}/${year}`)
+}
 </script>

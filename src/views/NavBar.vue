@@ -1,5 +1,5 @@
 <template>
-  <div class="flex items-center justify-between w-[90%] mx-auto mt-2 mb-6">
+  <div class="flex items-center justify-between w-[60%] md:w-[80%]  mx-auto mt-2 mb-6 px-8 lg:px-0 ">
     <div>
       <v-btn
         class="mt-4 text-white mr-5"
@@ -15,7 +15,7 @@
     <div>  
       <img class="mx-auto" width="300" src="../assets/icons/sofaraaLogo2.png" alt="">
     </div>
-    <div>
+    <div class="lg:mr-14">
       <v-btn
         :to="{ name: 'calander' }"
         class="mt-4 text-white mr-5"

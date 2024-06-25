@@ -5,7 +5,7 @@
     <v-locale-provider rtl>
       <v-card>
         <v-layout>
-          <v-navigation-drawer v-model="drawer" :rail="rail" permanent @click="rail = false">
+          <v-navigation-drawer v-model="drawer" :rail="false" permanent @click="rail = false">
             <img width="120px" src="/src/assets/icons/sofaraaLogo.png" />
             <v-list-item
               prepend-avatar=""

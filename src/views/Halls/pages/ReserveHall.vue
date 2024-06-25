@@ -108,18 +108,20 @@
 
       <div class="flex item-center justify-center gap-8">
         <v-date-input
-          
+          v-model="formDate"
           label="التاريخ من"
           variant="outlined"
           placeholder="ادخل التاريخ من ..."
+          :hide-actions="true"
         >
         </v-date-input>
 
         <v-date-input
+          v-model="toDate"
           label="التاريخ الى"
           placeholder="ادخل التاريخ الى ..."
           :hide-actions="true"
-           variant="outlined"
+          variant="outlined"
         ></v-date-input>
       </div>
 
@@ -371,8 +373,8 @@ const showAddMessage = ref(false)
 const fromTime = ref(0)
 const toTime = ref(0)
 const totalTime = ref(0)
-const formDate = ref('')
-const toDate = ref('')
+const formDate = ref<Date>()
+const toDate = ref<Date>()
 const placeHolderNumber = ref('')
 //variables for the calculation of the total
 const servicesPrice = ref<Service[]>([])
@@ -508,8 +510,8 @@ const submitHallData = () => {
 
         individualNumber.value = 1
 
-        formDate.value = ''
-        toDate.value = ''
+        formDate.value = undefined
+        toDate.value = undefined
 
         fromTime.value = 0
         toTime.value = 0
