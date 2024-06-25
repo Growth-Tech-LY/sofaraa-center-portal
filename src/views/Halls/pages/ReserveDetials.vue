@@ -127,12 +127,22 @@ watchEffect(() => {
 })
 
 watchEffect(() => {
-  if (hallResInfo.value?.reservationsTypeId == 1) {
+ 
+  if (hallResInfo.value) {
+    
+ 
+  if (hallResInfo.value.paymentMethodId == 1) {
     typeOfPayment.value= 'نقدا'
-  } else if (hallResInfo.value?.reservationsTypeId == 2) {
+    console.log('cash');
+  } if (hallResInfo.value.paymentMethodId == 2) {
     typeOfPayment.value= 'بطاقة مصرفية'
-  } else if (hallResInfo.value?.reservationsTypeId == 3)  {
+    console.log('bank');
+  }  if (hallResInfo.value.paymentMethodId == 3)  {
     typeOfPayment.value= 'شيك'
+    console.log('check');
   }
+
+}
 }) 
 </script>
+

@@ -94,41 +94,7 @@
       </div>
     </div>
 
-    <!-- <td class="w-3/4 mx-auto flex justify-center items-center mb-2">
-      <div
-        v-show="popUp"
-        @click.self="toggelPopUp"
-        class="fixed h-screen w-full top-0 left-0 bg-gray-500/50 z-[1005]"
-      >
-        <ReserveHall
-          @refresh="
-            onOptionsChange({
-              page: paginations.page,
-              itemsPerPage: paginations.size
-            })
-          "
-          @close="toggelPopUp"
-        />
-      </div>
-      <div
-        v-if="popUp2"
-        @click.self="toggelPopUp2"
-        class="fixed h-screen w-full top-0 left-0 bg-gray-500/50 z-[1005]"
-      >
-        <editHall
-          @editDone="EditMessage"
-          @refresh="
-            onOptionsChange({
-              page: paginations.page,
-              itemsPerPage: paginations.size
-            })
-          "
-          @closeIt="toggelPopUp2"
-          :id="idToEdit"
-        />
-      </div>
-    </td> -->
-
+   
     <v-data-table-server
       class="px-4"
       v-model:items-per-page="paginations.size"

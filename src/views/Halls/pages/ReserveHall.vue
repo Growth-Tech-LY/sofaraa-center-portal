@@ -65,7 +65,7 @@
           type="number"
         ></v-text-field>
       </div>
-      <div class="flex item-center justify-center gap-8">
+      <div class="flex item-center justify-center gap-4">
         <v-autocomplete
           v-model="servicesPrice"
           transition="slide-y-transition"
@@ -74,12 +74,23 @@
           multiple
           chips
           item-title="name"
-          item-value="servicePrice"
+          item-value="id"
           placeholder="نوع الخدمة"
           :return-object="true"
           variant="outlined"
         ></v-autocomplete>
-
+        <v-btn
+          class=" mt-2 "
+          size="x-large"
+          color="cyan-darken-2"
+          density="comfortable"
+          variant="text"
+          :prepend-icon="mdiBookVariant"
+          @click="toggeServicesDetials"
+        >
+          <v-tooltip activator="parent" location="bottom">تفاصيل الخدمات</v-tooltip></v-btn
+        >
+        
         <p class="ms-3 text-lg font-bold text-gray-900 text-center mt-4">
           <span class="text-red-500">سعر الخدمة :</span> {{ selectedServicesPrice }} د.ل
         </p>
@@ -150,15 +161,15 @@
             >تحقق من القاعة</v-btn
           >
           <div v-show="showSchedule" v-if="hallName">
-              <v-btn
-              :to="{ name: 'schedule-table' , params: { id: hallName.id }  }"
-                color="yellow-darken-2"
-                :disabled="!hallName"
-                :loading="loadingbtn"
-                class="mt-2 mr-4 text-white"
-                @click="checkTime"
-                >عرض جدول</v-btn
-              >
+            <v-btn
+              :to="{ name: 'schedule-table', params: { id: hallName.id } }"
+              color="yellow-darken-2"
+              :disabled="!hallName"
+              :loading="loadingbtn"
+              class="mt-2 mr-4 text-white"
+              @click="checkTime"
+              >عرض جدول</v-btn
+            >
           </div>
           <span v-show="reservationsChecked" class="absolute top-3 -left-8"
             ><v-icon size="large" color="green accent-3" :icon="mdiCheckCircle"></v-icon
@@ -259,6 +270,24 @@
   >
     <AddCustomerRes @close="toggeAddCustomer" @refresh="OngetCustomers" />
   </div>
+
+  <!-- <div
+    data-aos="fade-left"
+    v-if="servicesDetials"
+    @click.self="toggeServicesDetials"
+    class="fixed h-screen w-full top-0 left-0 bg-gray-500/50 z-[1005]"
+  >
+    <ScheduleView @close="toggeAddCustomer" @refresh="OngetCustomers" />
+  </div> -->
+
+  <div
+    data-aos="fade-left"
+    v-if="servicesDetials"
+    @click.self="toggeServicesDetials"
+    class="fixed h-screen w-full top-0 left-0 bg-gray-500/50 z-[1005]"
+  >
+    <ServiceDetials @close="toggeServicesDetials" />
+  </div>
 </template>
 <script setup lang="ts">
 import {
@@ -266,9 +295,11 @@ import {
   mdiTimerOutline,
   mdiCalendarRange,
   mdiArrowRightTop,
-  mdiCheckCircle
+  mdiCheckCircle,
+  mdiBookVariant
 } from '@mdi/js'
 import AddCustomerRes from './AddCustomerRes.vue'
+
 import { onMounted, ref, watchEffect } from 'vue'
 import { getHalls, getCustomers, getServices } from '@/core/services/mainServices'
 import { CheckHallReserved, Postreservation } from '../hallReserve-services'
@@ -276,6 +307,7 @@ import type { Hall, Service, Customer } from '@/core/models/Mainmodels'
 import router from '@/router'
 
 import type { AxiosError } from 'axios'
+import ServiceDetials from './ServiceDetials.vue'
 
 const form = ref(false)
 
@@ -322,6 +354,7 @@ const popAddCustomer = ref(false)
 const reservationsChecked = ref(false)
 const loadingbtn = ref(false)
 const showSchedule = ref(false)
+const servicesDetials = ref(false)
 
 const snackbar = ref({
   show: false,
@@ -335,6 +368,9 @@ const toggeAddCustomer = () => {
 const toggleSchedule = () => {
   showSchedule.value = !showSchedule.value
 }
+const toggeServicesDetials = () => {
+  servicesDetials.value = !servicesDetials.value
+}
 
 const OngetCustomers = () => {
   getCustomers().then((response) => {
@@ -343,7 +379,6 @@ const OngetCustomers = () => {
     showAddMessage.value = true
   })
 }
-
 
 //--------------------
 
@@ -425,6 +460,8 @@ watchEffect(() => {
   for (let i = 0; i < servicesPrice.value.length; i++) {
     selectedServicesPrice.value = selectedServicesPrice.value + servicesPrice.value[i].servicePrice
     servicesId.value.push(servicesPrice.value[i].id)
+    console.log(servicesId.value);
+    
   }
 })
 
@@ -585,7 +622,7 @@ const checkTime = () => {
 
         snackbar.value.show = true
       })
-      .catch((error: AxiosError) => {
+      .catch((error: any) => {
         console.log(error)
         loadingbtn.value = false
 
@@ -608,6 +645,8 @@ const checkTime = () => {
   }
 }
 
-
-
+watchEffect(() => {
+  console.log(Payment.value);
+  
+})
 </script>

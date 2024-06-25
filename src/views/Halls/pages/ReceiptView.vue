@@ -95,11 +95,11 @@ onMounted(() => {
 })
 
 watchEffect(() => {
-  if (reservedhall.value?.reservationsTypeId == 1) {
+  if (reservedhall.value?.paymentMethodId == 1) {
     typeOfPayment.value = 'نقدا'
-  } else if (reservedhall.value?.reservationsTypeId == 2) {
+  } else if (reservedhall.value?.paymentMethodId == 2) {
     typeOfPayment.value = 'بطاقة مصرفية'
-  } else if (reservedhall.value?.reservationsTypeId == 3) {
+  } else if (reservedhall.value?.paymentMethodId == 3) {
     typeOfPayment.value = 'شيك'
   }
 })
