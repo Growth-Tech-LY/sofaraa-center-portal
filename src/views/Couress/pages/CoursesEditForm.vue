@@ -57,27 +57,23 @@
         clearable
         :rules="[rules.required]"
       ></v-autocomplete>
-      <v-text-field
+      <v-date-input
         v-model="coures.startDate"
         class="col-start-3"
-        :prepend-icon="mdiCalendarRange"
         label="التاريخ من"
         variant="outlined"
         placeholder="ادخل التاريخ من ..."
-        type="date"
         :rules="[rules.required]"
       >
-      </v-text-field>
-      <v-text-field
-        v-model="coures.endDate"
-        :prepend-icon="mdiCalendarRange"
-        clearable
+      </v-date-input>
+
+      <v-date-input
+        :rules="[rules.required]"
         label="التاريخ الى"
         placeholder="ادخل التاريخ الى ..."
-        variant="outlined"
-        type="date"
-        :rules="[rules.required]"
-      ></v-text-field>
+        v-model="coures.startDate"
+        :hide-actions="true"
+      ></v-date-input>
       <v-text-field
         class="col-span-2"
         v-modle="coures.numberOfRquiredHours"
@@ -177,12 +173,11 @@
 
 <script setup lang="ts">
 import type { Coures, Hall, Service, Teacher } from '@/core/models/Mainmodels'
-
+import { VDateInput } from 'vuetify/labs/VDateInput'
 import { onMounted, ref } from 'vue'
 import type { PostCoures } from '../models/courses'
 import {
   mdiTimerEditOutline,
-  mdiCalendarRange,
   mdiCash,
   mdiAccountMultipleOutline,
   mdiOfficeBuildingMarker,
@@ -252,7 +247,7 @@ const coures = ref<PostCoures>({
   numberOfMaximumIndividuals: undefined,
   fromTime: undefined,
   toTime: undefined,
-  startDate: '',
+  startDate: undefined,
   endDate: '',
   reservationsTypeId: 0
 })
@@ -261,6 +256,11 @@ const submit = () => {
   UpdateCoures(coures.value).then(() => {
     UpdateMsg.value = true
   })
+}
+const formatDate = (dateString: string) => {
+  const [day, month, year] = dateString.split('/')
+
+  return new Date(`${month}/${day}/${year}`)
 }
 const getCurrentData = () => {
   getCourseByID(receivedID.value).then((response) => {
@@ -272,12 +272,12 @@ const getCurrentData = () => {
     coures.value.numberOfMaximumIndividuals = response.numberOfMaximumIndividuals
     coures.value.numberOfRquiredHours = response.numberOfRquiredHours
     coures.value.numberOfRquiredHours = response.numberOfRquiredHours
-
-    // coures.value.startDate = response.startDate
-    // coures.value.endDate = response.endDate
+    coures.value.startDate = formatDate(response.startDate)
+    coures.value.endDate = response.endDate
     coures.value.Price = response.price
   })
 }
+
 onMounted(() => {
   getCurrentData()
 })

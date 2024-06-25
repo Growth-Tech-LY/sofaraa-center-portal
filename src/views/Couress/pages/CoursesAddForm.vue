@@ -220,7 +220,7 @@ const rules = {
 
 // Vars using for body request
 const Price = ref<number>()
-const StartDate = ref<string>('')
+const StartDate = ref<Date>()
 const EndDate = ref<string>('')
 const couresId = ref<string>()
 const ServiceId = ref<string[]>()
