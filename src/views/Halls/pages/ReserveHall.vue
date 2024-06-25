@@ -160,7 +160,7 @@
             @click="checkTime"
             >تحقق من القاعة</v-btn
           >
-          <div v-show="showSchedule" v-if="hallName">
+          <!-- <div v-show="showSchedule" v-if="hallName">
             <v-btn
               :to="{ name: 'schedule-table', params: { id: hallName.id } }"
               color="yellow-darken-2"
@@ -170,7 +170,7 @@
               @click="checkTime"
               >عرض جدول</v-btn
             >
-          </div>
+          </div> -->
           <span v-show="reservationsChecked" class="absolute top-3 -left-8"
             ><v-icon size="large" color="green accent-3" :icon="mdiCheckCircle"></v-icon
           ></span>
