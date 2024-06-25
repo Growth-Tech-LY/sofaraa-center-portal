@@ -23,7 +23,7 @@ type PostCoures = {
   numberOfMaximumIndividuals: number | undefined
   fromTime: number | undefined
   toTime: number | undefined
-  startDate: string | undefined
+  startDate: Date | undefined
   endDate: string | undefined
   reservationsTypeId: number | undefined
 }
