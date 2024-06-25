@@ -8,10 +8,11 @@ type Couress = {
   startDate: string
   endDate: string
   numberOfRquiredHours: number
-
   studentName: string[]
   price: number
   numberOfMaximumIndividuals: number
+  toTime: number
+  fromTime: number
 }
 type PostCoures = {
   couresManagementId: string | undefined
@@ -24,7 +25,7 @@ type PostCoures = {
   fromTime: number | undefined
   toTime: number | undefined
   startDate: Date | undefined
-  endDate: string | undefined
+  endDate: Date | undefined
   reservationsTypeId: number | undefined
 }
 
@@ -37,7 +38,15 @@ type postStudents = {
   trainingCouresReservationsId: string
   studentInfoManagement: student[]
 }
+type UpdaterestPricee = {
+  trainingCourseReservationsId: string
+  studentManagementId: string
+  restPrice: number
+}
 
+export type UpdaterestPrice = {
+  updateStudentInfos: UpdaterestPricee[]
+}
 type studentInfo = {
   studentManagementId: string
   studentName: string

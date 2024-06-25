@@ -71,7 +71,8 @@
         :rules="[rules.required]"
         label="التاريخ الى"
         placeholder="ادخل التاريخ الى ..."
-        v-model="coures.startDate"
+        v-model="coures.endDate"
+        variant="outlined"
         :hide-actions="true"
       ></v-date-input>
       <v-text-field
@@ -248,7 +249,7 @@ const coures = ref<PostCoures>({
   fromTime: undefined,
   toTime: undefined,
   startDate: undefined,
-  endDate: '',
+  endDate: undefined,
   reservationsTypeId: 0
 })
 
@@ -271,10 +272,11 @@ const getCurrentData = () => {
     coures.value.reservationsTypeId = response.reservationsTypeId
     coures.value.numberOfMaximumIndividuals = response.numberOfMaximumIndividuals
     coures.value.numberOfRquiredHours = response.numberOfRquiredHours
-    coures.value.numberOfRquiredHours = response.numberOfRquiredHours
     coures.value.startDate = formatDate(response.startDate)
-    coures.value.endDate = response.endDate
+    coures.value.endDate = formatDate(response.endDate)
     coures.value.Price = response.price
+    coures.value.fromTime = response.fromTime
+    coures.value.toTime = response.toTime
   })
 }
 
