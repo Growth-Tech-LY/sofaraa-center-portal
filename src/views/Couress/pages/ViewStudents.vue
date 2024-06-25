@@ -2,9 +2,9 @@
   <div
     v-if="editPopUp && selectedStudent"
     class="fixed h-screen w-full top-0 left-0 bg-gray-500/50 z-[1005]"
-    @click.self="editPopUp = false"
+    @click.self="toggleEditModel"
   >
-    <EditStudent :couresID="TheID" :studentDetails="selectedStudent" />
+    <EditStudent :couresID="TheID" :studentDetails="selectedStudent" @update="getStudents" />
   </div>
 
   <div
@@ -67,7 +67,9 @@ const headers: any = [
 ]
 
 TheID.value = props.trainingCouresReservationsId
-
+const toggleEditModel = () => {
+  editPopUp.value = !editPopUp.value
+}
 onMounted(() => {
   console.log(TheID.value)
   getStudents()

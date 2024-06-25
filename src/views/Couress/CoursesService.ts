@@ -1,5 +1,11 @@
 import apiClient from '@/axios'
-import type { PostCoures, Couress, studentInfo, reservationDate } from './models/courses'
+import type {
+  PostCoures,
+  Couress,
+  studentInfo,
+  reservationDate,
+  UpdaterestPrice
+} from './models/courses'
 import type { List } from './models/courses'
 import type { PaginationCoures } from '@/core/models/pagination-params'
 import type { postStudents } from './models/courses'
@@ -17,6 +23,10 @@ const getCourses = (paginationParams: PaginationCoures) => {
 }
 const postStudent = (body: postStudents) => {
   return apiClient.post<postStudents>('TrainingCouresReservations/AddStudentAttributing', body)
+}
+
+const UpdateStudentPayed = (body: UpdaterestPrice) => {
+  return apiClient.put(`TrainingCouresReservations/UpdateStudentAttributing`, body)
 }
 
 const getStudentsByID = (id: string) => {
@@ -52,5 +62,6 @@ export {
   deleteCoures,
   UpdateCoures,
   getCourseByID,
-  checkReservation
+  checkReservation,
+  UpdateStudentPayed
 }

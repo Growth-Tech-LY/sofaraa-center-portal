@@ -25,13 +25,16 @@
       <div class="mt-4 flex">
         <v-icon :icon="mdiCash" color="red"></v-icon>
         <p class="pr-3 font-bold">القيمة المتبقية :</p>
-        <p class="text-xl font-semibold text-red-500">{{ studentDetails.restPrice }}</p>
+        <p class="text-xl font-semibold text-red-500">{{ restPrice }}</p>
       </div>
       <div class="mt-12 flex justify-around w-1/2">
-        <v-btn color="blue">تأكيد</v-btn>
+        <v-btn color="blue" @click="PaidUpdate">تأكيد</v-btn>
         <v-btn color="red">إلغاء</v-btn>
       </div>
     </div>
+    <v-snackbar :timeout="2000" color="success" :location="'top left'" v-model="DoneMsg">
+      تمت عملية بنجاح
+    </v-snackbar>
   </div>
 </template>
 
@@ -39,25 +42,55 @@
 import { onMounted, ref, watchEffect } from 'vue'
 import { mdiCashClock, mdiCash, mdiCashPlus } from '@mdi/js'
 import type { studentInfo } from '../models/courses'
-
+import { UpdateStudentPayed } from '../CoursesService'
 const payedPrice = ref<number>(0)
 const couresIdEdit = ref('')
+const DoneMsg = ref(false)
 const studentName = ref('')
 const props = defineProps<{
   couresID: string
   studentDetails: studentInfo
 }>()
+const restPrice = ref<number>(props.studentDetails.restPrice)
+const studentID = props.studentDetails.studentManagementId
 const rules = {
   price: (n: number) => n <= props.studentDetails.restPrice || 'أكبر من قيمة الدورة '
 }
-const TotalPayed = ref(props.studentDetails.restPrice)
+const emit = defineEmits<{
+  update: []
+  close: []
+}>()
+const updateModel = () => {
+  emit('update')
+}
+const closeModel = () => {
+  emit('close')
+}
 
 couresIdEdit.value = props.couresID
 onMounted(() => {
   console.log(couresIdEdit.value)
+  console.log(props.studentDetails.studentManagementId)
 })
 watchEffect(() => {
-  TotalPayed.value += payedPrice.value
   studentName.value = props.studentDetails.studentName
+  restPrice.value = props.studentDetails.restPrice - payedPrice.value
 })
+
+const PaidUpdate = () => {
+  UpdateStudentPayed({
+    updateStudentInfos: [
+      {
+        trainingCourseReservationsId: couresIdEdit.value,
+        studentManagementId: studentID,
+        restPrice: restPrice.value
+      }
+    ]
+  })
+    .then(() => {
+      DoneMsg.value = true
+      updateModel()
+    })
+    .finally(() => {})
+}
 </script>

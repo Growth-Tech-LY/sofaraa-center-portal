@@ -57,28 +57,26 @@
         clearable
         :rules="[rules.required]"
       ></v-autocomplete>
-      <v-text-field
+      <v-date-input
+        hide-actions
         id="Date"
         v-model="StartDate"
         class="col-start-3"
-        :prepend-icon="mdiCalendarRange"
         label="التاريخ من"
         variant="outlined"
         placeholder="ادخل التاريخ من ..."
-        type="date"
         :rules="[rules.required]"
       >
-      </v-text-field>
-      <v-text-field
+      </v-date-input>
+      <v-date-input
+        hide-actions
         v-model="EndDate"
-        :prepend-icon="mdiCalendarRange"
         clearable
         label="التاريخ الى"
         placeholder="ادخل التاريخ الى ..."
         variant="outlined"
-        type="date"
         :rules="[rules.required]"
-      ></v-text-field>
+      ></v-date-input>
       <v-text-field
         class="col-span-2"
         v-modle="numOfHours"
@@ -149,10 +147,10 @@
         type="number"
       ></v-text-field>
 
-      <div class="pr-20 col-start-1 row-start-5 col-span-2 mt-10 flex">
+      <div class="pr-20 col-start-1 col-span-3 mt-10 flex">
         <v-btn
           size="large"
-          class="p-4 mt-4 w-2/6 ml-3"
+          class="p-4 mt-4 w-1/6 ml-3"
           color="blue"
           @click="checkdate"
           :prepend-icon="mdiTimerEditOutline"
@@ -160,29 +158,48 @@
         >
         <v-btn
           size="large"
-          class="p-4 mt-4 w-2/6 ml-3"
+          class="p-4 mt-4 w-1/6 ml-3"
           color="green"
           :disabled="!form"
           @click="submitCoures"
           >حجز</v-btn
         >
-        <v-btn size="large" class="p-4 mt-4 w-2/6" color="red" @click="closeModel">الغاء </v-btn>
+        <v-btn size="large" class="p-4 mt-4 w-1/6" color="red" @click="closeModel">الغاء </v-btn>
+        <P
+          v-show="availableResrv"
+          class="border-green-500 border-4 p-2 rounded-lg text-green-800 w-1/4 mr-3 mt-3 text-center"
+        >
+          الموعد متاح للحجز <v-icon :icon="mdiCheckAll"></v-icon
+        ></P>
+        <P
+          v-show="NotAvailableResrv"
+          class="border-red-500 border-4 p-2 rounded-lg text-red-800 w-1/4 mr-3 mt-3 text-center"
+        >
+          الموعد غير متاح للحجز <v-icon :icon="mdiAlert"></v-icon
+        ></P>
       </div>
 
-      <v-snackbar :timeout="2000" color="success" :location="'top left'" v-model="AddMsg">
+      <v-snackbar
+        :timeout="2000"
+        :color="snackbar.color"
+        :location="'top left'"
+        v-model="snackbar.show"
+      >
         تمت الإضافة بنجاح
       </v-snackbar>
-      <v-snackbar :timeout="2000" color="success" :location="'top left'" v-model="ReservMsg">
-        تمت الإضافة بنجاح
+      <v-snackbar :timeout="2000" color="blue" :location="'top left'" v-model="ReservMsg">
+        تمت تحقق بنجاح
       </v-snackbar>
     </v-form>
   </div>
 </template>
 <script setup lang="ts">
 import { defineEmits, onMounted, ref, watchEffect } from 'vue'
+import { VDateInput } from 'vuetify/labs/VDateInput'
 import {
   mdiTimerEditOutline,
-  mdiCalendarRange,
+  mdiAlert,
+  mdiCheckAll,
   mdiCash,
   mdiAccountMultipleOutline,
   mdiOfficeBuildingMarker,
@@ -198,12 +215,13 @@ import {
 } from '@/core/services/mainServices'
 import type { Coures, Hall, Service, Teacher } from '@/core/models/Mainmodels'
 import type { PostCoures } from '../models/courses'
-import { toDate } from 'date-fns/fp'
-import { formatDateServer } from '@/core/healpers/dateFormat'
 
 const form = ref(false)
 const AddMsg = ref(false)
 const ReservMsg = ref(false)
+const availableResrv = ref(false)
+const NotAvailableResrv = ref(false)
+
 const emit = defineEmits<{
   close: []
 }>()
@@ -220,8 +238,8 @@ const rules = {
 
 // Vars using for body request
 const Price = ref<number>()
-const StartDate = ref<Date>()
-const EndDate = ref<string>('')
+const StartDate = ref()
+const EndDate = ref()
 const couresId = ref<string>()
 const ServiceId = ref<string[]>()
 const HallId = ref<string>('')
@@ -231,7 +249,11 @@ const numOfHours = ref<number>()
 const timeFrom = ref<number>(0)
 const timeTo = ref<number>(0)
 const reserveType = ref<number>()
-
+const snackbar = ref({
+  show: false,
+  message: '',
+  color: 'green'
+})
 const reserveTypes = [
   {
     label: 'مبدئ',
@@ -265,14 +287,24 @@ const getAllData = () => {
   })
 }
 
+const formatDate = (dateString: Date) => {
+  // تحويل النص إلى كائن تاريخ
+  const date = new Date(dateString)
+
+  // الحصول على اليوم والشهر والسنة
+  const day = String(date.getDate()).padStart(2, '0')
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const year = date.getFullYear()
+
+  // إعادة التنسيق إلى الشكل المطلوب
+  return `${year}-${month}-${day}`
+}
+
 onMounted(async () => {
   getAllData()
 })
 watchEffect(() => {
   console.log(StartDate.value)
-  // if (StartDate.value != undefined) {
-  //   console.log(formatDateServer(StartDate.value))
-  // }
 })
 
 const checkBtn = ref(false)
@@ -282,13 +314,24 @@ const checkdate = () => {
     hall_managementId: HallId.value,
     fromTime: Number(timeFrom.value),
     toTime: Number(timeTo.value),
-    startDate: StartDate.value,
-    endDate: EndDate.value
-  }).then((response) => {
-    if (response.message === 'Hall is available for the requested time.') {
-      ReservMsg.value = true
-    }
+    startDate: formatDate(StartDate.value),
+    endDate: formatDate(EndDate.value)
   })
+    .then((response) => {
+      if (response.message === 'TrainingCoures is available for the requested time.') {
+        ReservMsg.value = true
+        availableResrv.value = true
+      }
+    })
+    .catch((error: any) => {
+      if (error.response && error.response.data && error.response.data.message) {
+        const errorMessage = error.response.data.message
+
+        if (errorMessage === 'The checkTrainingCouresReservations field is required.') {
+          NotAvailableResrv.value = true
+        }
+      }
+    })
 }
 
 const submitCoures = async () => {
