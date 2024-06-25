@@ -92,7 +92,7 @@ watchEffect(() => {
         end: convertDateFormat(`${reservation.endDate} ${reservation.toTime}:00`)
       },
       color: getRandomColor(),
-      isEditable: false,
+      isEditable: true,
       id: reservation.id || 'unknown-id',
       description: ` رقم الزبون :${reservation.customerManegentPhonenumber}
      <p>  سعر الإجمالي : ${reservation.totalPrice}</p>
