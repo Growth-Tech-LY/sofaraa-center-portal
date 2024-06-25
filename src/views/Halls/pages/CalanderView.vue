@@ -1,4 +1,7 @@
 <template>
+  <div>
+    <p class="text-2xl mt-2">جدول الحجوزات</p>
+  </div>
   <div class="calendar-container is-light-mode relative">
     <Qalendar :events="events" :config="config" />
   </div>
@@ -46,7 +49,8 @@ interface Config {
     dayNames: string[]
     dayNameFormat?: (dayName: string) => string
   }
-  locale: string
+  locale: string,
+  
   // showCurrentTime: Boolean
 }
 
@@ -62,7 +66,7 @@ const config = ref<Config>({
     dayNames: ['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'],
     dayNameFormat: (dayNames: string) => dayNames // If the library allows formatting function
   },
-  locale: 'ar-AR'
+  locale: 'en-US'
   // showCurrentTime: true
 })
 
@@ -92,7 +96,7 @@ watchEffect(() => {
         end: convertDateFormat(`${reservation.endDate} ${reservation.toTime}:00`)
       },
       color: getRandomColor(),
-      isEditable: true,
+      isEditable: false,
       id: reservation.id || 'unknown-id',
       description: ` رقم الزبون :${reservation.customerManegentPhonenumber}
      <p>  سعر الإجمالي : ${reservation.totalPrice}</p>
@@ -156,7 +160,8 @@ console.log(formattedDateStr) // Outputs: 2024-06-27 11:00
 @import 'qalendar/dist/style.css';
 .calendar-container {
   width: 100%;
-  height: 800px;
+  height: 900px;
   padding-block: 2rem;
+  
 }
 </style>

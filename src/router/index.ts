@@ -28,6 +28,11 @@ const router = createRouter({
       component: MainLayout,
       children: [
         {
+          path: '',
+          name: 'calander',
+          component: CalanderView
+        },
+        {
           path: '/reservations',
           children: [
             {
@@ -46,11 +51,11 @@ const router = createRouter({
               component: EditResrvedHall
             },
             
-            {
-              path: 'calander',
-              name: 'calander',
-              component: CalanderView
-            }
+            // {
+            //   path: 'calander',
+            //   name: 'calander',
+            //   component: CalanderView
+            // }
           ]
         },
 

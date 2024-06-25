@@ -1,5 +1,5 @@
 import apiClient from '@/axios'
-import type {   PostReservationHalls  , ReservationTable , Postcustomer , CheckHallReservation, PutReservation} from './models/reserveModels'
+import type {   PostReservationHalls  , ReservationTable , Postcustomer , CheckHallReservation, PutReservation, editRestPrice} from './models/reserveModels'
 import type { Hall } from '@/core/models/Mainmodels'
 import type { List } from '../Couress/models/courses' 
 
@@ -31,6 +31,12 @@ const putResHall = (body: PutReservation) => {
 
 }
 
+const putRestPrice = (body: editRestPrice) => {
+  return apiClient.put('HallReservations/UpdateHallReservationRestPrice', body)
+
+}
+
+
 const getResHallByID = (id: string) => {
   return apiClient.get<ReservationTable>(`HallReservations/${id}`).then((response) => {
     return response.data
@@ -55,7 +61,7 @@ const HallScheduleByMonth = (paginationParams : DatePaginationParamas) => {
     })
 }
   
-export {  Postreservation ,getResHallTaple , getResHallByID , deleteResHall , putResHall , postCustomer , CheckHallReserved ,HallScheduleByMonth }
+export {  Postreservation ,getResHallTaple , getResHallByID , deleteResHall , putResHall , postCustomer , CheckHallReserved ,HallScheduleByMonth , putRestPrice  }
 
 
 

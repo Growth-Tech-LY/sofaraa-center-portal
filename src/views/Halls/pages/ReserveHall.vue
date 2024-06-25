@@ -80,7 +80,7 @@
           variant="outlined"
         ></v-autocomplete>
         <v-btn
-          class=" mt-2 "
+          class="mt-2"
           size="x-large"
           color="cyan-darken-2"
           density="comfortable"
@@ -90,7 +90,7 @@
         >
           <v-tooltip activator="parent" location="bottom">تفاصيل الخدمات</v-tooltip></v-btn
         >
-        
+
         <p class="ms-3 text-lg font-bold text-gray-900 text-center mt-4">
           <span class="text-red-500">سعر الخدمة :</span> {{ selectedServicesPrice }} د.ل
         </p>
@@ -107,27 +107,20 @@
       </div>
 
       <div class="flex item-center justify-center gap-8">
-        <v-text-field
-          v-model="formDate"
-          dir="rtl"
-          :prepend-icon="mdiCalendarRange"
-          clearable
+        <v-date-input
+          
           label="التاريخ من"
-          placeholder="ادخل التاريخ من ..."
           variant="outlined"
-          type="date"
-        ></v-text-field>
-        <v-text-field
-          v-model="toDate"
-          dir="rtl"
-          :prepend-icon="mdiCalendarRange"
-          :rules="[Rules.dateRange]"
-          clearable
+          placeholder="ادخل التاريخ من ..."
+        >
+        </v-date-input>
+
+        <v-date-input
           label="التاريخ الى"
           placeholder="ادخل التاريخ الى ..."
-          variant="outlined"
-          type="date"
-        ></v-text-field>
+          :hide-actions="true"
+           variant="outlined"
+        ></v-date-input>
       </div>
 
       <div class="flex item-center justify-center gap-4 mb-2">
@@ -271,15 +264,6 @@
     <AddCustomerRes @close="toggeAddCustomer" @refresh="OngetCustomers" />
   </div>
 
-  <!-- <div
-    data-aos="fade-left"
-    v-if="servicesDetials"
-    @click.self="toggeServicesDetials"
-    class="fixed h-screen w-full top-0 left-0 bg-gray-500/50 z-[1005]"
-  >
-    <ScheduleView @close="toggeAddCustomer" @refresh="OngetCustomers" />
-  </div> -->
-
   <div
     data-aos="fade-left"
     v-if="servicesDetials"
@@ -299,7 +283,7 @@ import {
   mdiBookVariant
 } from '@mdi/js'
 import AddCustomerRes from './AddCustomerRes.vue'
-
+import { VDateInput } from 'vuetify/labs/components'
 import { onMounted, ref, watchEffect } from 'vue'
 import { getHalls, getCustomers, getServices } from '@/core/services/mainServices'
 import { CheckHallReserved, Postreservation } from '../hallReserve-services'
@@ -460,8 +444,7 @@ watchEffect(() => {
   for (let i = 0; i < servicesPrice.value.length; i++) {
     selectedServicesPrice.value = selectedServicesPrice.value + servicesPrice.value[i].servicePrice
     servicesId.value.push(servicesPrice.value[i].id)
-    console.log(servicesId.value);
-    
+    console.log(servicesId.value)
   }
 })
 
@@ -646,7 +629,6 @@ const checkTime = () => {
 }
 
 watchEffect(() => {
-  console.log(Payment.value);
-  
+  console.log(Payment.value)
 })
 </script>

@@ -8,24 +8,39 @@
         :prepend-icon="mdiLogoutVariant"
         @click="LogOutbtn"
         variant="elevated"
-        >تسجيل الخروج</v-btn
       >
+        تسجيل الخروج
+      </v-btn>
+    </div>
+    <div>  
+      <img class="mx-auto" width="300" src="../assets/icons/sofaraaLogo2.png" alt="">
     </div>
     <div>
-      <h1 class="text-4xl font-bold text-gray-500 pr-20">
-        <v-img class="mx-auto" width="350" src="/src/assets/icons/sofaraaLogo2 .png"></v-img>
-      </h1>
+      <v-btn
+        :to="{ name: 'calander' }"
+        class="mt-4 text-white mr-5"
+        color="blue-accent-4"
+        rounded="lg"
+        :prepend-icon="mdiCalendarClockOutline"
+        variant="elevated"
+      >
+        رجوع لجدول الحجوزات
+      </v-btn>
     </div>
-    <div></div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { mdiLogoutVariant } from '@mdi/js'
+
+import { mdiLogoutVariant, mdiCalendarClockOutline } from '@mdi/js'
 import router from '@/router'
+
+
 
 const LogOutbtn = () => {
   localStorage.removeItem('token')
   router.replace('/login')
 }
+
+
 </script>

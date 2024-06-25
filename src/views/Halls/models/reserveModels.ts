@@ -78,6 +78,12 @@ type Postcustomer = {
   email: string
 }
 
+type editRestPrice = {
+  id: string,
+  restPrice: number,
+}
+
+
 type CheckHallReservation = {
   hall_ManagementId: string
   fromTime: number
@@ -86,4 +92,4 @@ type CheckHallReservation = {
   endDate: string
 }
 
-export type { packages, PostReservationHalls, ReservationTable, Postcustomer, CheckHallReservation , PutReservation }
+export type { packages, PostReservationHalls, ReservationTable, Postcustomer, CheckHallReservation , PutReservation , editRestPrice}
