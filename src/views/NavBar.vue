@@ -27,8 +27,8 @@
          جدول الحجوزات
       </v-btn>
     </div>
-  </div>س
-</template>
+  </div>
+  </template>
 
 <script setup lang="ts">
 
