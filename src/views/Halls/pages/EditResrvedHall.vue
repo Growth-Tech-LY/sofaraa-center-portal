@@ -70,7 +70,7 @@
           multiple
           chips
           item-title="name"
-          item-value="servicePrice"
+          item-value="id"
           placeholder="نوع الخدمة"
           :return-object="true"
           variant="outlined"
@@ -91,7 +91,7 @@
         ></v-text-field>
       </div>
 
-      <div class="flex item-center justify-center gap-8">
+      <div class="flex item-center justify-center gap-8 relative">
         <v-date-input
           v-model="startDate"
           class="col-start-3"
@@ -110,6 +110,7 @@
           variant="outlined"
           :hide-actions="true"
         ></v-date-input>
+        <p v-show="dateError" class="text-red-500 text-sm absolute left-8 bottom-0 ">القيمة أصغر من تاريخ البدء</p>
       </div>
 
       <div class="flex item-center justify-center gap-8">
@@ -133,6 +134,20 @@
           :rules="[Rules.time]"
           :prepend-icon="mdiTimerOutline"
         ></v-text-field>
+        <div class="relative flex">
+          <v-btn
+            color="blue accent-4"
+            :disabled="!startDate || !endDate || !toTime || !fromTime || !hallName"
+            :loading="loadingbtn"
+            class="mt-2"
+            @click="checkTime"
+            >تحقق من القاعة</v-btn
+          >
+
+          <span v-show="reservationsChecked" class="absolute top-3 -left-8"
+            ><v-icon size="large" color="green accent-3" :icon="mdiCheckCircle"></v-icon
+          ></span>
+        </div>
       </div>
 
       <div class="flex item-center justify-center gap-8">
@@ -190,7 +205,8 @@
             !toTime ||
             !Payment ||
             !reserveType ||
-            !paid
+            !paid ||
+            dateError
           "
           size="large"
           class="mx-3"
@@ -207,13 +223,27 @@
     <v-snackbar v-model="showAddMessage" :timeout="2000" color="success" :location="'top left'">
       تم التعديل بنجاح
     </v-snackbar>
+    <v-snackbar
+      v-model="snackbar.show"
+      :timeout="2000"
+      color="blue-darken-2"
+      :location="'top center'"
+    >
+      {{ snackbar.message }}
+    </v-snackbar>
   </div>
 </template>
 <script setup lang="ts">
-import { mdiPlus, mdiTimerOutline, mdiCalendarRange, mdiArrowRightTop } from '@mdi/js'
+import {
+  mdiPlus,
+  mdiTimerOutline,
+  mdiCalendarRange,
+  mdiArrowRightTop,
+  mdiCheckCircle
+} from '@mdi/js'
 import { onMounted, ref, watchEffect } from 'vue'
 import { getHalls, getCustomers, getServices } from '@/core/services/mainServices'
-import { Postreservation } from '../hallReserve-services'
+import { CheckHallReserved, Postreservation } from '../hallReserve-services'
 import { putResHall, getResHallByID } from '../hallReserve-services'
 import type { Hall, Service, Customer } from '@/core/models/Mainmodels'
 import router from '@/router'
@@ -234,13 +264,19 @@ watchEffect(() => {
 //------------------------------
 
 const form = ref(false)
+const dateError = ref(false)
+const reservationsChecked = ref(false)
+const snackbar = ref({
+  show: false,
+  message: ''
+})
 
 const Rules = {
-  time: (value: number) => (value > 0 && value <= 24) || 'يجب التكون القيمة بين ال 1 إلي 24 ',
-  timeDiffrince: (value: number) =>
-    value > fromTime.value || ' يجب أن يكون قيمة الحقل أكبر من الوقت من',
-  paymentCount: (value: number) => value <= totalPayment.value || 'قيمة المدخلة اكبر من الإجمالي '
-}
+  time: (value: number) => (value > 0 && value <= 24) || 'يجب أن تكون القيمة بين 1 إلى 24',
+  timeDifference: (value: number) => value > fromTime.value || 'يجب أن تكون قيمة الحقل أكبر من الوقت من',
+  paymentCount: (value: number) => value <= totalPayment.value || 'القيمة المدخلة أكبر من الإجمالي',
+};
+
 
 const closeModel = () => {
   router.replace({ name: 'reservations-list' })
@@ -270,6 +306,7 @@ const packagePrice = ref<PaymentMethod | null>(null)
 
 const individualNumber = ref<number>(1)
 const showAddMessage = ref(false)
+const loadingbtn = ref(false)
 const fromTime = ref(0)
 const toTime = ref(0)
 const firstCheck = ref(1)
@@ -407,13 +444,13 @@ const submit = () => {
       numberOfRquiredHours: countOfrequiedTime.value,
       numberOfIndividuals: individualNumber.value,
       totalPrice: totalPayment.value,
-      payedPrice: paid.value,
-      restPrice: remainingPayment.value
+      payedPrice: paid.value
+      // restPrice: remainingPayment.value
     }
     putResHall(body)
       .then(() => {
         showAddMessage.value = true
-        router.replace('/hall-list')
+        router.replace({ name: 'reservations-list' })
       })
       .catch((error) => {
         console.log(error)
@@ -571,7 +608,13 @@ watchEffect(() => {
 // }
 
 watchEffect(() => {
-  if (resToEdit.value) {
+  if (startDate.value && endDate.value) {
+    if (endDate.value < startDate.value ) {
+      dateError.value=true
+      
+    } else if (endDate.value >= startDate.value) {
+      dateError.value= false
+    } 
   }
 })
 
@@ -580,4 +623,52 @@ const formatDate = (dateString: string) => {
 
   return new Date(`${month}/${day}/${year}`)
 }
+
+const checkTime = () => {
+  loadingbtn.value = true
+  if (hallName.value) {
+    const body = {
+      hall_ManagementId: hallName.value.id,
+      fromTime: fromTime.value,
+      toTime: toTime.value,
+      startDate: startDate.value,
+      endDate: endDate.value
+    }
+    CheckHallReserved(body)
+      .then((response) => {
+        console.log(response)
+        loadingbtn.value = false
+
+        if (response.message === 'Hall is available for the requested time.') {
+          snackbar.value.message = 'الحجز متاح'
+          reservationsChecked.value = true
+        } else {
+          snackbar.value.message = 'الحجز غير متاح'
+          reservationsChecked.value = false
+        }
+
+        snackbar.value.show = true
+      })
+      .catch((error: any) => {
+        console.log(error)
+        loadingbtn.value = false
+
+        if (error.response && error.response.data && error.response.data.message) {
+          const errorMessage = error.response.data.message
+
+          if (errorMessage === 'Hall is already reserved during the requested time.') {
+            snackbar.value.message = 'الحجز غير متاح'
+            reservationsChecked.value = false
+          } else {
+            snackbar.value.message = 'حدث خطأ ما. حاول مرة أخرى.'
+          }
+        } else {
+          snackbar.value.message = 'حدث خطأ ما. حاول مرة أخرى.'
+        }
+
+        snackbar.value.show = true
+      })
+  }
+}
+
 </script>
