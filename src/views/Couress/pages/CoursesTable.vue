@@ -1,15 +1,8 @@
 <template>
   <div class="pt-6">
-    <div class="flex w-5/6 mx-auto">
-      <v-btn
-        class="mt-4 text-white"
-        color="green-accent-4"
-        rounded="lg"
-        :prepend-icon="mdiPlus"
-        @click="toggelForm"
-        >اضافة حجز</v-btn
-      >
-      <div class="flex flex-col w-1/2">
+    <p class="text-2xl">حجورات الدورات التدربية</p>
+    <div class="flex w-full mx-auto justify-between">
+      <div class="flex flex-col">
         <div class="flex justify-between items-center relative">
           <v-btn @click="searchToggle" size="large" variant="text" :prepend-icon="mdiFilter">
             <v-tooltip activator="parent" location="bottom">بحث</v-tooltip></v-btn
@@ -112,6 +105,15 @@
           </div>
         </div>
       </div>
+      <v-btn
+        class="mt-4 ml-5 text-white"
+        color="pink-darken-2"
+        rounded="lg"
+        :prepend-icon="mdiPlus"
+        @click="toggelForm"
+        >اضافة حجز</v-btn
+      >
+
       <!--               The Coureses Add Form   Start       -->
 
       <div
@@ -138,11 +140,33 @@
         @click.self="viewStudents = false"
         class="fixed h-screen w-full top-0 left-0 bg-gray-500/50 z-[1005]"
       >
+        <v-btn
+          @click="viewStudents = false"
+          class="absolute top-6 right-1/4"
+          :prepend-icon="mdiArrowURightBottom"
+          color="pink-darken-2"
+          >أغلاق</v-btn
+        >
         <div data-aos="zoom-in-right">
-          <ViewStudents :trainingCouresReservationsId="courseId" @close="viewStudents = false" />
+          <ViewStudents :trainingCouresReservationsId="courseId" />
         </div>
       </div>
 
+      <!-- view services model  -->
+      <div
+        v-if="viewServ"
+        class="fixed h-screen w-full top-0 left-0 bg-gray-500/50 z-[1005]"
+        @click.self="toggelServies"
+      >
+        <v-btn
+          @click="toggelServies"
+          class="absolute top-6 right-1/4"
+          :prepend-icon="mdiArrowURightBottom"
+          color="pink-darken-2"
+          >أغلاق</v-btn
+        >
+        <viewService :serv="service" />
+      </div>
       <!-- [     The Coureses Add Form Start           >>      ]  -->
 
       <div
@@ -200,6 +224,18 @@
       :search="searcher"
       item-value="name"
     >
+      <!-- view the services PopUp  -->
+      <template #[`item.serviceManagementName`]="{ item }">
+        <v-btn
+          :icon="mdiInformationSlabCircleOutline"
+          class="text-sm ml-4"
+          size="sm"
+          color="blue"
+          variant="text"
+          @click="openViewServies(item.serviceManagementName)"
+        ></v-btn>
+      </template>
+
       <!-- The  Actions  in the table  Start -->
 
       <template #[`item.actions`]="{ item }">
@@ -258,14 +294,15 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import CoursesForm from './CoursesAddForm.vue'
-
+import viewService from '../components/viewService.vue'
 import {
   mdiPlus,
   mdiPencil,
   mdiDelete,
   mdiAccountMultiplePlus,
   mdiAccountEye,
-  mdiFilter
+  mdiFilter,
+  mdiArrowURightBottom
 } from '@mdi/js'
 import { deleteCoures, getCourses } from '../CoursesService'
 import CoursesEditForm from './CoursesEditForm.vue'
@@ -276,7 +313,8 @@ import {
   mdiCalendarRange,
   mdiOrderAlphabeticalAscending,
   mdiHumanMaleBoard,
-  mdiOfficeBuildingMarker
+  mdiOfficeBuildingMarker,
+  mdiInformationSlabCircleOutline
 } from '@mdi/js'
 import type { Hall, Teacher, Coures } from '@/core/models/Mainmodels'
 import { getCouresesFromMang, getHalls, getTeacher } from '@/core/services/mainServices'
@@ -312,11 +350,13 @@ const formPopUP = ref(false)
 const editPopUp = ref(false)
 const confirmDelete = ref(false)
 const viewStudents = ref(false)
+const viewServ = ref(false)
 const courseId = ref<string>('')
 const courseIdDelete = ref<string>('')
 const DeleteMsg = ref(false)
 const totalCustomers = ref(0)
 const coursesPrice = ref<number>(0)
+const service = ref<string[]>()
 const paginations = ref<PaginationCoures>({
   page: 1,
   size: 10,
@@ -423,8 +463,15 @@ const searchToggle = () => {
 const toggelForm = () => {
   formPopUP.value = !formPopUP.value
 }
+const openViewServies = (services: string[]) => {
+  toggelServies()
+  service.value = services
+}
 const toggelEdit = () => {
   editPopUp.value = !editPopUp.value
+}
+const toggelServies = () => {
+  viewServ.value = !viewServ.value
 }
 const OpenAddstudent = (item: Couress) => {
   studentPopUp.value = true

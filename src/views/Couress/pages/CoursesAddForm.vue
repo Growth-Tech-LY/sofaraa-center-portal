@@ -1,6 +1,6 @@
 <template>
   <div
-    class="mt-12 bg-white border-t-[20px] border-[#BF3B74] w-3/4 mx-auto py-16 px-16 rounded-lg shadow-lg"
+    class="mt-12 bg-white border-t-[20px] border-[#BF3B74] w-3/4 mx-auto py-16 px-16 rounded-lg shadow-lg h-3/4"
   >
     <h2 class="text-2xl">- حجز دورة</h2>
     <v-form v-model="form" class="grid grid-cols-4 gap-4 mt-8">
@@ -154,6 +154,7 @@
           color="blue"
           @click="checkdate"
           :prepend-icon="mdiTimerEditOutline"
+          :disabled="!timeFrom || !timeTo || !StartDate || !EndDate || !HallId"
           >تحقق</v-btn
         >
         <v-btn
@@ -321,14 +322,16 @@ const checkdate = () => {
       if (response.message === 'TrainingCoures is available for the requested time.') {
         ReservMsg.value = true
         availableResrv.value = true
+        NotAvailableResrv.value = false
       }
     })
     .catch((error: any) => {
       if (error.response && error.response.data && error.response.data.message) {
         const errorMessage = error.response.data.message
 
-        if (errorMessage === 'The checkTrainingCouresReservations field is required.') {
+        if (errorMessage === 'TrainingCoures is already reserved during the requested time.') {
           NotAvailableResrv.value = true
+          availableResrv.value = false
         }
       }
     })
