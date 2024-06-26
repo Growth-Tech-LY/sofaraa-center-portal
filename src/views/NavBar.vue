@@ -24,10 +24,10 @@
         :prepend-icon="mdiCalendarClockOutline"
         variant="elevated"
       >
-        رجوع لجدول الحجوزات
+         جدول الحجوزات
       </v-btn>
     </div>
-  </div>
+  </div>س
 </template>
 
 <script setup lang="ts">
