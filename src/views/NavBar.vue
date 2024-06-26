@@ -1,32 +1,46 @@
 <template>
-  <div class="flex items-center justify-between w-[90%] mx-auto mt-2 mb-6">
+  <div class="flex items-center justify-between w-[60%] md:w-[80%]  mx-auto mt-2 mb-6 px-8 lg:px-0 ">
     <div>
       <v-btn
-        class="mt-4 text-white"
-        color="red-darken-1"
+        class="mt-4 text-white mr-5"
+        color="pink-accent-4"
         rounded="lg"
         :prepend-icon="mdiLogoutVariant"
         @click="LogOutbtn"
-        variant="plain"
-        >تسجيل الخروج</v-btn
+        variant="elevated"
       >
+        تسجيل الخروج
+      </v-btn>
     </div>
-    <div>
-      <h1 class="text-4xl font-bold text-gray-500 pr-20">
-        <v-img class="mx-auto" width="350" src="/src/assets/icons/sofaraaLogo2 .png"></v-img>
-
-      </h1>
+    <div>  
+      <img class="mx-auto" width="300" src="../assets/icons/sofaraaLogo2.png" alt="">
     </div>
-    <div></div>
+    <div class="lg:mr-14">
+      <v-btn
+        :to="{ name: 'calander' }"
+        class="mt-4 text-white mr-5"
+        color="blue-accent-4"
+        rounded="lg"
+        :prepend-icon="mdiCalendarClockOutline"
+        variant="elevated"
+      >
+        رجوع لجدول الحجوزات
+      </v-btn>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { mdiLogoutVariant } from '@mdi/js'
+
+import { mdiLogoutVariant, mdiCalendarClockOutline } from '@mdi/js'
 import router from '@/router'
+
+
 
 const LogOutbtn = () => {
   localStorage.removeItem('token')
   router.replace('/login')
 }
+
+
 </script>

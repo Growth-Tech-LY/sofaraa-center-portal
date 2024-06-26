@@ -1,14 +1,14 @@
 import apiClient from '@/axios'
-import type {   PostReservationHalls  , ReservationTable , Postcustomer , CheckHallReservation, PutReservation} from './models/reserveModels'
+import type {   PostReservationHalls  , ReservationTable , Postcustomer , CheckHallReservation, PutReservation, editRestPrice} from './models/reserveModels'
 import type { Hall } from '@/core/models/Mainmodels'
 import type { List } from '../Couress/models/courses' 
 
-import type { PaginationParamas    } from '@/core/models/pagination-params'
+import type { DatePaginationParamas, PaginationParamas    } from '@/core/models/pagination-params'
 
 
 
   const Postreservation = (body: PostReservationHalls) => {
-  return apiClient.post<ReservationTable>('HallReservations', body)
+  return apiClient.post<ReservationTable>('HallReservations/CreateHallReservation', body)
 }
 
 
@@ -31,6 +31,12 @@ const putResHall = (body: PutReservation) => {
 
 }
 
+const putRestPrice = (body: editRestPrice) => {
+  return apiClient.put('HallReservations/UpdateHallReservationRestPrice', body)
+
+}
+
+
 const getResHallByID = (id: string) => {
   return apiClient.get<ReservationTable>(`HallReservations/${id}`).then((response) => {
     return response.data
@@ -38,7 +44,7 @@ const getResHallByID = (id: string) => {
 }
 
 const postCustomer = (body: Postcustomer) => {
-  return apiClient.post('HallReservations/AddCustomers', body)
+  return apiClient.post('HallReservations/CreateCustomer', body)
 }
 
 const CheckHallReserved = (body: CheckHallReservation) => {
@@ -47,9 +53,15 @@ const CheckHallReserved = (body: CheckHallReservation) => {
   })
 }
 
-
-
-export {  Postreservation ,getResHallTaple , getResHallByID , deleteResHall , putResHall , postCustomer , CheckHallReserved  }
+const HallScheduleByMonth = (paginationParams : DatePaginationParamas) => {
+  return apiClient
+    .get<List<ReservationTable[]>>('HallReservations', { params: paginationParams })
+    .then((response) => {
+      return response.data
+    })
+}
+  
+export {  Postreservation ,getResHallTaple , getResHallByID , deleteResHall , putResHall , postCustomer , CheckHallReserved ,HallScheduleByMonth , putRestPrice  }
 
 
 

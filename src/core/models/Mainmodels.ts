@@ -2,6 +2,7 @@ type Service = {
   id: string
   name: string
   servicePrice: number
+  descreption: string
 }
 
 type Customer = {
@@ -15,7 +16,7 @@ type Hall = {
   id: string
   name: string
   hourPrice: number
-  halfDayPrice: number
+  dayPrice: number
   weekPrice: number
   monthPrice: number
 }
@@ -28,6 +29,7 @@ type Coures = {
   subscriptionPrice: number
   curriculum: string
   level: string
+  price: number
 }
 
 type Teacher = {

@@ -1,13 +1,16 @@
 <template>
   <div class="mx-auto mt-12 px-4">
     <div class="flex justify-between items-center">
-      <p class="text-2xl">حجوزات القاعات</p>
+      <p class="text-2xl">إدارة حجوزات القاعات</p>
 
-      <RouterLink :to="{ name: 'hall-reserve' }">
-        <v-btn class="mt-4 text-white" color="pink-darken-2" rounded="lg" :prepend-icon="mdiPlus"
-          >اضافة حجز
-        </v-btn>
-      </RouterLink>
+      <v-btn
+        :to="{ name: 'hall-reserve' }"
+        class="mt-4 text-white"
+        color="pink-darken-2"
+        rounded="lg"
+        :prepend-icon="mdiPlus"
+        >اضافة حجز
+      </v-btn>
     </div>
     <div class="flex justify-between items-center relative">
       <v-btn @click="searchToggle" size="large" variant="text" :prepend-icon="mdiFilter">
@@ -96,41 +99,6 @@
       </div>
     </div>
 
-    <!-- <td class="w-3/4 mx-auto flex justify-center items-center mb-2">
-      <div
-        v-show="popUp"
-        @click.self="toggelPopUp"
-        class="fixed h-screen w-full top-0 left-0 bg-gray-500/50 z-[1005]"
-      >
-        <ReserveHall
-          @refresh="
-            onOptionsChange({
-              page: paginations.page,
-              itemsPerPage: paginations.size
-            })
-          "
-          @close="toggelPopUp"
-        />
-      </div>
-      <div
-        v-if="popUp2"
-        @click.self="toggelPopUp2"
-        class="fixed h-screen w-full top-0 left-0 bg-gray-500/50 z-[1005]"
-      >
-        <editHall
-          @editDone="EditMessage"
-          @refresh="
-            onOptionsChange({
-              page: paginations.page,
-              itemsPerPage: paginations.size
-            })
-          "
-          @closeIt="toggelPopUp2"
-          :id="idToEdit"
-        />
-      </div>
-    </td> -->
-
     <v-data-table-server
       class="px-4"
       v-model:items-per-page="paginations.size"
@@ -144,47 +112,52 @@
       @update:options="onOptionsChange"
     >
       <template #[`item.actions`]="{ item }">
-        <v-btn
-          color="blue-darken-2"
-          variant="text"
-          size="medium"
-          class="me-2"
-          :append-icon="mdiNote"
-          @click="openDetials(item)"
-        >
-          <v-tooltip activator="parent" location="bottom">عرض التفاصيل</v-tooltip>
-        </v-btn>
-        <v-btn
-          color="green-darken-2"
-          variant="text"
-          size="medium"
-          class="me-2"
-          :append-icon="mdiPrinter"
-          @click="openPrint(item)"
-        >
-          <v-tooltip activator="parent" location="bottom">إيصال قبض </v-tooltip>
-        </v-btn>
-        <RouterLink :to="{ name: 'edit-reserved', params: { id: item.id } }">
+        <div class="grid grid-cols-3 gap-1 justify-center items-center">
+          <v-btn
+            color="blue-darken-2"
+            variant="text"
+            class="mb-1"
+            size="medium"
+            :append-icon="mdiNote"
+            @click="openDetials(item)"
+          >
+            <v-tooltip activator="parent" location="bottom">عرض التفاصيل</v-tooltip>
+          </v-btn>
+          <v-btn
+            color="blue-grey"
+            variant="text"
+            size="medium"
+            :append-icon="mdiPrinter"
+            @click="openPrint(item)"
+          >
+            <v-tooltip activator="parent" location="bottom">إيصال قبض </v-tooltip>
+          </v-btn>
+          <RouterLink :to="{ name: 'edit-reserved', params: { id: item.id } }">
+            <v-btn variant="text" size="medium" color="yellow-darken-2" :append-icon="mdiPencil">
+              <v-tooltip activator="parent" location="bottom">تعديل</v-tooltip>
+            </v-btn>
+          </RouterLink>
+
           <v-btn
             variant="text"
-            class="me-2"
+            @click="openEditRestPrice(item)"
             size="medium"
-            color="yellow-darken-2"
-            :append-icon="mdiPencil"
+            color="green-darken-2"
+            :append-icon="mdiCash"
           >
-            <v-tooltip activator="parent" location="bottom">تعديل</v-tooltip>
+            <v-tooltip activator="parent" location="bottom">تعديل المتبقي </v-tooltip>
           </v-btn>
-        </RouterLink>
 
-        <v-btn
-          variant="text"
-          size="medium"
-          color="red-darken-2"
-          :append-icon="mdiDelete"
-          @click="openDeleteModal(item)"
-        >
-          <v-tooltip activator="parent" location="bottom">حذف</v-tooltip>
-        </v-btn>
+          <v-btn
+            variant="text"
+            size="medium"
+            color="red-darken-2"
+            :append-icon="mdiDelete"
+            @click="openDeleteModal(item)"
+          >
+            <v-tooltip activator="parent" location="bottom">حذف</v-tooltip>
+          </v-btn>
+        </div>
       </template>
       <template v-slot:[`item.reservationsTypeId`]="{ value }">
         <p v-if="value == 1">مبديء</p>
@@ -192,8 +165,8 @@
       </template>
       <template v-slot:[`item.paymentMethodId`]="{ value }">
         <p v-if="value == 1">نقدا</p>
-        <p v-else-if="value == 2">شيك</p>
-        <p v-else-if="value == 3">بطاقة مصرفية</p>
+        <p v-else-if="value == 2">بطاقة مصرفية</p>
+        <p v-else-if="value == 3">شيك</p>
       </template>
     </v-data-table-server>
   </div>
@@ -235,7 +208,7 @@
     </v-snackbar>
   </div>
   <div
-    data-aos="flip-down"
+    data-aos="fade-left"
     v-if="popDetials"
     @click.self="toggeDetials"
     class="fixed h-screen w-full top-0 left-0 bg-gray-500/50 z-[1005]"
@@ -251,14 +224,44 @@
   >
     <ReceiptView :id="idToPrint" @close="toggelReceipt" />
   </div>
+
+  <div
+    data-aos="fade-left"
+    v-if="popRestPrice"
+    @click.self="toggeRestPrice"
+    class="fixed h-screen w-full top-0 left-0 bg-gray-500/50 z-[1005]"
+  >
+    <EditRestPrice
+      :id="idToEdit"
+      @close="toggeRestPrice"
+      @refresh="
+        onOptionsChange({
+          page: paginations.page,
+          itemsPerPage: paginations.size
+        })
+      "
+      @editDone="EditMessage"
+    />
+  </div>
 </template>
 
 <script lang="ts" setup>
 import { onMounted, ref } from 'vue'
 
-import { mdiDelete, mdiPencil, mdiPlus, mdiFilter, mdiNote, mdiCalendarRange , mdiReceipt ,mdiPrinter } from '@mdi/js'
+import {
+  mdiDelete,
+  mdiPencil,
+  mdiPlus,
+  mdiFilter,
+  mdiNote,
+  mdiCalendarRange,
+  mdiReceipt,
+  mdiPrinter,
+  mdiCash
+} from '@mdi/js'
 import ReceiptView from './ReceiptView.vue'
 import ReserveHall from './ReserveHall.vue'
+import EditRestPrice from './EditRestPrice.vue'
 import type { Hall, Customer, Service } from '@/core/models/Mainmodels'
 import { deleteResHall, getResHallTaple } from '../hallReserve-services'
 import type { PaginationParamas } from '@/core/models/pagination-params'
@@ -291,6 +294,7 @@ const confirmDelete = ref(false)
 const showDeleteMessage = ref(false)
 const HallDeleteId = ref<string>('')
 const popDetials = ref(false)
+const popRestPrice = ref(false)
 const idToEdit = ref('')
 const idToPrint = ref('')
 
@@ -383,12 +387,22 @@ const toggeDetials = () => {
   popDetials.value = !popDetials.value
 }
 
-
+const toggeRestPrice = () => {
+  popRestPrice.value = !popRestPrice.value
+}
 
 const openDetials = (item: ReservationTable) => {
   idToEdit.value = item.id
   toggeDetials()
-  console.log('this is :  ', idToEdit.value)
+}
+
+const openEditRestPrice = (item: ReservationTable) => {
+  idToEdit.value = item.id
+  toggeRestPrice()
+}
+
+const EditMessage = () => {
+  showEditMessage.value = !showEditMessage.value
 }
 
 const receipt = ref<ReservationTable>()
@@ -396,10 +410,7 @@ const receipt = ref<ReservationTable>()
 const openPrint = (item: ReservationTable) => {
   idToPrint.value = item.id
   toggelReceipt()
-  console.log('this is :  ', idToEdit.value)
 }
-
-
 
 onMounted(async () => {
   onGetHallsRes(paginations.value)

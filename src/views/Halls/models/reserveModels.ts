@@ -10,7 +10,7 @@ type packages = {
 type Postreservation = {
   fromTime: number
   toTime: number
-  startDate: number
+  startDate: Date | undefined
   endDate: string
   typeOfReservations: number
 }
@@ -25,8 +25,8 @@ type PostReservationHalls = {
   restPrice: number
   fromTime: number
   toTime: number
-  startDate: string
-  endDate: string
+  startDate: Date | undefined
+  endDate: Date | undefined
   reservationsTypeId: number
   paymentMethodId: number
   numberOfRquiredHours: number
@@ -60,8 +60,8 @@ type PutReservation = {
   customerManegentId: string
   fromTime: number
   toTime: number
-  startDate: string
-  endDate: string
+  startDate: Date | undefined
+  endDate: Date | undefined
   reservationsTypeId: number
   paymentMethodId: number
   numberOfRquiredHours: number
@@ -78,12 +78,18 @@ type Postcustomer = {
   email: string
 }
 
-type CheckHallReservation = {
-  hallManagementId: string
-  fromTime: number
-  toTime: number
-  startDate: string
-  endDate: string
+type editRestPrice = {
+  id: string,
+  restPrice: number,
 }
 
-export type { packages, PostReservationHalls, ReservationTable, Postcustomer, CheckHallReservation , PutReservation }
+
+type CheckHallReservation = {
+  hall_ManagementId: string
+  fromTime: number
+  toTime: number
+    startDate: Date | undefined
+  endDate: Date | undefined
+}
+
+export type { packages, PostReservationHalls, ReservationTable, Postcustomer, CheckHallReservation , PutReservation , editRestPrice}

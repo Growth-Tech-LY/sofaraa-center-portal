@@ -1,6 +1,6 @@
 <template>
   <div
-    class="mt-16 bg-white border-t-[20px] border-[#BF3B74] w-5/6 mx-auto p-7 sm:p-0 max-h-screen rounded-lg shadow-lg"
+    class="mt-16 bg-white border-t-[20px] border-[#BF3B74] w-5/6 mx-auto p-7  sm:p-0 max-h-screen rounded-lg shadow-lg"
   >
     <div ref="printSection" class="mx-auto w-1/3 px-10">
       <img class="w-96 mb-8 sm:mb-0" src="../../../assets/icons/sofaraaLogo2.png" alt="" />
@@ -20,7 +20,7 @@
         </div>
       </div>
     </div>
-    <div class= "flex lg:gap-4 mr-8 lg:pb-2">
+    <div class= "flex lg:gap-4 mr-8 lg:pb-2 lg:mt-8">
       <v-btn @click="onPrintCard" color="pink-darken-2">طباعة </v-btn>
       <v-btn @click="closeModel" color="red-darken-2">إغلاق </v-btn>
     </div>
@@ -95,11 +95,11 @@ onMounted(() => {
 })
 
 watchEffect(() => {
-  if (reservedhall.value?.reservationsTypeId == 1) {
+  if (reservedhall.value?.paymentMethodId == 1) {
     typeOfPayment.value = 'نقدا'
-  } else if (reservedhall.value?.reservationsTypeId == 2) {
+  } else if (reservedhall.value?.paymentMethodId == 2) {
     typeOfPayment.value = 'بطاقة مصرفية'
-  } else if (reservedhall.value?.reservationsTypeId == 3) {
+  } else if (reservedhall.value?.paymentMethodId == 3) {
     typeOfPayment.value = 'شيك'
   }
 })

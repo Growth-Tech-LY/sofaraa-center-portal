@@ -65,7 +65,7 @@
           type="number"
         ></v-text-field>
       </div>
-      <div class="flex item-center justify-center gap-8">
+      <div class="flex item-center justify-center gap-4">
         <v-autocomplete
           v-model="servicesPrice"
           transition="slide-y-transition"
@@ -74,11 +74,22 @@
           multiple
           chips
           item-title="name"
-          item-value="servicePrice"
+          item-value="id"
           placeholder="نوع الخدمة"
           :return-object="true"
           variant="outlined"
         ></v-autocomplete>
+        <v-btn
+          class="mt-2"
+          size="x-large"
+          color="cyan-darken-2"
+          density="comfortable"
+          variant="text"
+          :prepend-icon="mdiBookVariant"
+          @click="toggeServicesDetials"
+        >
+          <v-tooltip activator="parent" location="bottom">تفاصيل الخدمات</v-tooltip></v-btn
+        >
 
         <p class="ms-3 text-lg font-bold text-gray-900 text-center mt-4">
           <span class="text-red-500">سعر الخدمة :</span> {{ selectedServicesPrice }} د.ل
@@ -96,26 +107,22 @@
       </div>
 
       <div class="flex item-center justify-center gap-8">
-        <v-text-field
+        <v-date-input
           v-model="formDate"
-          dir="rtl"
-          :prepend-icon="mdiCalendarRange"
-          clearable
           label="التاريخ من"
-          placeholder="ادخل التاريخ من ..."
           variant="outlined"
-          type="date"
-        ></v-text-field>
-        <v-text-field
+          placeholder="ادخل التاريخ من ..."
+          :hide-actions="true"
+        >
+        </v-date-input>
+
+        <v-date-input
           v-model="toDate"
-          dir="rtl"
-          :prepend-icon="mdiCalendarRange"
-          clearable
           label="التاريخ الى"
           placeholder="ادخل التاريخ الى ..."
+          :hide-actions="true"
           variant="outlined"
-          type="date"
-        ></v-text-field>
+        ></v-date-input>
       </div>
 
       <div class="flex item-center justify-center gap-4 mb-2">
@@ -139,7 +146,7 @@
           :rules="[Rules.time]"
           :prepend-icon="mdiTimerOutline"
         ></v-text-field>
-        <div class="relative">
+        <div class="relative flex">
           <v-btn
             color="blue accent-4"
             :disabled="!toDate || !formDate || !toTime || !fromTime || !hallName"
@@ -148,6 +155,17 @@
             @click="checkTime"
             >تحقق من القاعة</v-btn
           >
+          <!-- <div v-show="showSchedule" v-if="hallName">
+            <v-btn
+              :to="{ name: 'schedule-table', params: { id: hallName.id } }"
+              color="yellow-darken-2"
+              :disabled="!hallName"
+              :loading="loadingbtn"
+              class="mt-2 mr-4 text-white"
+              @click="checkTime"
+              >عرض جدول</v-btn
+            >
+          </div> -->
           <span v-show="reservationsChecked" class="absolute top-3 -left-8"
             ><v-icon size="large" color="green accent-3" :icon="mdiCheckCircle"></v-icon
           ></span>
@@ -219,6 +237,7 @@
         >
           إضافة
         </v-btn>
+
         <v-btn size="large" class="mx-3" color="red" @click="closeModel"> ألغاء </v-btn>
       </div>
     </v-form>
@@ -246,23 +265,35 @@
   >
     <AddCustomerRes @close="toggeAddCustomer" @refresh="OngetCustomers" />
   </div>
- 
+
+  <div
+    data-aos="fade-left"
+    v-if="servicesDetials"
+    @click.self="toggeServicesDetials"
+    class="fixed h-screen w-full top-0 left-0 bg-gray-500/50 z-[1005]"
+  >
+    <ServiceDetials @close="toggeServicesDetials" />
+  </div>
 </template>
 <script setup lang="ts">
-
 import {
   mdiPlus,
   mdiTimerOutline,
   mdiCalendarRange,
   mdiArrowRightTop,
-  mdiCheckCircle
+  mdiCheckCircle,
+  mdiBookVariant
 } from '@mdi/js'
 import AddCustomerRes from './AddCustomerRes.vue'
+import { VDateInput } from 'vuetify/labs/components'
 import { onMounted, ref, watchEffect } from 'vue'
 import { getHalls, getCustomers, getServices } from '@/core/services/mainServices'
 import { CheckHallReserved, Postreservation } from '../hallReserve-services'
 import type { Hall, Service, Customer } from '@/core/models/Mainmodels'
 import router from '@/router'
+
+import type { AxiosError } from 'axios'
+import ServiceDetials from './ServiceDetials.vue'
 
 const form = ref(false)
 
@@ -278,8 +309,12 @@ const form = ref(false)
 
 const Rules = {
   time: (value: number) => (value > 0 && value <= 24) || 'يجب التكون القيمة بين ال 1 إلي 24 ',
-  timeDiffrince: (value: number) =>
-    value > fromTime.value || ' يجب أن يكون قيمة الحقل أكبر من الوقت من',
+  dateRange: (value: string) => {
+    if (!formDate.value) return true
+    const fromDate = new Date(formDate.value)
+    const toDate = new Date(value)
+    return toDate >= fromDate || 'تاريخ النهاية يجب أن يكون أكبر من تاريخ البداية'
+  },
   paymentCount: (value: number) => value <= totalPayment.value || 'قيمة المدخلة اكبر من الإجمالي '
 }
 
@@ -287,8 +322,8 @@ const closeModel = () => {
   router.replace({ name: 'reservations-list' })
 }
 
-
 const hallName = ref<Hall>()
+const hallId = ref('')
 const oldHallName = ref<Hall>()
 const hallData = ref<Hall[]>([])
 const customerData = ref<Customer[]>([])
@@ -304,16 +339,24 @@ const packagePrice = ref<PaymentMethod | null>(null)
 const popAddCustomer = ref(false)
 const reservationsChecked = ref(false)
 const loadingbtn = ref(false)
+const showSchedule = ref(false)
+const servicesDetials = ref(false)
 
 const snackbar = ref({
   show: false,
-  message: ""
+  message: ''
 })
 
 const toggeAddCustomer = () => {
   popAddCustomer.value = !popAddCustomer.value
 }
 
+const toggleSchedule = () => {
+  showSchedule.value = !showSchedule.value
+}
+const toggeServicesDetials = () => {
+  servicesDetials.value = !servicesDetials.value
+}
 
 const OngetCustomers = () => {
   getCustomers().then((response) => {
@@ -330,8 +373,8 @@ const showAddMessage = ref(false)
 const fromTime = ref(0)
 const toTime = ref(0)
 const totalTime = ref(0)
-const formDate = ref('')
-const toDate = ref('')
+const formDate = ref<Date>()
+const toDate = ref<Date>()
 const placeHolderNumber = ref('')
 //variables for the calculation of the total
 const servicesPrice = ref<Service[]>([])
@@ -403,6 +446,7 @@ watchEffect(() => {
   for (let i = 0; i < servicesPrice.value.length; i++) {
     selectedServicesPrice.value = selectedServicesPrice.value + servicesPrice.value[i].servicePrice
     servicesId.value.push(servicesPrice.value[i].id)
+    console.log(servicesId.value)
   }
 })
 
@@ -466,8 +510,8 @@ const submitHallData = () => {
 
         individualNumber.value = 1
 
-        formDate.value = ''
-        toDate.value = ''
+        formDate.value = undefined
+        toDate.value = undefined
 
         fromTime.value = 0
         toTime.value = 0
@@ -501,8 +545,8 @@ watchEffect(() => {
           value: hallName.value.hourPrice
         },
         {
-          label: 'نصف يوم',
-          value: hallName.value.halfDayPrice
+          label: ' يوم',
+          value: hallName.value.dayPrice
         },
         {
           label: 'أسبوع',
@@ -520,8 +564,8 @@ watchEffect(() => {
   if (packagePrice.value) {
     switch (packagePrice.value.label) {
       case 'ساعة':
-      case 'نصف يوم':
-        placeHolderNumber.value = 'عدد الساعات المطلوبة'
+      case ' يوم':
+        placeHolderNumber.value = 'عدد الأيام المطلوبة'
         break
       case 'أسبوع':
         placeHolderNumber.value = 'عدد الأسابيع المطلوبة'
@@ -542,25 +586,51 @@ const checkTime = () => {
   loadingbtn.value = true
   if (hallName.value) {
     const body = {
-      hallManagementId: hallName.value.id,
+      hall_ManagementId: hallName.value.id,
       fromTime: fromTime.value,
       toTime: toTime.value,
       startDate: formDate.value,
       endDate: toDate.value
     }
-    CheckHallReserved(body).then((response) => {
-      console.log(response)
-      loadingbtn.value = false
-      if (response.message == "تاريخ الحجز متاح") {
-        snackbar.value.message = "الحجز متاح"
+    CheckHallReserved(body)
+      .then((response) => {
+        console.log(response)
+        loadingbtn.value = false
 
-        reservationsChecked.value = true
-      } else {
-        snackbar.value.message = "الحجز غير متاح"
-      }
+        if (response.message === 'Hall is available for the requested time.') {
+          snackbar.value.message = 'الحجز متاح'
+          reservationsChecked.value = true
+        } else {
+          snackbar.value.message = 'الحجز غير متاح'
+          reservationsChecked.value = false
+        }
 
-      snackbar.value.show = true
-    })
+        snackbar.value.show = true
+      })
+      .catch((error: any) => {
+        console.log(error)
+        loadingbtn.value = false
+
+        if (error.response && error.response.data && error.response.data.message) {
+          const errorMessage = error.response.data.message
+
+          if (errorMessage === 'Hall is already reserved during the requested time.') {
+            snackbar.value.message = 'الحجز غير متاح'
+            reservationsChecked.value = false
+          } else {
+            snackbar.value.message = 'حدث خطأ ما. حاول مرة أخرى.'
+          }
+        } else {
+          snackbar.value.message = 'حدث خطأ ما. حاول مرة أخرى.'
+        }
+
+        snackbar.value.show = true
+        toggleSchedule()
+      })
   }
 }
+
+watchEffect(() => {
+  console.log(Payment.value)
+})
 </script>
