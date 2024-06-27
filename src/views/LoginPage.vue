@@ -99,15 +99,18 @@ const rules = {
 const LoginBtn = async () => {
   isLoading.value = true
 
-  const response = await apiClient.post('Auth/Login', {
-    userName: UserData.value.Name,
-    password: UserData.value.password
-  })
-  // console.log(response.data)
-  console.log(response.data.token)
-  localStorage.setItem('token', response.data.token)
-  isLoading.value = false
-  router.replace({ name: 'calander' })
+  const response = await apiClient
+    .post('Auth/Login', {
+      userName: UserData.value.Name,
+      password: UserData.value.password
+    })
+    .then((response) => {
+      // console.log(response.data)
+      console.log(response.data.token)
+      localStorage.setItem('token', response.data.token)
+      isLoading.value = false
+      router.replace({ name: 'calander' })
+    })
 }
 watchEffect(() => {
   console.log(UserData.value.Name)

@@ -1,9 +1,9 @@
 <template>
   <v-form
     v-model="form"
-    class="mt-12 bg-white border-t-[20px] border-[#BF3B74] w-3/5 mx-auto py-16 px-16 rounded-lg shadow-lg overflow-y-scroll max-h-[75%] scroll-container"
+    class="mt-12 bg-white border-t-[20px] border-[#BF3B74] w-3/5 mx-auto py-16 px-16 rounded-lg shadow-lg overflow-y-scroll max-h-[75vh]"
   >
-    <p>اسناد طلبة الى الدورة</p>
+    <p class="text-xl">- إسناد طلبة الى الدورة</p>
     <div class="grid grid-cols-4 gap-2 p-4 mt-4" v-for="(item, index) in AllStudent" :key="index">
       <v-autocomplete
         class="col-span-2"
@@ -115,22 +115,4 @@ onMounted(async () => {
   console.log(props.price)
 })
 </script>
-<style>
-.scroll-container {
-  overflow-y: scroll;
-  scrollbar-width: thin;
-  scrollbar-color: transparent transparent;
-}
-
-.scroll-container::-webkit-scrollbar {
-  width: 6px;
-}
-
-.scroll-container::-webkit-scrollbar-track {
-  background-color: transparent;
-}
-
-.scroll-container::-webkit-scrollbar-thumb {
-  background-color: transparent;
-}
-</style>
+<style></style>

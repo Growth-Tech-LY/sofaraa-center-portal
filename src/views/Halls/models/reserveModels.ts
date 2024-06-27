@@ -68,7 +68,7 @@ type PutReservation = {
   numberOfIndividuals: number
   totalPrice: number
   payedPrice: number
-  restPrice: number
+  // restPrice: number
   serviceManagementId: string[]
 }
 

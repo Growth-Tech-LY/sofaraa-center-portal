@@ -106,7 +106,7 @@
         ></v-text-field>
       </div>
 
-      <div class="flex item-center justify-center gap-8">
+      <div class="flex item-center justify-center gap-8 relative">
         <v-date-input
           v-model="formDate"
           label="التاريخ من"
@@ -123,6 +123,7 @@
           :hide-actions="true"
           variant="outlined"
         ></v-date-input>
+        <p v-show="dateError" class="text-red-500 text-sm absolute left-8 bottom-0 ">القيمة أصغر من تاريخ البدء</p>
       </div>
 
       <div class="flex item-center justify-center gap-4 mb-2">
@@ -633,4 +634,18 @@ const checkTime = () => {
 watchEffect(() => {
   console.log(Payment.value)
 })
+
+const dateError = ref(false)
+watchEffect(() => {
+  if (formDate.value && toDate.value) {
+    if (toDate.value < formDate.value ) {
+      dateError.value=true
+      
+    } else if (toDate.value >= formDate.value) {
+      dateError.value= false
+    } 
+  }
+})
+
+
 </script>

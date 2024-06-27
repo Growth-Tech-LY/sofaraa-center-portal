@@ -152,6 +152,7 @@
           class="p-4 mt-4 w-2/6 ml-3 text-white"
           color="yellow-accent-4"
           :disabled="!form"
+          :append-icon="mdiPencil"
           @click="submit"
           >تعديل</v-btn
         >
@@ -183,7 +184,8 @@ import {
   mdiAccountMultipleOutline,
   mdiOfficeBuildingMarker,
   mdiHumanMaleBoard,
-  mdiOrderAlphabeticalAscending
+  mdiOrderAlphabeticalAscending,
+  mdiPencil
 } from '@mdi/js'
 import {
   getCouresesFromMang,

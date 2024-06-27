@@ -101,7 +101,8 @@
 
     <v-data-table-server
       class="px-4"
-      v-model:items-per-page="paginations.size"
+      sticky
+      :items-per-page="paginations.size"
       :page="paginations.page"
       :headers="headers"
       :items="hallsRes"
@@ -159,11 +160,11 @@
           </v-btn>
         </div>
       </template>
-      <template v-slot:[`item.reservationsTypeId`]="{ value }">
+      <template #[`item.reservationsTypeId`]="{ value }">
         <p v-if="value == 1">مبديء</p>
         <p v-else>نهائي</p>
       </template>
-      <template v-slot:[`item.paymentMethodId`]="{ value }">
+      <template #[`item.paymentMethodId`]="{ value }">
         <p v-if="value == 1">نقدا</p>
         <p v-else-if="value == 2">بطاقة مصرفية</p>
         <p v-else-if="value == 3">شيك</p>
@@ -443,9 +444,12 @@ const onGetHallsRes = (paginations: PaginationParamas) => {
 }
 
 const onOptionsChange = ({ page, itemsPerPage }: { page: number; itemsPerPage: number }) => {
+  // Set size to a very large number if itemsPerPage is -1
+  const size = itemsPerPage === -1 ? totalHalls.value : itemsPerPage;
+  
   paginations.value = {
     page: page,
-    size: itemsPerPage,
+    size: size,
     Hallname: '',
     customerName: '',
     startDate: '',
@@ -453,7 +457,7 @@ const onOptionsChange = ({ page, itemsPerPage }: { page: number; itemsPerPage: n
     phoneNumber: ''
   }
   onGetHallsRes(paginations.value)
-  console.log('OnOptionsChange')
+
 }
 
 const onSearchFilter = () => {

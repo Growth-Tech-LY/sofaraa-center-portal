@@ -14,7 +14,7 @@
               nav
             >
               <template v-slot:append>
-                <v-btn :icon="mdiChevronLeft" variant="text" @click.stop="rail = !rail"></v-btn>
+                <!-- <v-btn :icon="mdiChevronLeft" variant="text" @click.stop="rail = !rail"></v-btn> -->
               </template>
             </v-list-item>
 
