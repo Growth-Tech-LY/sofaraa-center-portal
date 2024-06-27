@@ -1,6 +1,6 @@
 <template>
   <div
-    class="mt-12 bg-white border-t-[20px] border-[#BF3B74] w-3/4 mx-auto py-16 px-16 rounded-lg shadow-lg h-3/4"
+    class="mt-6 bg-white border-t-[20px] border-[#BF3B74] w-3/4 mx-auto py-16 px-16 rounded-lg shadow-lg h-3/4 max-h-[90vh]"
   >
     <h2 class="text-2xl">- حجز دورة</h2>
     <v-form v-model="form" class="grid grid-cols-4 gap-4 mt-8">
@@ -150,7 +150,7 @@
       <div class="pr-20 col-start-1 col-span-3 mt-10 flex">
         <v-btn
           size="large"
-          class="p-4 mt-4 w-1/6 ml-3"
+          class="p-4 mt-4 w-1/6 ml-3 hover:scale-95"
           color="blue"
           @click="checkdate"
           :prepend-icon="mdiTimerEditOutline"
@@ -159,13 +159,16 @@
         >
         <v-btn
           size="large"
-          class="p-4 mt-4 w-1/6 ml-3"
+          class="p-4 mt-4 w-1/6 ml-3 hover:scale-95"
           color="green"
           :disabled="!form"
+          :prepend-icon="mdiBookPlus"
           @click="submitCoures"
           >حجز</v-btn
         >
-        <v-btn size="large" class="p-4 mt-4 w-1/6" color="red" @click="closeModel">الغاء </v-btn>
+        <v-btn size="large" class="p-4 mt-4 w-1/6 hover:scale-95" color="red" @click="closeModel"
+          >الغاء
+        </v-btn>
         <P
           v-show="availableResrv"
           class="border-green-500 border-4 p-2 rounded-lg text-green-800 w-1/4 mr-3 mt-3 text-center"
@@ -205,7 +208,8 @@ import {
   mdiAccountMultipleOutline,
   mdiOfficeBuildingMarker,
   mdiHumanMaleBoard,
-  mdiOrderAlphabeticalAscending
+  mdiOrderAlphabeticalAscending,
+  mdiBookPlus
 } from '@mdi/js'
 import { checkReservation, postCoures } from '../CoursesService'
 import {
@@ -225,6 +229,7 @@ const NotAvailableResrv = ref(false)
 
 const emit = defineEmits<{
   close: []
+  refresh: []
 }>()
 //  Geting values   FROM API
 const AllTeachers = ref<Teacher[]>()
@@ -243,7 +248,7 @@ const StartDate = ref()
 const EndDate = ref()
 const couresId = ref<string>()
 const ServiceId = ref<string[]>()
-const HallId = ref<string>('')
+const HallId = ref<string>()
 const TeacherId = ref<string>()
 const numOfstudents = ref<number>()
 const numOfHours = ref<number>()
@@ -272,7 +277,9 @@ const reserveTypes = [
 const closeModel = () => {
   emit('close')
 }
-
+const refresh = () => {
+  emit('refresh')
+}
 const getAllData = () => {
   getCouresesFromMang().then((response) => {
     AllCoureses.value = response
@@ -356,6 +363,7 @@ const submitCoures = async () => {
   postCoures(body)
     .then(() => {
       AddMsg.value = true
+      refresh()
     })
     .catch((error) => {
       console.log(error)

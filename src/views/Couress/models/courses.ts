@@ -55,7 +55,7 @@ type studentInfo = {
 }
 
 export type reservationDate = {
-  hall_managementId: string
+  hall_managementId: string | undefined
   fromTime: number
   toTime: number
   startDate: string

@@ -83,30 +83,32 @@
                 ></v-text-field>
               </div>
             </div>
-            <v-btn size="large" class="mx-3" color="red" @click="searchToggle"> إغلاق </v-btn>
-            <v-btn
-              size="large"
-              class="mx-3"
-              color="light-blue-accent-4"
-              @click="onSearchFilter"
-              @keydown.enter="onSearchFilter"
-            >
-              بحث
-            </v-btn>
-            <v-btn
-              size="large"
-              class="text-white"
-              color="light-blue-accent-4 "
-              variant="outlined"
-              @click="clearFilter"
-            >
-              إلغاء البحث
-            </v-btn>
+            <div class="flex flex-nowrap">
+              <v-btn size="large" class="mx-3" color="red" @click="searchToggle"> إغلاق </v-btn>
+              <v-btn
+                size="large"
+                class="mx-3"
+                color="light-blue-accent-4"
+                @click="onSearchFilter"
+                @keydown.enter="onSearchFilter"
+              >
+                بحث
+              </v-btn>
+              <v-btn
+                size="large"
+                class="text-white"
+                color="light-blue-accent-4 "
+                variant="outlined"
+                @click="clearFilter"
+              >
+                إلغاء البحث
+              </v-btn>
+            </div>
           </div>
         </div>
       </div>
       <v-btn
-        class="mt-4 ml-5 text-white"
+        class="mt-4 ml-5 text-white hover:scale-95"
         color="pink-darken-2"
         rounded="lg"
         :prepend-icon="mdiPlus"
@@ -121,6 +123,13 @@
         @click.self="toggelForm"
         class="fixed h-screen w-full top-0 left-0 bg-gray-500/50 z-[1005]"
       >
+        <v-btn
+          class="absolute top-6 right-20 hover:scale-95"
+          :prepend-icon="mdiCloseCircleOutline"
+          color="pink-darken-2"
+          @click="toggelForm"
+          >أغلاق</v-btn
+        >
         <div data-aos="zoom-in-up">
           <CoursesForm
             @close="toggelForm"
@@ -142,8 +151,8 @@
       >
         <v-btn
           @click="viewStudents = false"
-          class="absolute top-6 right-1/4"
-          :prepend-icon="mdiArrowURightBottom"
+          class="absolute top-6 right-20 hover:scale-95"
+          :prepend-icon="mdiCloseCircleOutline"
           color="pink-darken-2"
           >أغلاق</v-btn
         >
@@ -160,22 +169,33 @@
       >
         <v-btn
           @click="toggelServies"
-          class="absolute top-6 right-1/4"
-          :prepend-icon="mdiArrowURightBottom"
+          class="absolute top-6 right-1/4 hover:scale-95"
+          :prepend-icon="mdiCloseCircleOutline"
           color="pink-darken-2"
           >أغلاق</v-btn
         >
         <viewService :serv="service" />
       </div>
-      <!-- [     The Coureses Add Form Start           >>      ]  -->
+      <!-- [     Add Student Start           >>      ]  -->
 
       <div
         v-if="studentPopUp"
         class="fixed h-screen w-full top-0 left-0 bg-gray-500/50 z-[1005]"
         @click.self="studentPopUp = false"
       >
+        <v-btn
+          @click="toggelAddstudent"
+          class="absolute top-6 right-32 hover:scale-95"
+          :prepend-icon="mdiCloseCircleOutline"
+          color="pink-darken-2"
+          >أغلاق</v-btn
+        >
         <div data-aos="zoom-in-right">
-          <AddStudent :trainingCouresReservationsId="courseId" :price="coursesPrice" />
+          <AddStudent
+            :trainingCouresReservationsId="courseId"
+            :price="coursesPrice"
+            @close="toggelAddstudent"
+          />
         </div>
       </div>
 
@@ -195,27 +215,35 @@
         class="fixed h-screen w-full top-0 left-0 bg-gray-500/50 z-[1005] flex justify-center items-center"
       >
         <div>
-          <v-card>
-            <v-card-title class="text-h5">هل أنت متأكد من حذف الدورة؟ </v-card-title>
+          <div class="bg-white p-4 rounded-lg shadow-lg">
+            <p class="text-xl">هل أنت متأكد من حذف الدورة؟</p>
             <v-card-actions>
               <v-spacer></v-spacer>
               <v-btn
                 class="mt-4 text-white"
                 color="green-accent-4"
                 rounded="lg"
+                variant="flat"
                 @click="confirmDelete = false"
                 >إلغاء</v-btn
               >
-              <v-btn class="mt-4 text-white" color="red-darken-2" rounded="lg" @click="onDelete"
+              <v-btn
+                :append-icon="mdiDeleteOutline"
+                class="mt-4 text-white"
+                color="red-darken-2"
+                rounded="lg"
+                @click="onDelete"
+                variant="flat"
                 >نعم</v-btn
               >
               <v-spacer></v-spacer>
             </v-card-actions>
-          </v-card>
+          </div>
         </div>
       </div>
     </div>
     <v-data-table-server
+      class="max-w-[750px]"
       v-model:items-per-page="paginations.size"
       :headers="headers"
       :items="courses"
@@ -223,6 +251,7 @@
       :loading="loading"
       :search="searcher"
       item-value="name"
+      @update:options="onOptionsChange"
     >
       <!-- view the services PopUp  -->
       <template #[`item.serviceManagementName`]="{ item }">
@@ -286,8 +315,6 @@
           تم الحذف حجز الدورة
         </v-snackbar>
       </template>
-
-      <!-- The  Actions  in the table  End !! -->
     </v-data-table-server>
   </div>
 </template>
@@ -302,7 +329,7 @@ import {
   mdiAccountMultiplePlus,
   mdiAccountEye,
   mdiFilter,
-  mdiArrowURightBottom
+  mdiCloseCircleOutline
 } from '@mdi/js'
 import { deleteCoures, getCourses } from '../CoursesService'
 import CoursesEditForm from './CoursesEditForm.vue'
@@ -314,7 +341,8 @@ import {
   mdiOrderAlphabeticalAscending,
   mdiHumanMaleBoard,
   mdiOfficeBuildingMarker,
-  mdiInformationSlabCircleOutline
+  mdiInformationSlabCircleOutline,
+  mdiDeleteOutline
 } from '@mdi/js'
 import type { Hall, Teacher, Coures } from '@/core/models/Mainmodels'
 import { getCouresesFromMang, getHalls, getTeacher } from '@/core/services/mainServices'
@@ -473,8 +501,12 @@ const toggelEdit = () => {
 const toggelServies = () => {
   viewServ.value = !viewServ.value
 }
+const toggelAddstudent = () => {
+  studentPopUp.value = !studentPopUp.value
+}
+
 const OpenAddstudent = (item: Couress) => {
-  studentPopUp.value = true
+  toggelAddstudent()
   courseId.value = item.id
   coursesPrice.value = item.price
 }
@@ -506,13 +538,13 @@ const onDelete = () => {
   deleteCoures(courseIdDelete.value)
     .then(() => {
       confirmDelete.value = false
+    })
+    .finally(() => {
+      DeleteMsg.value = true
       onOptionsChange({
         page: paginations.value.page,
         itemsPerPage: paginations.value.size
       })
-    })
-    .finally(() => {
-      DeleteMsg.value = true
     })
 }
 onMounted(async () => {

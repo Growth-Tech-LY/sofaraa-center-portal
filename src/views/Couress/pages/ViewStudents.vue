@@ -4,7 +4,12 @@
     class="fixed h-screen w-full top-0 left-0 bg-gray-500/50 z-[1005]"
     @click.self="toggleEditModel"
   >
-    <EditStudent :couresID="TheID" :studentDetails="selectedStudent" @update="getStudents" />
+    <EditStudent
+      :couresID="TheID"
+      :studentDetails="selectedStudent"
+      @update="getStudents"
+      @close="toggleEditModel"
+    />
   </div>
 
   <div
