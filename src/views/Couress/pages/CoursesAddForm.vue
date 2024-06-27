@@ -315,8 +315,6 @@ watchEffect(() => {
   console.log(StartDate.value)
 })
 
-const checkBtn = ref(false)
-
 const checkdate = () => {
   checkReservation({
     hall_managementId: HallId.value,
