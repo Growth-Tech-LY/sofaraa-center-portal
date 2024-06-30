@@ -64,11 +64,14 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   close: []
+  refresh: []
 }>()
 const closeModel = () => {
   emit('close')
 }
-
+const updateTable = () => {
+  emit('refresh')
+}
 const rules = {
   required: (v: string) => !!v || 'الحقل اجباري',
   notZero: (v: number) => v != 0 || 'يجب ادخال قيمة',
@@ -90,7 +93,8 @@ const submitStudents = () => {
   postStudent(body)
     .then(() => {
       showMessage.value = true
-      console.log(body)
+      closeModel()
+      updateTable()
     })
     .catch((error: any) => {
       console.log(error)

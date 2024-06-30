@@ -32,20 +32,17 @@
         <v-btn color="red" @click="closeModel">إلغاء</v-btn>
       </div>
     </v-form>
-    <v-snackbar :timeout="2000" color="success" :location="'top left'" v-model="DoneMsg">
-      تمت عملية بنجاح
-    </v-snackbar>
   </div>
 </template>
 
 <script setup lang="ts">
 import { onMounted, ref, watchEffect } from 'vue'
-import { mdiCashClock, mdiCash, mdiCashPlus } from '@mdi/js'
+import { mdiCashClock, mdiCash } from '@mdi/js'
 import type { studentInfo } from '../models/courses'
 import { UpdateStudentPayed } from '../CoursesService'
 const payedPrice = ref<number>(0)
 const couresIdEdit = ref('')
-const DoneMsg = ref(false)
+
 const form = ref(false)
 const studentName = ref('')
 const props = defineProps<{
@@ -90,8 +87,8 @@ const PaidUpdate = () => {
     ]
   })
     .then(() => {
-      DoneMsg.value = true
       updateModel()
+      closeModel()
     })
     .finally(() => {})
 }
