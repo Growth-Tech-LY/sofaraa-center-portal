@@ -108,6 +108,7 @@
         </div>
       </div>
       <v-btn
+          v-if="premissions.courses.add"
         class="mt-4 ml-5 text-white hover:scale-95"
         color="pink-darken-2"
         rounded="lg"
@@ -201,6 +202,7 @@
 
       <!--  <<  [        The Edit start          ] >>       -->
       <div
+      
         v-if="editPopUp"
         @click.self="toggelEdit"
         class="fixed h-screen w-full top-0 left-0 bg-gray-500/50 z-[1005]"
@@ -291,6 +293,7 @@
           </v-btn>
           <RouterLink :to="{ name: 'edit-courese', params: { id: item.id } }"
             ><v-btn
+               v-if="premissions.courses.edit"
               variant="text"
               class=""
               color="yellow-darken-2"
@@ -302,6 +305,7 @@
           >
 
           <v-btn
+           v-if="premissions.courses.delete"
             color="deep-orange-darken-1"
             variant="text"
             size="medium"
@@ -347,6 +351,7 @@ import {
 import type { Hall, Teacher, Coures } from '@/core/models/Mainmodels'
 import { getCouresesFromMang, getHalls, getTeacher } from '@/core/services/mainServices'
 import type { Couress } from '../models/courses'
+import { premissions } from '@/core/stores/premissions'
 
 // const searchHall = ref<Hall>()
 

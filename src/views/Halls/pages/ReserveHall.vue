@@ -292,7 +292,6 @@ import { getHalls, getCustomers, getServices } from '@/core/services/mainService
 import { CheckHallReserved, Postreservation } from '../hallReserve-services'
 import type { Hall, Service, Customer } from '@/core/models/Mainmodels'
 import router from '@/router'
-
 import type { AxiosError } from 'axios'
 import ServiceDetials from './ServiceDetials.vue'
 
