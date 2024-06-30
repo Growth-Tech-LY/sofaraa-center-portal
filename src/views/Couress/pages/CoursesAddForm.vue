@@ -183,14 +183,6 @@
         ></P>
       </div>
 
-      <v-snackbar
-        :timeout="2000"
-        :color="snackbar.color"
-        :location="'top left'"
-        v-model="snackbar.show"
-      >
-        تمت الإضافة بنجاح
-      </v-snackbar>
       <v-snackbar :timeout="2000" color="blue" :location="'top left'" v-model="ReservMsg">
         تمت تحقق بنجاح
       </v-snackbar>
@@ -255,11 +247,7 @@ const numOfHours = ref<number>()
 const timeFrom = ref<number>(0)
 const timeTo = ref<number>(0)
 const reserveType = ref<number>()
-const snackbar = ref({
-  show: false,
-  message: '',
-  color: 'green'
-})
+
 const reserveTypes = [
   {
     label: 'مبدئ',
@@ -362,6 +350,7 @@ const submitCoures = async () => {
     .then(() => {
       AddMsg.value = true
       refresh()
+      closeModel()
     })
     .catch((error) => {
       console.log(error)
