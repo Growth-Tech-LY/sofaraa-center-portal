@@ -94,6 +94,7 @@
           variant="outlined"
           placeholder="ادخل التاريخ من ..."
           :rules="[rules.required]"
+           :hide-actions="true"
         >
         </v-date-input>
 
