@@ -179,7 +179,7 @@
   >
     <div data-aos="zoom-in">
       <v-card>
-        <v-card-title class="text-h5">هل أنت متأكد من حذف القاعة؟ </v-card-title>
+        <v-card-title class="text-h5">هل أنت متأكد من حذف الحجز؟ </v-card-title>
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn class="mt-4" color="blue-darken-1" rounded="lg" @click="confirmDelete = false"
