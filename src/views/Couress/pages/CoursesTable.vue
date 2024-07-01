@@ -12,10 +12,10 @@
           <div
             data-aos="zoom-in-up"
             v-if="showSearch"
-            class="bg-white border-t-[12px] border-[#BF3B74] mx-auto p-7 rounded-lg shadow-lg w-1/4 z-50 left-1/2 top-10 fixed"
+            class="bg-white border-t-[12px] border-[#BF3B74] mx-auto p-7 rounded-lg shadow-lg w-3/4 z-50 top-60 fixed"
           >
             <p class="text-gray-700 mx-auto pr-3 mb-2 text-xl py-2">فلتر البحث</p>
-            <div class="bg-white grid grid-cols-1 gap-4 justify-center items-center">
+            <div class="bg-white grid grid-cols-3 gap-4 justify-center items-center">
               <div class="flex gap-1 justify-center items-center">
                 <v-autocomplete
                   :prepend-icon="mdiOfficeBuildingMarker"
@@ -108,6 +108,7 @@
         </div>
       </div>
       <v-btn
+          v-if="premissions.courses.add"
         class="mt-4 ml-5 text-white hover:scale-95"
         color="pink-darken-2"
         rounded="lg"
@@ -195,17 +196,24 @@
             :trainingCouresReservationsId="courseId"
             :price="coursesPrice"
             @close="toggelAddstudent"
+            @refresh="
+              onOptionsChange({
+                page: paginations.page,
+                itemsPerPage: paginations.size
+              })
+            "
           />
         </div>
       </div>
 
       <!--  <<  [        The Edit start          ] >>       -->
       <div
+      
         v-if="editPopUp"
         @click.self="toggelEdit"
         class="fixed h-screen w-full top-0 left-0 bg-gray-500/50 z-[1005]"
       >
-        <CoursesEditForm :trainingCouresReservationsId="courseId" />
+        <CoursesEditForm @snakBar="useSnackbar" />
       </div>
 
       <!--              The Delete Start           -->
@@ -291,6 +299,7 @@
           </v-btn>
           <RouterLink :to="{ name: 'edit-courese', params: { id: item.id } }"
             ><v-btn
+               v-if="premissions.courses.edit"
               variant="text"
               class=""
               color="yellow-darken-2"
@@ -302,6 +311,7 @@
           >
 
           <v-btn
+           v-if="premissions.courses.delete"
             color="deep-orange-darken-1"
             variant="text"
             size="medium"
@@ -311,8 +321,13 @@
             <v-tooltip activator="parent" location="bottom">حذف</v-tooltip>
           </v-btn>
         </div>
-        <v-snackbar v-model="DeleteMsg" :timeout="2000" color="red" :location="'top right'">
-          تم الحذف حجز الدورة
+        <v-snackbar
+          v-model="snacMsg.show"
+          :timeout="2000"
+          :color="snacMsg.color"
+          :location="'top right'"
+        >
+          {{ snacMsg.msg }}
         </v-snackbar>
       </template>
     </v-data-table-server>
@@ -347,6 +362,7 @@ import {
 import type { Hall, Teacher, Coures } from '@/core/models/Mainmodels'
 import { getCouresesFromMang, getHalls, getTeacher } from '@/core/services/mainServices'
 import type { Couress } from '../models/courses'
+import { premissions } from '@/core/stores/premissions'
 
 // const searchHall = ref<Hall>()
 
@@ -371,7 +387,7 @@ const loading = ref(false)
 const courses = ref<Couress[]>([])
 const AllTeachers = ref<Teacher[]>()
 const AllCoureses = ref<Coures[]>()
-const AllHalls = ref<Hall[]>()
+const AllHalls = ref<Hall[]>([])
 const studentPopUp = ref(false)
 const showSearch = ref(false)
 const formPopUP = ref(false)
@@ -381,7 +397,11 @@ const viewStudents = ref(false)
 const viewServ = ref(false)
 const courseId = ref<string>('')
 const courseIdDelete = ref<string>('')
-const DeleteMsg = ref(false)
+const snacMsg = ref({
+  show: false,
+  msg: '',
+  color: ''
+})
 const totalCustomers = ref(0)
 const coursesPrice = ref<number>(0)
 const service = ref<string[]>()
@@ -402,7 +422,7 @@ const headers: any = [
   { title: ' الخدمة', key: 'serviceManagementName', align: 'center' },
   { title: 'تاريخ البدء', key: 'startDate', align: 'center' },
   { title: 'تاريخ الانتهاء', key: 'endDate', align: 'center' },
-  { title: ' الساعات ', key: 'numberOfRquiredHours', align: 'center' },
+  // { title: ' الساعات ', key: 'numberOfRquiredHours', align: 'center' },
   { title: ' الطلاب المسجلين ', key: 'numberOfIndividuals', align: 'center' },
   { title: '   حجم القاعة', key: 'numberOfMaximumIndividuals', align: 'center' },
   { title: 'الأجرائات', key: 'actions', align: 'center' }
@@ -520,7 +540,11 @@ const openDeleteModal = (id: string) => {
 
   console.log(confirmDelete.value)
 }
-
+const useSnackbar = ({ msg, color }: { msg: string; color: string }) => {
+  snacMsg.value.msg = msg
+  snacMsg.value.color = color
+  snacMsg.value.show = true
+}
 const getALLdeta = () => {
   getCouresesFromMang().then((response) => {
     AllCoureses.value = response
@@ -540,7 +564,11 @@ const onDelete = () => {
       confirmDelete.value = false
     })
     .finally(() => {
-      DeleteMsg.value = true
+      useSnackbar({
+        color: 'red',
+        msg: 'تم الحذف حجز الدورة بنجاح'
+      })
+
       onOptionsChange({
         page: paginations.value.page,
         itemsPerPage: paginations.value.size

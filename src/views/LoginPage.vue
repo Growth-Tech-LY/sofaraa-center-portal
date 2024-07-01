@@ -108,6 +108,8 @@ const LoginBtn = async () => {
       // console.log(response.data)
       console.log(response.data.token)
       localStorage.setItem('token', response.data.token)
+      const permissionCodes = JSON.stringify(response.data.permissionCodes)
+      localStorage.setItem('permissionCodes', permissionCodes)
       isLoading.value = false
       router.replace({ name: 'calander' })
     })

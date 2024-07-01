@@ -14,7 +14,27 @@ type Couress = {
   toTime: number
   fromTime: number
 }
+type CouressByID = {
+  id: string
+  couresManagementName: string
+  couresManagementId: string
+  teacherManagementName: string
+  teacherManagementId: string
+  hall_managementId: string
+  hall_managementName: string
+  serviceManagementName: string[]
+  reservationsTypeId: number
+  startDate: string
+  endDate: string
+  numberOfRquiredHours: number
+  studentName: string[]
+  price: number
+  numberOfMaximumIndividuals: number
+  toTime: number
+  fromTime: number
+}
 type PostCoures = {
+  id?: string
   couresManagementId: string | undefined
   teacherManagementId: string | undefined
   hall_managementId: string | undefined
@@ -66,4 +86,4 @@ export type List<T> = {
   data: T
 }
 
-export type { Couress, PostCoures, student, postStudents, studentInfo }
+export type { Couress, PostCoures, student, postStudents, studentInfo, CouressByID }

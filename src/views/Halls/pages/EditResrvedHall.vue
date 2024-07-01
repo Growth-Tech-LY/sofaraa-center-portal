@@ -28,12 +28,7 @@
           variant="outlined"
           :return-object="true"
         ></v-autocomplete>
-        <v-btn
-          class="text-white mb-4"
-          color="green-accent-4"
-          density="comfortable"
-          :icon="mdiPlus"
-        ></v-btn>
+       
       </div>
 
       <div class="flex item-center justify-center gap-8">
@@ -99,6 +94,7 @@
           variant="outlined"
           placeholder="ادخل التاريخ من ..."
           :rules="[rules.required]"
+           :hide-actions="true"
         >
         </v-date-input>
 

@@ -3,15 +3,22 @@ import type {
   PostCoures,
   Couress,
   studentInfo,
+  CouressByID,
   reservationDate,
   UpdaterestPrice
 } from './models/courses'
 import type { List } from './models/courses'
 import type { PaginationCoures } from '@/core/models/pagination-params'
 import type { postStudents } from './models/courses'
+import { alertStore } from '@/core/stores/alert.store'
 
 const postCoures = (body: PostCoures) => {
-  return apiClient.post<PostCoures>('TrainingCouresReservations', body)
+  return apiClient.post<PostCoures>('TrainingCouresReservations', body).then(() => {
+    alertStore.show({
+      msg: ' تمت الإضافة بنجاح',
+      color: 'green'
+    })
+  })
 }
 
 const getCourses = (paginationParams: PaginationCoures) => {
@@ -22,11 +29,23 @@ const getCourses = (paginationParams: PaginationCoures) => {
     })
 }
 const postStudent = (body: postStudents) => {
-  return apiClient.post<postStudents>('TrainingCouresReservations/AddStudentAttributing', body)
+  return apiClient
+    .post<postStudents>('TrainingCouresReservations/AddStudentAttributing', body)
+    .then(() => {
+      alertStore.show({
+        color: 'teal-accent-4',
+        msg: 'تمت إضافة الطلاب بنجاح'
+      })
+    })
 }
 
 const UpdateStudentPayed = (body: UpdaterestPrice) => {
-  return apiClient.put(`TrainingCouresReservations/UpdateStudentAttributing`, body)
+  return apiClient.put(`TrainingCouresReservations/UpdateStudentAttributing`, body).then(() => {
+    alertStore.show({
+      color: 'green-lighten-1',
+      msg: 'تمت عملية الدفع بنجاح '
+    })
+  })
 }
 
 const getStudentsByID = (id: string) => {
@@ -35,7 +54,7 @@ const getStudentsByID = (id: string) => {
   )
 }
 const getCourseByID = (id: string) => {
-  return apiClient.get<Couress>(`TrainingCouresReservations/${id}`).then((response) => {
+  return apiClient.get<CouressByID>(`TrainingCouresReservations/${id}`).then((response) => {
     return response.data
   })
 }
@@ -44,7 +63,12 @@ const deleteCoures = (ID: string) => {
   return apiClient.delete(`TrainingCouresReservations/${ID}`)
 }
 const UpdateCoures = (body: PostCoures) => {
-  return apiClient.put<postStudents>(`TrainingCouresReservations`, body)
+  return apiClient.put<postStudents>(`TrainingCouresReservations`, body).then(() => {
+    alertStore.show({
+      msg: 'تم التعديل بنجاح',
+      color: 'yellow'
+    })
+  })
 }
 
 const checkReservation = (body: reservationDate) => {

@@ -75,7 +75,7 @@
         variant="outlined"
         :hide-actions="true"
       ></v-date-input>
-      <v-text-field
+      <!-- <v-text-field
         class="col-span-2"
         v-modle="coures.numberOfRquiredHours"
         :prepend-icon="mdiTimerEditOutline"
@@ -83,10 +83,9 @@
         label="عدد الساعات "
         placeholder="ادخل عدد الساعات  ..."
         variant="outlined"
-        prefix="د.ل"
         type="number"
         :rules="[rules.required]"
-      ></v-text-field>
+      ></v-text-field> -->
 
       <v-text-field
         v-model="coures.fromTime"
@@ -128,7 +127,7 @@
         :prepend-icon="mdiAccountMultipleOutline"
         :rules="[rules.required]"
         item-title="label"
-        item-value="value"
+        item-value="id"
         label=" نوع الحجز"
         placeholder="اختر نوع الحجز  ..."
         variant="outlined"
@@ -142,6 +141,7 @@
         clearable
         label="سعر الدورة"
         placeholder="ادخل السعر  ..."
+        prefix="د.ل"
         variant="outlined"
         type="number"
       ></v-text-field>
@@ -153,6 +153,7 @@
           color="yellow-accent-4"
           :disabled="!form"
           :append-icon="mdiPencil"
+          :loading="btnLoading"
           @click="submit"
           >تعديل</v-btn
         >
@@ -195,14 +196,17 @@ import {
 } from '@/core/services/mainServices'
 import { useRoute } from 'vue-router'
 import { UpdateCoures, getCourseByID } from '../CoursesService'
+import router from '@/router'
 
 const form = ref(false)
 const UpdateMsg = ref(false)
+const btnLoading = ref(false)
 const route = useRoute()
 const receivedID = ref(String(route.params.id))
 const rules = {
   required: (v: string) => !!v || 'الحقل اجباري'
 }
+
 const reserveTypes = [
   {
     label: 'مبدئ',
@@ -241,6 +245,7 @@ const AllHalls = ref<Hall[]>()
 const AllService = ref<Service[]>()
 
 const coures = ref<PostCoures>({
+  id: receivedID.value,
   couresManagementId: undefined,
   teacherManagementId: undefined,
   hall_managementId: undefined,
@@ -256,9 +261,14 @@ const coures = ref<PostCoures>({
 })
 
 const submit = () => {
+  btnLoading.value = true
   UpdateCoures(coures.value).then(() => {
-    UpdateMsg.value = true
+    btnLoading.value = false
+    closeForm()
   })
+}
+const closeForm = () => {
+  router.replace({ name: 'coureses-list' })
 }
 const formatDate = (dateString: string) => {
   const [day, month, year] = dateString.split('/')
@@ -267,10 +277,10 @@ const formatDate = (dateString: string) => {
 }
 const getCurrentData = () => {
   getCourseByID(receivedID.value).then((response) => {
-    coures.value.couresManagementId = response.couresManagementName
-    coures.value.hall_managementId = response.hall_managementName
-    coures.value.teacherManagementId = response.teacherManagementName
-    coures.value.serviceManagementId = response.serviceManagementName
+    coures.value.couresManagementId = response.couresManagementId
+    coures.value.hall_managementId = response.hall_managementId
+    coures.value.teacherManagementId = response.teacherManagementId
+    // coures.value.serviceManagementId = response.
     coures.value.reservationsTypeId = response.reservationsTypeId
     coures.value.numberOfMaximumIndividuals = response.numberOfMaximumIndividuals
     coures.value.numberOfRquiredHours = response.numberOfRquiredHours

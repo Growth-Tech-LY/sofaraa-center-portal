@@ -39,6 +39,7 @@ import router from '@/router'
 
 const LogOutbtn = () => {
   localStorage.removeItem('token')
+  localStorage.removeItem('permissionCodes')
   router.replace('/login')
 }
 
