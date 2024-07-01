@@ -1,6 +1,6 @@
 <template>
   <div
-    class="mt-16 bg-white border-t-[20px] border-[#BF3B74] w-5/6 mx-auto p-7 rounded-lg shadow-lg"
+    class="mt-16 bg-white border-t-[20px] border-[#BF3B74] w-5/6 mx-auto p-7 max-h-[75%] rounded-lg shadow-lg overflow-y-scroll"
   >
   <p class="pr-4 font-bold text-lg mb-2">تفاصيل الخدمات</p>
     <div v-for="(item, i) in services" :key="i">
