@@ -7,13 +7,13 @@ type packages = {
   monthPrice: number
 }
 
-type Postreservation = {
-  fromTime: number
-  toTime: number
-  startDate: Date | undefined
-  endDate: string
-  typeOfReservations: number
-}
+// type Postreservation = {
+//   fromTime: number
+//   toTime: number
+//   startDate: Date | undefined
+//   endDate: string
+//   typeOfReservations: number
+// }
 
 type PostReservationHalls = {
   hall_ManagementId: string
@@ -51,7 +51,12 @@ type ReservationTable = {
   numberOfIndividuals: number
   serviceManagementName: string[]
   customerManegentPhonenumber: string
+  createdAt : Date
 } 
+
+
+
+type Printpaper = {}
 
 type PutReservation = {
   id: string

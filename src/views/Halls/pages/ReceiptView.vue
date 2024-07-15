@@ -1,14 +1,16 @@
 <template>
   <div
-    class="mt-16 bg-white border-t-[20px] border-[#BF3B74] w-5/6 mx-auto p-7  sm:p-0 max-h-screen rounded-lg shadow-lg"
+    class="mt-16 bg-white border-t-[20px] border-[#BF3B74] w-5/6 mx-auto p-7 sm:p-0 max-h-screen rounded-lg shadow-lg"
   >
     <div ref="printSection" class="mx-auto w-1/3 px-10">
       <img class="w-96 mb-8 sm:mb-0" src="../../../assets/icons/sofaraaLogo2.png" alt="" />
       <div class="flex justify-between items-center text-lg lg:mb-4 lg:px-2 print:w-[110mm]">
-        <p>التاريخ : {{ currentDate }}</p>
+        <p>التاريخ : {{  currentDate }}</p>
         <p>إيصال قبض</p>
       </div>
-      <div class="border-2 font-bold border-black px-2 lg:px-4 lg:pt-4 lg:h-44 lg:pb-44 min-w-96 print:w-[110mm]">
+      <div
+        class="border-2 font-bold border-black px-2 lg:px-4 lg:pt-4 lg:h-44 lg:pb-44 min-w-96 print:w-[110mm]"
+      >
         <p class="mb-8">أسم الزبون : {{ reservedhall?.customerManegentName }}</p>
         <div class="flex gap-32 items-center lg:mb-8 sm:mb-0">
           <p>المبلغ و قدرة : {{ reservedhall?.totalPrice }}</p>
@@ -20,7 +22,7 @@
         </div>
       </div>
     </div>
-    <div class= "flex lg:gap-4 mr-8 lg:pb-2 lg:mt-8">
+    <div class="flex lg:gap-4 mr-8 lg:pb-2 lg:mt-8">
       <v-btn @click="onPrintCard" color="pink-darken-2">طباعة </v-btn>
       <v-btn @click="closeModel" color="red-darken-2">إغلاق </v-btn>
     </div>
@@ -36,11 +38,11 @@ import { onMounted, ref, watchEffect } from 'vue'
 import ReceiptPrint from '../components/ReceiptPrint.vue'
 import type { ReservationTable } from '../models/reserveModels'
 import { getResHallByID } from '../hallReserve-services'
-import { useVueToPrint } from 'vue-to-print';
+import { useVueToPrint } from 'vue-to-print'
 
 const typeOfPayment = ref('')
 const currentDate = ref('')
-const loading = ref(false)
+// const loading = ref(false)
 
 const reservedhall = ref<ReservationTable>()
 
@@ -61,14 +63,11 @@ const { handlePrint } = useVueToPrint({
   content: () => componentRef.value,
   documentTitle: 'إيصال صرف',
   removeAfterPrint: true,
-  bodyClass:'onPrint',
-  onAfterPrint: () => {
-  
-  }
+  bodyClass: 'onPrint',
+  onAfterPrint: () => {}
 })
 
-
-const onPrintCard =  () => {
+const onPrintCard = () => {
   setTimeout(() => {
     handlePrint()
   }, 50)
@@ -76,22 +75,18 @@ const onPrintCard =  () => {
 
 const printSection = ref<HTMLElement | null>(null)
 
-
-
-
-
 onMounted(() => {
   getResHallByID(props.id).then((response) => {
     reservedhall.value = response
   })
 
-  const now = new Date()
-  const formattedDate = now.toLocaleDateString('en', {
-    year: 'numeric',
-    month: 'numeric',
-    day: 'numeric',
-  })
-  currentDate.value = formattedDate
+  // const now = new Date()
+  // const formattedDate = now.toLocaleDateString('en', {
+  //   year: 'numeric',
+  //   month: 'numeric',
+  //   day: 'numeric',
+  // })
+  // currentDate.value = formattedDate
 })
 
 watchEffect(() => {
@@ -101,6 +96,19 @@ watchEffect(() => {
     typeOfPayment.value = 'بطاقة مصرفية'
   } else if (reservedhall.value?.paymentMethodId == 3) {
     typeOfPayment.value = 'شيك'
+  }
+})
+
+watchEffect(() => {
+  if (reservedhall.value) {
+    const date = new Date(reservedhall.value?.createdAt)
+
+    const day = String(date.getDate()).padStart(2, '0')
+    const month = String(date.getMonth() + 1).padStart(2, '0') // Months are zero-based
+    const year = date.getFullYear()
+
+    const formattedDate = `${day}-${month}-${year}`
+    currentDate.value = formattedDate
   }
 })
 </script>
