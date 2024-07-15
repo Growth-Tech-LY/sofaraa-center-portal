@@ -324,8 +324,8 @@ const popReceipt = ref(false)
 const paginations = ref<PaginationParamas>({
   page: 1,
   size: 10,
-  customerName: '',
-  Hallname: '',
+  CustomerId: '',
+  HallId: '',
   startDate: '',
   endDate: '',
   phoneNumber: ''
@@ -455,8 +455,8 @@ const onOptionsChange = ({ page, itemsPerPage }: { page: number; itemsPerPage: n
   paginations.value = {
     page: page,
     size: size,
-    Hallname: '',
-    customerName: '',
+    HallId: '',
+    CustomerId: '',
     startDate: '',
     endDate: '',
     phoneNumber: ''
@@ -467,10 +467,10 @@ const onOptionsChange = ({ page, itemsPerPage }: { page: number; itemsPerPage: n
 
 const onSearchFilter = () => {
   if (searchHall.value?.id) {
-    paginations.value.Hallname = searchHall.value.id
+    paginations.value.HallId = searchHall.value.id
   }
   if (searchCustomer.value?.id) {
-    paginations.value.customerName = searchCustomer.value.id
+    paginations.value.CustomerId = searchCustomer.value.id
   }
   onGetHallsRes(paginations.value)
 }
@@ -478,8 +478,8 @@ const onSearchFilter = () => {
 const clearFilter = () => {
   searchHall.value = undefined
   searchCustomer.value = undefined
-  paginations.value.Hallname = ''
-  paginations.value.customerName = ''
+  paginations.value.HallId = ''
+  paginations.value.CustomerId = ''
   paginations.value.endDate = ''
   paginations.value.startDate = ''
   paginations.value.phoneNumber = ''
