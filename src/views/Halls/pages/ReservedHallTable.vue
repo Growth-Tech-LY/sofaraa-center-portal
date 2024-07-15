@@ -19,12 +19,13 @@
 
       <!-- //filter div -->
       <div
-        v-show="showSearch"
+      data-aos="zoom-in-up"
+        v-if="showSearch"
         class="bg-white border-t-8 border-[#BF3B74] mx-auto p-7 rounded-lg shadow-lg w-3/4 z-50 left-40 top-64 fixed"
       >
         <p class="text-gray-700 mx-auto pr-3 mb-1">البحث</p>
-        <div class="bg-white grid grid-cols-3 gap-4 justify-center items-center">
-          <div class="flex gap-1 justify-center items-center">
+        <div  class="bg-white grid grid-cols-3 gap-4 justify-center items-center">
+          <div  class="flex gap-1 justify-center items-center">
             <v-autocomplete
               transition="slide-y-transition"
               v-model="searchHall"
