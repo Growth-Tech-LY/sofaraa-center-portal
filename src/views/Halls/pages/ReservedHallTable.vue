@@ -2,8 +2,8 @@
   <div class="mx-auto mt-12 px-4">
     <div class="flex justify-between items-center">
       <p class="text-2xl">إدارة حجوزات القاعات</p>
-
       <v-btn
+   v-if="premissions.halls.add"
         :to="{ name: 'hall-reserve' }"
         class="mt-4 text-white"
         color="pink-darken-2"
@@ -134,12 +134,15 @@
             <v-tooltip activator="parent" location="bottom">إيصال قبض </v-tooltip>
           </v-btn>
           <RouterLink :to="{ name: 'edit-reserved', params: { id: item.id } }">
-            <v-btn variant="text" size="medium" color="yellow-darken-2" :append-icon="mdiPencil">
+            <v-btn 
+            v-if="premissions.halls.edit"
+            variant="text" size="medium" color="yellow-darken-2" :append-icon="mdiPencil">
               <v-tooltip activator="parent" location="bottom">تعديل</v-tooltip>
             </v-btn>
           </RouterLink>
 
           <v-btn
+              v-if="premissions.halls.edit"
             variant="text"
             @click="openEditRestPrice(item)"
             size="medium"
@@ -150,6 +153,7 @@
           </v-btn>
 
           <v-btn
+          v-if="premissions.halls.delete"
             variant="text"
             size="medium"
             color="red-darken-2"
@@ -269,6 +273,7 @@ import type { PaginationParamas } from '@/core/models/pagination-params'
 import type { ReservationTable } from '@/views/Halls/models/reserveModels'
 import ReserveDetials from './ReserveDetials.vue'
 import { getHalls, getCustomers, getServices } from '@/core/services/mainServices'
+import { premissions } from '@/core/stores/premissions'
 
 const headers: any = [
   { title: 'أسم القاعة', align: 'start', sortable: false, value: 'hall_ManagementName' },

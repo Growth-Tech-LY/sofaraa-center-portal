@@ -21,7 +21,8 @@
             <v-divider></v-divider>
 
             <v-list density="compact" nav>
-              <RouterLink :to="{ name: 'reservations-list' }">
+              <RouterLink v-if="premissions.halls.showed" :to="{ name: 'reservations-list' }">
+                
                 <v-list-item
                   :prepend-icon="mdiHomeCityOutline"
                   title="إدارة حجوزات القاعات"
@@ -29,7 +30,7 @@
                 ></v-list-item>
               </RouterLink>
 
-              <RouterLink to="/courses">
+              <RouterLink v-if="premissions.courses.showed" to="/courses">
                 <v-list-item
                   :prepend-icon="mdiHumanMaleBoardPoll"
                   title="حجز دورة"
@@ -56,6 +57,8 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import NavBar from './NavBar.vue'
+import { givePremission } from '@/core/stores/premissions';
+import { premissions } from '@/core/stores/premissions';
 import CalanderView from './Halls/pages/CalanderView.vue';
 import {
   mdiHumanMaleBoard,
@@ -67,6 +70,13 @@ import {
   mdiWalletGiftcard,
   mdiHumanMaleBoardPoll
 } from '@mdi/js'
+
+onMounted(() => {
+  // const pre = localStorage.getItem('permissionCodes')
+  // console.log(pre);
+  
+  givePremission()
+})
 
 const user = ref()
 const drawer = ref(true)
