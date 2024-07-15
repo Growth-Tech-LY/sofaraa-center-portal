@@ -261,14 +261,12 @@ import {
   mdiFilter,
   mdiNote,
   mdiCalendarRange,
-  mdiReceipt,
   mdiPrinter,
   mdiCash
 } from '@mdi/js'
 import ReceiptView from './ReceiptView.vue'
-import ReserveHall from './ReserveHall.vue'
 import EditRestPrice from './EditRestPrice.vue'
-import type { Hall, Customer, Service } from '@/core/models/Mainmodels'
+import type { Hall, Customer } from '@/core/models/Mainmodels'
 import { deleteResHall, getResHallTaple } from '../hallReserve-services'
 import type { PaginationParamas } from '@/core/models/pagination-params'
 import type { ReservationTable } from '@/views/Halls/models/reserveModels'
@@ -309,17 +307,14 @@ const idToPrint = ref('')
 
 const searchHall = ref<Hall>()
 const searchCustomer = ref<Customer>()
-const SearchStartDate = ref('')
-const SearchEndDate = ref('')
-const phoneNumber = ref('')
+
 
 //------------------------
 
-const hallName = ref<Hall>()
+
 
 const hallData = ref<Hall[]>([])
 const customerData = ref<Customer[]>([])
-const ServicesData = ref<Service[]>([])
 const popReceipt = ref(false)
 
 const paginations = ref<PaginationParamas>({
@@ -331,56 +326,6 @@ const paginations = ref<PaginationParamas>({
   endDate: '',
   phoneNumber: ''
 })
-
-const PaymentMethods = [
-  {
-    label: 'نقدا',
-    value: 1,
-    index: 1
-  },
-  {
-    label: ' بطاقة مصرفية',
-    value: 2,
-    index: 2
-  },
-  {
-    label: 'شيك',
-    value: 3,
-    index: 3
-  }
-] as const
-
-const reserveTypes = [
-  {
-    label: 'مبدئ',
-    value: 1,
-    index: 1
-  },
-  {
-    label: 'نهائي',
-    value: 2,
-    index: 2
-  }
-] as const
-
-const packageType = [
-  {
-    label: 'ساعة',
-    value: 'ساعة'
-  },
-  {
-    label: 'نصف يوم',
-    value: 'نصف يوم'
-  },
-  {
-    label: 'أسبوع',
-    value: 'أسبوع'
-  },
-  {
-    label: 'شهر',
-    value: 'أسبوع'
-  }
-] as const
 
 const searchToggle = () => {
   showSearch.value = !showSearch.value
@@ -412,7 +357,7 @@ const EditMessage = () => {
   showEditMessage.value = !showEditMessage.value
 }
 
-const receipt = ref<ReservationTable>()
+
 
 const openPrint = (item: ReservationTable) => {
   idToPrint.value = item.id
