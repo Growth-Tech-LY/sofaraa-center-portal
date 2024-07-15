@@ -21,9 +21,11 @@
     "date-fns": "^3.6.0",
     "qalendar": "^3.8.1",
     "tw-elements": "^2.0.0",
+    "v-onboarding": "^2.8.2",
     "vue": "^3.4.21",
     "vue-router": "^4.3.0",
     "vue-to-print": "^1.1.0",
+    "vue3-tour": "^1.0.1",
     "vuetify": "^3.6.6"
   },
   "devDependencies": {

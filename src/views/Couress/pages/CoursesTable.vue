@@ -4,10 +4,27 @@
     <div class="flex w-full mx-auto justify-between">
       <div class="flex flex-col">
         <div class="flex justify-between items-center relative">
-          <v-btn @click="searchToggle" size="large" variant="text" :prepend-icon="mdiFilter">
+          <v-btn
+            id="search"
+            @click="searchToggle"
+            size="large"
+            variant="text"
+            :prepend-icon="mdiFilter"
+          >
             <v-tooltip activator="parent" location="bottom">بحث</v-tooltip></v-btn
           >
-
+          <v-alert
+            class="w-1/3 mt-3"
+            v-if="TourAlert"
+            closable
+            text=" هل تريد عدم ظهور (  التعليمات  ) مرة اخرة ؟ "
+            type="warning"
+            variant="outlined"
+          >
+            <br />
+            <v-btn color="teal-accent-4" class="mt-4" @click="TourAlert = false">لا </v-btn>
+            <v-btn color="orange-darken-1" class="mx-2 mt-4" @click="stopTour">موافق </v-btn>
+          </v-alert>
           <!-- //filter div -->
           <div
             data-aos="zoom-in-up"
@@ -15,7 +32,7 @@
             class="bg-white border-t-[12px] border-[#BF3B74] mx-auto p-7 rounded-lg shadow-lg w-3/4 z-50 top-60 fixed"
           >
             <p class="text-gray-700 mx-auto pr-3 mb-2 text-xl py-2">فلتر البحث</p>
-            <div class="bg-white grid grid-cols-3 gap-4 justify-center items-center">
+            <div id="filter" class="bg-white grid grid-cols-3 gap-4 justify-center items-center">
               <div class="flex gap-1 justify-center items-center">
                 <v-autocomplete
                   :prepend-icon="mdiOfficeBuildingMarker"
@@ -86,6 +103,7 @@
             <div class="flex flex-nowrap">
               <v-btn size="large" class="mx-3" color="red" @click="searchToggle"> إغلاق </v-btn>
               <v-btn
+                id="serechBtn"
                 size="large"
                 class="mx-3"
                 color="light-blue-accent-4"
@@ -95,6 +113,7 @@
                 بحث
               </v-btn>
               <v-btn
+                id="c-serech"
                 size="large"
                 class="text-white"
                 color="light-blue-accent-4 "
@@ -108,7 +127,8 @@
         </div>
       </div>
       <v-btn
-          v-if="premissions.courses.add"
+        v-if="premissions.courses.add"
+        id="addBtn"
         class="mt-4 ml-5 text-white hover:scale-95"
         color="pink-darken-2"
         rounded="lg"
@@ -208,7 +228,6 @@
 
       <!--  <<  [        The Edit start          ] >>       -->
       <div
-      
         v-if="editPopUp"
         @click.self="toggelEdit"
         class="fixed h-screen w-full top-0 left-0 bg-gray-500/50 z-[1005]"
@@ -299,7 +318,7 @@
           </v-btn>
           <RouterLink :to="{ name: 'edit-courese', params: { id: item.id } }"
             ><v-btn
-               v-if="premissions.courses.edit"
+              v-if="premissions.courses.edit"
               variant="text"
               class=""
               color="yellow-darken-2"
@@ -311,7 +330,7 @@
           >
 
           <v-btn
-           v-if="premissions.courses.delete"
+            v-if="premissions.courses.delete"
             color="deep-orange-darken-1"
             variant="text"
             size="medium"
@@ -332,6 +351,49 @@
       </template>
     </v-data-table-server>
   </div>
+  <VOnboardingWrapper ref="wrapper" :steps="steps" class="z-[2500] relative">
+    <template #default="{ previous, next, step, isFirst, isLast, index }">
+      <VOnboardingStep>
+        <div class="bg-white shadow rounded-lg">
+          <v-btn
+            @click="closeTour"
+            :icon="mdiCloseThick"
+            color="red"
+            size="x-small"
+            class="relative left-3 bottom-2 scale-75"
+          ></v-btn>
+          <div class="px-4 py-5 p-6">
+            <div class="">
+              <div v-if="step.content">
+                <h3 v-if="step.content.title" class="text-lg font-medium leading-6 text-gray-900">
+                  {{ step.content.title }}
+                </h3>
+                <div
+                  v-if="step.content.description"
+                  class="mt-2 max-w-sm text-sm text-gray-500 py-2"
+                >
+                  <p>{{ step.content.description }}</p>
+                </div>
+              </div>
+              <div class="mt-5 space-x-4 ml-6 flex flex-shrink-0 items-center relative">
+                <span
+                  class="absolute right-0 bottom-full mb-2 mr-2 text-gray-600 font-medium text-xs"
+                  >{{ `${index + 1}/${steps.length}` }}</span
+                >
+                <template v-if="!isFirst">
+                  <v-btn @click="previous" color="deep-purple-darken-1">السابق</v-btn>
+                </template>
+
+                <v-btn @click="next" color="pink-darken-2">
+                  {{ isLast ? 'انتهاء' : 'التالي' }}
+                </v-btn>
+              </div>
+            </div>
+          </div>
+        </div>
+      </VOnboardingStep>
+    </template>
+  </VOnboardingWrapper>
 </template>
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
@@ -357,7 +419,8 @@ import {
   mdiHumanMaleBoard,
   mdiOfficeBuildingMarker,
   mdiInformationSlabCircleOutline,
-  mdiDeleteOutline
+  mdiDeleteOutline,
+  mdiCloseThick
 } from '@mdi/js'
 import type { Hall, Teacher, Coures } from '@/core/models/Mainmodels'
 import { getCouresesFromMang, getHalls, getTeacher } from '@/core/services/mainServices'
@@ -366,6 +429,124 @@ import { premissions } from '@/core/stores/premissions'
 
 // const searchHall = ref<Hall>()
 
+import { defineComponent } from 'vue'
+import { VOnboardingWrapper, VOnboardingStep, useVOnboarding } from 'v-onboarding'
+
+const wrapper = ref(null)
+const { start, goToStep, finish } = useVOnboarding(wrapper)
+defineComponent({
+  components: {
+    VOnboardingWrapper
+  },
+  setup() {
+    const wrapper = ref(null)
+
+    return {
+      wrapper,
+      steps
+    }
+  }
+})
+const closeTour = () => {
+  finish()
+  TourAlert.value = true
+}
+const steps = [
+  {
+    attachTo: { element: '#addBtn' },
+    content: {
+      title: 'حجز دورة جديدة',
+      description: ' اضغط هنا و انتقل لتعبئة النموذج و اضافة حجز جديدة في الجدول'
+    }
+  },
+  {
+    attachTo: { element: '#form' },
+    content: {
+      title: 'حجز دورة جديدة',
+      description: 'تقوم بتعبئة النومذج التالي لتحجز قاعة '
+    },
+    on: {
+      beforeStep: function () {
+        toggelForm()
+      }
+    }
+  },
+  {
+    attachTo: { element: '#check' },
+    content: {
+      title: 'حجز دورة جديدة',
+      description: 'يمكمك تحقق من القاعة اذا كانت متاحة للحجز في الوقت الذي قمت بتحديده '
+    }
+  },
+  {
+    attachTo: { element: '#add' },
+    content: {
+      title: 'حجز دورة جديدة',
+      description: 'و ثم تقوم بحجز الدروة'
+    }
+  },
+  {
+    attachTo: { element: '#cancel' },
+    content: {
+      title: 'حجز دورة جديدة',
+      description: 'أو تلغي العملية '
+    },
+    on: {
+      afterStep: function () {
+        toggelForm()
+      }
+    }
+  },
+  {
+    attachTo: { element: '#search' },
+    content: {
+      title: 'البحث في الحجوزات',
+      description: ' تضغط هنا للبحث '
+    },
+    on: {
+      afterStep: function () {
+        searchToggle()
+      }
+    }
+  },
+  {
+    attachTo: { element: '#filter' },
+    content: {
+      title: 'البحث في الحجوزات',
+      description: 'يمكن البحث باسم القاعة فقط او يمكن تحدد اكثر من ذالك '
+    }
+  },
+  {
+    attachTo: { element: '#serechBtn' },
+    content: {
+      title: 'البحث في الحجوزات',
+      description: ' و بعد تحديد اختيارات البحث اظغط هنا '
+    }
+  },
+  {
+    attachTo: { element: '#c-serech' },
+    content: {
+      title: 'البحث في الحجوزات',
+      description: ' و من هنا تقوم بألغاء كل أختيارات البحث  '
+    },
+    on: {
+      afterStep: function () {
+        searchToggle()
+        TourAlert.value = true
+      }
+    }
+  }
+]
+const enabelTours = () => {
+  if (localStorage.getItem('couresTour') != 'true') {
+    start()
+  }
+}
+const stopTour = () => {
+  localStorage.setItem('couresTour', 'true')
+  TourAlert.value = false
+}
+onMounted(enabelTours)
 const searcher = ref()
 type SRH = {
   Hall: { id: string }
@@ -384,6 +565,7 @@ const search = ref<SRH>({
   }
 })
 const loading = ref(false)
+const TourAlert = ref(false)
 const courses = ref<Couress[]>([])
 const AllTeachers = ref<Teacher[]>()
 const AllCoureses = ref<Coures[]>()
@@ -428,83 +610,6 @@ const headers: any = [
   { title: 'الأجرائات', key: 'actions', align: 'center' }
 ]
 
-// const test = [
-//   {
-//     id: '001',
-//     couresManagementName: 'دورة طبخ ',
-//     teacherManagementName: 'الشيف العالم',
-//     hall_managementName: 'Top Chaf',
-//     serviceManagementName: 'فطور + غذاء',
-//     endDate: '3/3/2023',
-//     fromTime: '11',
-//     toTime: '2'
-//   },
-
-//   {
-//     id: '002',
-//     couresManagementName: 'دورة طبخ ',
-//     teacherManagementName: 'الشيف العالم',
-//     hall_managementName: 'Top Chaf',
-//     serviceManagementName: 'فطور + غذاء',
-//     endDate: '3/3/2023',
-//     fromTime: '11',
-//     toTime: '2'
-//   },
-//   {
-//     id: '003',
-//     couresManagementName: 'دورة طبخ ',
-//     teacherManagementName: 'الشيف العالم',
-//     hall_managementName: 'Top Chaf',
-//     serviceManagementName: 'فطور + غذاء',
-//     endDate: '3/3/2023',
-//     fromTime: '11',
-//     toTime: '2'
-//   },
-//   {
-//     id: '004',
-//     couresManagementName: 'دورة طبخ ',
-//     teacherManagementName: 'الشيف العالم',
-//     hall_managementName: 'Top Chaf',
-//     serviceManagementName: 'فطور + غذاء',
-//     endDate: '3/3/2023',
-//     fromTime: '11',
-//     toTime: '2'
-//   },
-//   {
-//     id: '005',
-//     couresManagementName: 'دورة طبخ ',
-//     teacherManagementName: 'الشيف العالم',
-//     hall_managementName: 'Top Chaf',
-//     serviceManagementName: 'فطور + غذاء',
-//     endDate: '3/3/2023',
-//     fromTime: '11',
-//     toTime: '2'
-//   },
-//   {
-//     id: '006',
-//     couresManagementName: 'دورة طبخ ',
-//     teacherManagementName: 'الشيف العالم',
-//     hall_managementName: 'Top Chaf',
-//     serviceManagementName: 'فطور + غذاء',
-//     endDate: '3/3/2023',
-//     fromTime: '11',
-//     toTime: '2'
-//   },
-//   {
-//     id: '007',
-//     couresManagementName: 'دورة طبخ ',
-//     teacherManagementName: 'الشيف العالم',
-//     hall_managementName: 'Top Chaf',
-//     serviceManagementName: 'فطور + غذاء',
-//     endDate: '3/3/2023',
-//     fromTime: '11',
-//     toTime: '2'
-//   }
-// ]
-
-// const toggelStudent = () => {
-//   formPopUP.value = !formPopUP.value
-// }
 const searchToggle = () => {
   showSearch.value = !showSearch.value
 }
@@ -629,3 +734,37 @@ const clearFilter = () => {
   onGetCourse(paginations.value)
 }
 </script>
+<style>
+[data-v-onboarding-wrapper] [data-popper-arrow]::before {
+  content: '';
+  background: var(--v-onboarding-step-arrow-background, white);
+  top: 0;
+  left: 0;
+  transition:
+    transform 0.2s ease-out,
+    visibility 0.2s ease-out;
+  visibility: visible;
+  transform: translateX(0px) rotate(45deg);
+  transform-origin: center;
+  width: var(--v-onboarding-step-arrow-size, 10px);
+  height: var(--v-onboarding-step-arrow-size, 10px);
+  position: absolute;
+  z-index: -1;
+}
+
+[data-v-onboarding-wrapper] [data-popper-placement^='top'] > [data-popper-arrow] {
+  bottom: 5px;
+}
+
+[data-v-onboarding-wrapper] [data-popper-placement^='right'] > [data-popper-arrow] {
+  left: -4px;
+}
+
+[data-v-onboarding-wrapper] [data-popper-placement^='bottom'] > [data-popper-arrow] {
+  top: -4px;
+}
+
+[data-v-onboarding-wrapper] [data-popper-placement^='left'] > [data-popper-arrow] {
+  right: -4px;
+}
+</style>

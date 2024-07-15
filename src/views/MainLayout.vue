@@ -22,7 +22,6 @@
 
             <v-list density="compact" nav>
               <RouterLink v-if="premissions.halls.showed" :to="{ name: 'reservations-list' }">
-                
                 <v-list-item
                   :prepend-icon="mdiHomeCityOutline"
                   title="إدارة حجوزات القاعات"
@@ -55,30 +54,19 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { ref } from 'vue'
 import NavBar from './NavBar.vue'
-import { givePremission } from '@/core/stores/premissions';
-import { premissions } from '@/core/stores/premissions';
-import CalanderView from './Halls/pages/CalanderView.vue';
-import {
-  mdiHumanMaleBoard,
-  mdiRoomServiceOutline,
-  mdiChevronLeft,
-  mdiAccountGroupOutline,
-  mdiAccountTie,
-  mdiHomeCityOutline,
-  mdiWalletGiftcard,
-  mdiHumanMaleBoardPoll
-} from '@mdi/js'
+import { premissions } from '@/core/stores/premissions'
+import { mdiHomeCityOutline, mdiHumanMaleBoardPoll } from '@mdi/js'
 
-onMounted(() => {
-  // const pre = localStorage.getItem('permissionCodes')
-  // console.log(pre);
-  
-  givePremission()
-})
+// onMounted(() => {
+//   const pre = localStorage.getItem('permissionCodes')
+//   console.log(pre);
 
-const user = ref()
+//   givePremission()
+// })
+
+// const user = ref()
 const drawer = ref(true)
 const rail = ref(true)
 </script>

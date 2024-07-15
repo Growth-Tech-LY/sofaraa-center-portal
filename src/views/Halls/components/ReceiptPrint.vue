@@ -20,7 +20,7 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, ref } from 'vue';
+import {  ref } from 'vue';
 import type { ReservationTable } from '../models/reserveModels';
 import { watchEffect } from 'vue';
 

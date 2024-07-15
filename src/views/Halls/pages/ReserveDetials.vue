@@ -47,7 +47,8 @@
           <span class="text-blue-500"> طريقة الدفع : </span>{{ typeOfPayment }}
         </p>
         <p class="ms-3 py-2 tetx-sm text-start pr-1 font-bold bg-gray-200 text-gray-900  mt-4">
-          <span class="text-blue-500"> نوع الباقة : </span>{{ hallResInfo?.packageType }}        </p>
+          <span class="text-blue-500"> نوع الباقة : </span>{{ hallResInfo?.packageType }}
+        </p>
   
           <div>
         <p class="ms-3 py-2 text-sm text-start pr-1 font-bold bg-gray-200 text-gray-900 mt-4">
@@ -58,7 +59,7 @@
        
       </div>
     </div>   
-    </p>
+       </p>
       </div>
       </div>
       <div class="mt-8">

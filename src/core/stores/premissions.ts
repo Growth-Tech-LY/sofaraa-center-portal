@@ -14,34 +14,34 @@ export const premissions = {
 }
 
 const givePremission = () => {
-  const Codes =localStorage.getItem('permissionCodes')
+  const Codes = localStorage.getItem('permissionCodes')
   const permissionCodes = JSON.parse(Codes as string)
 
   if (permissionCodes) {
-    permissionCodes.forEach((permission : any) => {
+    permissionCodes.forEach((permission: any) => {
       switch (permission.code) {
-        case '9001':
+        case '12001':
           premissions.halls.showed = true
           break
-        case '9003':
+        case '12003':
           premissions.halls.add = true
           break
-          case '9004':
-            premissions.halls.edit = true
-            break
-        case '9005':
+        case '12004':
+          premissions.halls.edit = true
+          break
+        case '12005':
           premissions.halls.delete = true
           break
-          
+
         case '10001':
           premissions.courses.showed = true
           break
         case '10003':
           premissions.courses.add = true
           break
-          case '10004':
-            premissions.courses.edit = true
-            break
+        case '10004':
+          premissions.courses.edit = true
+          break
         case '10005':
           premissions.courses.delete = true
           break

@@ -19,12 +19,13 @@
 
       <!-- //filter div -->
       <div
-        v-show="showSearch"
+      data-aos="zoom-in-up"
+        v-if="showSearch"
         class="bg-white border-t-8 border-[#BF3B74] mx-auto p-7 rounded-lg shadow-lg w-3/4 z-50 left-40 top-64 fixed"
       >
         <p class="text-gray-700 mx-auto pr-3 mb-1">البحث</p>
-        <div class="bg-white grid grid-cols-3 gap-4 justify-center items-center">
-          <div class="flex gap-1 justify-center items-center">
+        <div  class="bg-white grid grid-cols-3 gap-4 justify-center items-center">
+          <div  class="flex gap-1 justify-center items-center">
             <v-autocomplete
               transition="slide-y-transition"
               v-model="searchHall"
@@ -324,8 +325,8 @@ const popReceipt = ref(false)
 const paginations = ref<PaginationParamas>({
   page: 1,
   size: 10,
-  customerName: '',
-  Hallname: '',
+  CustomerId: '',
+  HallId: '',
   startDate: '',
   endDate: '',
   phoneNumber: ''
@@ -455,8 +456,8 @@ const onOptionsChange = ({ page, itemsPerPage }: { page: number; itemsPerPage: n
   paginations.value = {
     page: page,
     size: size,
-    Hallname: '',
-    customerName: '',
+    HallId: '',
+    CustomerId: '',
     startDate: '',
     endDate: '',
     phoneNumber: ''
@@ -467,10 +468,10 @@ const onOptionsChange = ({ page, itemsPerPage }: { page: number; itemsPerPage: n
 
 const onSearchFilter = () => {
   if (searchHall.value?.id) {
-    paginations.value.Hallname = searchHall.value.id
+    paginations.value.HallId = searchHall.value.id
   }
   if (searchCustomer.value?.id) {
-    paginations.value.customerName = searchCustomer.value.id
+    paginations.value.CustomerId = searchCustomer.value.id
   }
   onGetHallsRes(paginations.value)
 }
@@ -478,8 +479,8 @@ const onSearchFilter = () => {
 const clearFilter = () => {
   searchHall.value = undefined
   searchCustomer.value = undefined
-  paginations.value.Hallname = ''
-  paginations.value.customerName = ''
+  paginations.value.HallId = ''
+  paginations.value.CustomerId = ''
   paginations.value.endDate = ''
   paginations.value.startDate = ''
   paginations.value.phoneNumber = ''

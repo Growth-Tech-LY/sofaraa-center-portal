@@ -3,8 +3,9 @@ import vuetify from './core/plugins/vuetify'
 import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
+import { givePremission } from './core/stores/premissions'
 
-
+givePremission()
 
 
 

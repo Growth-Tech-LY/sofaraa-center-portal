@@ -3,7 +3,7 @@
     class="mt-6 bg-white border-t-[20px] border-[#BF3B74] w-3/4 mx-auto py-16 px-16 rounded-lg shadow-lg h-3/4 max-h-[90vh]"
   >
     <h2 class="text-2xl">- حجز دورة</h2>
-    <v-form v-model="form" class="grid grid-cols-4 gap-4 mt-8">
+    <v-form id="form" v-model="form" class="grid grid-cols-4 gap-4 mt-8">
       <v-autocomplete
         :prepend-icon="mdiHumanMaleBoard"
         v-model="TeacherId"
@@ -149,6 +149,7 @@
 
       <div class="pr-20 col-start-1 col-span-3 mt-10 flex">
         <v-btn
+          id="check"
           size="large"
           class="p-4 mt-4 w-1/6 ml-3 hover:scale-95"
           color="blue"
@@ -158,6 +159,7 @@
           >تحقق</v-btn
         >
         <v-btn
+          id="add"
           size="large"
           class="p-4 mt-4 w-1/6 ml-3 hover:scale-95"
           color="green"
@@ -166,7 +168,12 @@
           @click="submitCoures"
           >حجز</v-btn
         >
-        <v-btn size="large" class="p-4 mt-4 w-1/6 hover:scale-95" color="red" @click="closeModel"
+        <v-btn
+          id="cancel"
+          size="large"
+          class="p-4 mt-4 w-1/6 hover:scale-95"
+          color="red"
+          @click="closeModel"
           >الغاء
         </v-btn>
         <P
@@ -312,7 +319,8 @@ const checkdate = () => {
     endDate: formatDate(EndDate.value)
   })
     .then((response) => {
-      if (response.message === 'TrainingCoures is available for the requested time.') {
+      //       تم تغير
+      if (response.message === 'حجز الدورة التدريبية متاح في الوقت المطلوب.') {
         ReservMsg.value = true
         availableResrv.value = true
         NotAvailableResrv.value = false
@@ -321,7 +329,8 @@ const checkdate = () => {
     .catch((error: any) => {
       if (error.response && error.response.data && error.response.data.message) {
         const errorMessage = error.response.data.message
-
+        //                             |                          |
+        //                             v  تحتاج لتغير الرسالـة  v
         if (errorMessage === 'TrainingCoures is already reserved during the requested time.') {
           NotAvailableResrv.value = true
           availableResrv.value = false
