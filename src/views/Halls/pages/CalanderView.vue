@@ -22,7 +22,7 @@ import { Qalendar } from 'qalendar'
 import { getResHallTaple } from '../hallReserve-services'
 import type { PaginationParamas } from '@/core/models/pagination-params'
 import type { ReservationTable } from '../models/reserveModels'
-import { watch } from 'vue'
+
 
 const hallsReservation = ref<ReservationTable[]>([])
 // const currentMode = ref('week')
@@ -73,8 +73,8 @@ const config = ref<Config>({
 const paginations = ref<PaginationParamas>({
   page: 1,
   size: 10,
-  customerName: '',
-  Hallname: '',
+  CustomerId: '',
+  HallId: '',
   startDate: '',
   endDate: '',
   phoneNumber: ''

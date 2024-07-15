@@ -36,8 +36,10 @@ type PostReservationHalls = {
 type ReservationTable = {
   id: string
   hall_ManagementName: string
+  hall_ManagementId: string
   packageType: string
   customerManegentName: string
+  customerManegentId: string
   totalPrice: number
   payedPrice: number
   restPrice: number
@@ -55,8 +57,6 @@ type ReservationTable = {
 } 
 
 
-
-type Printpaper = {}
 
 type PutReservation = {
   id: string

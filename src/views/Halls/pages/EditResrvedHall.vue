@@ -168,7 +168,7 @@
         ></v-autocomplete>
       </div>
       <div class="flex item-center justify-center gap-8">
-        <v-text-field
+        <!-- <v-text-field
           v-model="paid"
           label="المدفوع"
           item-title="label"
@@ -177,7 +177,7 @@
           variant="outlined"
           type="number"
           :rules="[Rules.paymentCount]"
-        ></v-text-field>
+        ></v-text-field> -->
         <p class="ms-3 text-lg font-bold text-gray-900 text-center mt-4">
           <span class="text-red-500">سعر الإجمالي : </span> {{ totalPayment }}د.ل
         </p>
@@ -201,7 +201,6 @@
             !toTime ||
             !Payment ||
             !reserveType ||
-            !paid ||
             dateError
           "
           size="large"
@@ -384,11 +383,12 @@ watchEffect(() => {
     selectedServicesPrice.value = selectedServicesPrice.value + services.value[i].servicePrice
     servicesId.value.push(services.value[i].id)
   }
-  console.log('theids', servicesId.value)
+  // console.log('the server ids', servicesId.value)
 })
 
 watchEffect(() => {
   console.log('the hallname value is ', hallName.value)
+
 })
 
 const onGetData = () => {
@@ -518,8 +518,9 @@ watchEffect(() => {
 watchEffect(() => {
   if (resToEdit.value) {
     hallData.value.forEach((item) => {
-      if (item.name == resToEdit.value?.hall_ManagementName) {
+      if (item.id == resToEdit.value?.hall_ManagementId) {
         hallName.value = item
+        console.log( 'haaall', hallName.value);
         return
       }
     })
@@ -547,7 +548,7 @@ watchEffect(() => {
   // }
   if (resToEdit.value) {
     customerData.value.forEach((item) => {
-      if (item.name == resToEdit.value?.customerManegentName) {
+      if (item.id == resToEdit.value?.customerManegentId) {
         customer.value = item
         return
       }
