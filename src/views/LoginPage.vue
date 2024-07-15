@@ -5,7 +5,7 @@
     <div class="hidden lg:flex items-center justify-center flex-1 bg-white text-black shadow-2xl">
       <!-- <div class="max-w-md text-center"> -->
       <!--   <<[      big pic here !!        ]>> -->
-      <div class=""><img src="../assets/LoginPic.jpg" class="bg-contain" alt="" /></div>
+      <div class=""><img src="../assets/LoginPic.jpg" class="bg-cover bg-center" alt="" /></div>
       <!-- </div> -->
     </div>
     <!-- Right Pane -->
@@ -65,6 +65,17 @@
               >تسجيل الدخول</v-btn
             >
           </div>
+          <v-alert
+            dir="rtl"
+            v-if="ErrorAlert"
+            closable
+            text="حدث خطاء  "
+            type="warning"
+            variant="outlined"
+          >
+            <br />
+            الرجاء التأكد من كلمة السر واسم المستخدم !
+          </v-alert>
         </form>
         <div class="mt-4 text-sm text-gray-600 text-center">
           <!-- <p>
@@ -77,13 +88,16 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watchEffect } from 'vue'
+import { onMounted, ref, watchEffect } from 'vue'
 import { useRouter } from 'vue-router'
 import apiClient from '@/axios'
 
 import { mdiAccountCircle, mdiKey } from '@mdi/js'
+import { givePremission } from '@/core/stores/premissions'
+import { alertStore } from '@/core/stores/alert.store'
 const router = useRouter()
 const isLoading = ref(false)
+const ErrorAlert = ref(false)
 type user = {
   Name: string
   password: string
@@ -111,11 +125,24 @@ const LoginBtn = async () => {
       const permissionCodes = JSON.stringify(response.data.permissionCodes)
       localStorage.setItem('permissionCodes', permissionCodes)
       isLoading.value = false
+      givePremission()
       router.replace({ name: 'calander' })
     })
+    .catch((error) => {
+      if (error) {
+        isLoading.value = false
+        ErrorAlert.value = true
+      }
+    })
 }
-watchEffect(() => {
-  console.log(UserData.value.Name)
-  console.log(UserData.value.password)
+
+onMounted(() => {
+  const hasReloaded = localStorage.getItem('hasReloaded')
+  if (!hasReloaded) {
+    localStorage.setItem('hasReloaded', 'true')
+    window.location.reload()
+  } else {
+    localStorage.removeItem('hasReloaded')
+  }
 })
 </script>
