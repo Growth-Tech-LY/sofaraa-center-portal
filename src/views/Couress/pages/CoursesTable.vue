@@ -531,18 +531,19 @@ const steps = [
     },
     on: {
       afterStep: function () {
-        stopTour
+        searchToggle()
+        TourAlert.value = true
       }
     }
   }
 ]
 const enabelTours = () => {
-  if (localStorage.getItem('stopTour') != 'true') {
+  if (localStorage.getItem('couresTour') != 'true') {
     start()
   }
 }
 const stopTour = () => {
-  localStorage.setItem('stopTour', 'true')
+  localStorage.setItem('couresTour', 'true')
   TourAlert.value = false
 }
 onMounted(enabelTours)
