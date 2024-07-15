@@ -312,7 +312,8 @@ const checkdate = () => {
     endDate: formatDate(EndDate.value)
   })
     .then((response) => {
-      if (response.message === 'TrainingCoures is available for the requested time.') {
+      //       تم تغير
+      if (response.message === 'حجز الدورة التدريبية متاح في الوقت المطلوب.') {
         ReservMsg.value = true
         availableResrv.value = true
         NotAvailableResrv.value = false
@@ -321,7 +322,8 @@ const checkdate = () => {
     .catch((error: any) => {
       if (error.response && error.response.data && error.response.data.message) {
         const errorMessage = error.response.data.message
-
+        //                             |                          |
+        //                             v  تحتاج لتغير الرسالـة  v
         if (errorMessage === 'TrainingCoures is already reserved during the requested time.') {
           NotAvailableResrv.value = true
           availableResrv.value = false

@@ -108,6 +108,7 @@
         </div>
       </div>
       <v-btn
+        id="addBtn"
         class="mt-4 ml-5 text-white hover:scale-95"
         color="pink-darken-2"
         rounded="lg"
@@ -328,6 +329,49 @@
       </template>
     </v-data-table-server>
   </div>
+  <VOnboardingWrapper ref="wrapper" :steps="steps" class="z-[2500] relative">
+    <template #default="{ previous, next, step, isFirst, isLast, index }">
+      <VOnboardingStep>
+        <div class="bg-white shadow rounded-lg mt-3">
+          <v-btn
+            @click="closeTour"
+            :icon="mdiCloseThick"
+            color="red"
+            size="x-small"
+            class="relative left-3 bottom-2 scale-75"
+          ></v-btn>
+          <div class="px-4 py-5 p-6">
+            <div class="">
+              <div v-if="step.content">
+                <h3 v-if="step.content.title" class="text-lg font-medium leading-6 text-gray-900">
+                  {{ step.content.title }}
+                </h3>
+                <div
+                  v-if="step.content.description"
+                  class="mt-2 max-w-sm text-sm text-gray-500 py-2"
+                >
+                  <p>{{ step.content.description }}</p>
+                </div>
+              </div>
+              <div class="mt-5 space-x-4 ml-6 flex flex-shrink-0 items-center relative">
+                <span
+                  class="absolute right-0 bottom-full mb-2 mr-2 text-gray-600 font-medium text-xs"
+                  >{{ `${index + 1}/${steps.length}` }}</span
+                >
+                <template v-if="!isFirst">
+                  <v-btn @click="previous" color="deep-purple-darken-1">السابق</v-btn>
+                </template>
+
+                <v-btn @click="next" color="pink-darken-2">
+                  {{ isLast ? 'انتهاء' : 'التالي' }}
+                </v-btn>
+              </div>
+            </div>
+          </div>
+        </div>
+      </VOnboardingStep>
+    </template>
+  </VOnboardingWrapper>
 </template>
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
@@ -353,7 +397,8 @@ import {
   mdiHumanMaleBoard,
   mdiOfficeBuildingMarker,
   mdiInformationSlabCircleOutline,
-  mdiDeleteOutline
+  mdiDeleteOutline,
+  mdiCloseThick
 } from '@mdi/js'
 import type { Hall, Teacher, Coures } from '@/core/models/Mainmodels'
 import { getCouresesFromMang, getHalls, getTeacher } from '@/core/services/mainServices'
@@ -361,6 +406,47 @@ import type { Couress } from '../models/courses'
 
 // const searchHall = ref<Hall>()
 
+import { defineComponent } from 'vue'
+import { VOnboardingWrapper, VOnboardingStep, useVOnboarding } from 'v-onboarding'
+
+const wrapper = ref(null)
+const { start, goToStep, finish } = useVOnboarding(wrapper)
+defineComponent({
+  components: {
+    VOnboardingWrapper
+  },
+  setup() {
+    const wrapper = ref(null)
+
+    return {
+      wrapper,
+      steps
+    }
+  }
+})
+const closeTour = () => {
+  finish()
+  TourAlert.value = true
+}
+const steps = [
+  {
+    attachTo: { element: '#addBtn' },
+    content: {
+      title: 'حجز دورة جديدة',
+      description: ' اضغط هنا و انتقل لتعبئة النموذج و اضافة حجز جديدة في الجدول'
+    }
+  }
+]
+const enabelTours = () => {
+  if (localStorage.getItem('stopTour') != 'true') {
+    start()
+  }
+}
+const stopTour = () => {
+  localStorage.setItem('stopTour', 'true')
+  TourAlert.value = false
+}
+onMounted(enabelTours)
 const searcher = ref()
 type SRH = {
   Hall: { id: string }
@@ -379,6 +465,7 @@ const search = ref<SRH>({
   }
 })
 const loading = ref(false)
+const TourAlert = ref(false)
 const courses = ref<Couress[]>([])
 const AllTeachers = ref<Teacher[]>()
 const AllCoureses = ref<Coures[]>()
