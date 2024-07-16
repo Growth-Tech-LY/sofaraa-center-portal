@@ -117,6 +117,7 @@
         </v-date-input>
 
         <v-date-input
+        
           v-model="toDate"
           label="التاريخ الى"
           placeholder="ادخل التاريخ الى ..."
@@ -144,7 +145,7 @@
           item-value="value"
           placeholder="الوقيت إلي"
           variant="outlined"
-          :rules="[Rules.time]"
+           :rules="[Rules.time ,Rules.timeDiffrence]"
           :prepend-icon="mdiTimerOutline"
         ></v-text-field>
         <div class="relative flex">
@@ -315,7 +316,8 @@ const Rules = {
     const toDate = new Date(value)
     return toDate >= fromDate || 'تاريخ النهاية يجب أن يكون أكبر من تاريخ البداية'
   },
-  paymentCount: (value: number) => value <= totalPayment.value || 'قيمة المدخلة اكبر من الإجمالي '
+  paymentCount: (value: number) => value <= totalPayment.value || 'قيمة المدخلة اكبر من الإجمالي ',
+  timeDiffrence: (value : number) => value > fromTime.value || 'يجب ان يكون وقت النهاية اكبر من الوقت البداية '
 }
 
 const closeModel = () => {
