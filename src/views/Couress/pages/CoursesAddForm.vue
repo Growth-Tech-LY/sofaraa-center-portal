@@ -77,6 +77,7 @@
         variant="outlined"
         :rules="[rules.required]"
       ></v-date-input>
+
       <v-text-field
         class="col-span-2"
         v-modle="numOfHours"
@@ -239,7 +240,8 @@ const AllService = ref<Service[]>()
 // **********************
 const rules = {
   required: (v: string) => !!v || 'الحقل اجباري',
-  timeDiffrence: (value : number) => value > timeFrom.value|| 'يجب ان يكون وقت النهاية اكبر من الوقت البداية '
+  timeDiffrence: (value: number) =>
+    value > timeFrom.value || 'يجب ان يكون وقت النهاية اكبر من الوقت البداية '
 }
 
 // Vars using for body request
@@ -301,7 +303,7 @@ const formatDate = (dateString: Date) => {
   const year = date.getFullYear()
 
   // إعادة التنسيق إلى الشكل المطلوب
-  return `${year}-${month}-${day}`
+  return `${year}/${month}/${day}`
 }
 
 onMounted(async () => {
@@ -349,8 +351,8 @@ const submitCoures = async () => {
     Price: Price.value,
     numberOfRquiredHours: numOfHours.value,
     numberOfMaximumIndividuals: numOfstudents.value,
-    startDate: StartDate.value,
-    endDate: EndDate.value,
+    startDate: formatDate(StartDate.value),
+    endDate: formatDate(EndDate.value),
     fromTime: timeFrom.value,
     toTime: timeTo.value,
     reservationsTypeId: reserveType.value

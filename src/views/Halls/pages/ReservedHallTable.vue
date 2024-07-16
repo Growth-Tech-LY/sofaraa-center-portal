@@ -1,9 +1,22 @@
 <template>
   <div class="mx-auto mt-12 px-4">
+    <v-alert
+      class="w-1/3 mt-3"
+      v-if="TourAlert"
+      closable
+      text=" هل تريد عدم ظهور (  التعليمات  ) مرة اخرة ؟ "
+      type="warning"
+      variant="outlined"
+    >
+      <br />
+      <v-btn color="teal-accent-4" class="mt-4" @click="TourAlert = false">لا </v-btn>
+      <v-btn color="orange-darken-1" class="mx-2 mt-4" @click="stopTour">موافق </v-btn>
+    </v-alert>
     <div class="flex justify-between items-center">
       <p class="text-2xl">إدارة حجوزات القاعات</p>
       <v-btn
-   v-if="premissions.halls.add"
+        id="add"
+        v-if="premissions.halls.add"
         :to="{ name: 'hall-reserve' }"
         class="mt-4 text-white"
         color="pink-darken-2"
@@ -13,19 +26,25 @@
       </v-btn>
     </div>
     <div class="flex justify-between items-center relative">
-      <v-btn @click="searchToggle" size="large" variant="text" :prepend-icon="mdiFilter">
+      <v-btn
+        id="search"
+        @click="searchToggle"
+        size="large"
+        variant="text"
+        :prepend-icon="mdiFilter"
+      >
         <v-tooltip activator="parent" location="bottom">بحث</v-tooltip></v-btn
       >
 
       <!-- //filter div -->
       <div
-      data-aos="zoom-in-up"
+        data-aos="zoom-in-up"
         v-if="showSearch"
         class="bg-white border-t-8 border-[#BF3B74] mx-auto p-7 rounded-lg shadow-lg w-3/4 z-50 left-40 top-64 fixed"
       >
         <p class="text-gray-700 mx-auto pr-3 mb-1">البحث</p>
-        <div  class="bg-white grid grid-cols-3 gap-4 justify-center items-center">
-          <div  class="flex gap-1 justify-center items-center">
+        <div id="filter" class="bg-white grid grid-cols-3 gap-4 justify-center items-center">
+          <div class="flex gap-1 justify-center items-center">
             <v-autocomplete
               transition="slide-y-transition"
               v-model="searchHall"
@@ -91,9 +110,17 @@
           </div>
         </div>
         <v-btn size="large" class="mx-3" color="red" @click="searchToggle"> إغلاق </v-btn>
-        <v-btn size="large" class="mx-3" color="pink-darken-2" @click="onSearchFilter"> بحث </v-btn>
-        <v-btn size="large" class="mx-3" color="pink-darken-1" @click="clearFilter">
-          تصفيت فلتر
+        <v-btn
+          id="serechBtn"
+          size="large"
+          class="mx-3"
+          color="pink-darken-2"
+          @click="onSearchFilter"
+        >
+          بحث
+        </v-btn>
+        <v-btn id="c-serech" size="large" class="mx-3" color="pink-darken-1" @click="clearFilter">
+          إلغاء البحث
         </v-btn>
 
         <!-- //filter div Ends-->
@@ -116,6 +143,7 @@
       <template #[`item.actions`]="{ item }">
         <div class="grid grid-cols-3 gap-1 justify-center items-center">
           <v-btn
+            id="Detials"
             color="blue-darken-2"
             variant="text"
             class="mb-1"
@@ -126,6 +154,7 @@
             <v-tooltip activator="parent" location="bottom">عرض التفاصيل</v-tooltip>
           </v-btn>
           <v-btn
+            id="Print"
             color="blue-grey"
             variant="text"
             size="medium"
@@ -135,15 +164,21 @@
             <v-tooltip activator="parent" location="bottom">إيصال قبض </v-tooltip>
           </v-btn>
           <RouterLink :to="{ name: 'edit-reserved', params: { id: item.id } }">
-            <v-btn 
-            v-if="premissions.halls.edit"
-            variant="text" size="medium" color="yellow-darken-2" :append-icon="mdiPencil">
+            <v-btn
+              id="edit"
+              v-if="premissions.halls.edit"
+              variant="text"
+              size="medium"
+              color="yellow-darken-2"
+              :append-icon="mdiPencil"
+            >
               <v-tooltip activator="parent" location="bottom">تعديل</v-tooltip>
             </v-btn>
           </RouterLink>
 
           <v-btn
-              v-if="premissions.halls.edit"
+            id="RestPrice"
+            v-if="premissions.halls.edit"
             variant="text"
             @click="openEditRestPrice(item)"
             size="medium"
@@ -154,7 +189,8 @@
           </v-btn>
 
           <v-btn
-          v-if="premissions.halls.delete"
+            id="Delete"
+            v-if="premissions.halls.delete"
             variant="text"
             size="medium"
             color="red-darken-2"
@@ -249,6 +285,49 @@
       @editDone="EditMessage"
     />
   </div>
+  <VOnboardingWrapper ref="wrapper" :steps="steps" class="z-[2500] relative">
+    <template #default="{ previous, next, step, isFirst, isLast, index }">
+      <VOnboardingStep>
+        <div class="bg-white shadow rounded-lg">
+          <v-btn
+            @click="closeTour"
+            :icon="mdiCloseThick"
+            color="red"
+            size="x-small"
+            class="relative left-3 bottom-2 scale-75"
+          ></v-btn>
+          <div class="px-4 py-5 p-6">
+            <div class="">
+              <div v-if="step.content">
+                <h3 v-if="step.content.title" class="text-lg font-medium leading-6 text-gray-900">
+                  {{ step.content.title }}
+                </h3>
+                <div
+                  v-if="step.content.description"
+                  class="mt-2 max-w-sm text-sm text-gray-500 py-2"
+                >
+                  <p>{{ step.content.description }}</p>
+                </div>
+              </div>
+              <div class="mt-5 space-x-4 ml-6 flex flex-shrink-0 items-center relative">
+                <span
+                  class="absolute right-0 bottom-full mb-2 mr-2 text-gray-600 font-medium text-xs"
+                  >{{ `${index + 1}/${steps.length}` }}</span
+                >
+                <template v-if="!isFirst">
+                  <v-btn @click="previous" color="deep-purple-darken-1">السابق</v-btn>
+                </template>
+
+                <v-btn @click="next" color="pink-darken-2">
+                  {{ isLast ? 'انتهاء' : 'التالي' }}
+                </v-btn>
+              </div>
+            </div>
+          </div>
+        </div>
+      </VOnboardingStep>
+    </template>
+  </VOnboardingWrapper>
 </template>
 
 <script lang="ts" setup>
@@ -262,7 +341,8 @@ import {
   mdiNote,
   mdiCalendarRange,
   mdiPrinter,
-  mdiCash
+  mdiCash,
+  mdiCloseThick
 } from '@mdi/js'
 import ReceiptView from './ReceiptView.vue'
 import EditRestPrice from './EditRestPrice.vue'
@@ -274,6 +354,124 @@ import ReserveDetials from './ReserveDetials.vue'
 import { getHalls, getCustomers, getServices } from '@/core/services/mainServices'
 import { premissions } from '@/core/stores/premissions'
 
+import { defineComponent } from 'vue'
+import { VOnboardingWrapper, VOnboardingStep, useVOnboarding } from 'v-onboarding'
+
+const wrapper = ref(null)
+const { start, goToStep, finish } = useVOnboarding(wrapper)
+defineComponent({
+  components: {
+    VOnboardingWrapper
+  },
+  setup() {
+    const wrapper = ref(null)
+
+    return {
+      wrapper,
+      steps
+    }
+  }
+})
+const closeTour = () => {
+  finish()
+  TourAlert.value = true
+}
+const steps = [
+  {
+    attachTo: { element: '#add' },
+    content: {
+      title: ' حجز قاعة جديد',
+      description: ' اضغط هنا و انتقل لتعبئة النموذج و اضافة حجز جديدة في الجدول'
+    }
+  },
+  {
+    attachTo: { element: '#Detials' },
+    content: {
+      title: ' عرض التفاصيل',
+      description: `
+      من هنا يمكنك عرض كل بيانات الحجز
+          ( -طريقة الدفع - المدفوع - المتبقي الخ ...) 
+      `
+    }
+  },
+  {
+    attachTo: { element: '#Print' },
+    content: {
+      title: ' طباعة فاتورة',
+      description: ' من هنا يمكنك طباعة فاتورة الخاصة بحجز القاعة   '
+    }
+  },
+  {
+    attachTo: { element: '#edit' },
+    content: {
+      title: 'تعديل بيانات قاعة',
+      description: ' اضغط هنا للأنتقال لصفحة تعديل بيانات حجز القاعة  '
+    }
+  },
+  {
+    attachTo: { element: '#RestPrice' },
+    content: {
+      title: 'تعديل القيمة المدفوعة لحجز قاعة',
+      description: ' اظغط هنا لتعديل على القيمة المدفوعة  '
+    }
+  },
+  {
+    attachTo: { element: '#Delete' },
+    content: {
+      title: 'حذف بيانات قاعة',
+      description: '  اظغط هنا لحذف حجز القاعة  '
+    }
+  },
+  {
+    attachTo: { element: '#search' },
+    content: {
+      title: 'البحث في الحجوزات',
+      description: ' تضغط هنا للبحث '
+    },
+    on: {
+      afterStep: function () {
+        searchToggle()
+      }
+    }
+  },
+  {
+    attachTo: { element: '#filter' },
+    content: {
+      title: 'البحث في الحجوزات',
+      description: 'يمكن البحث باسم القاعة فقط او يمكن تحدد اكثر من ذالك '
+    }
+  },
+  {
+    attachTo: { element: '#serechBtn' },
+    content: {
+      title: 'البحث في الحجوزات',
+      description: ' و بعد تحديد اختيارات البحث اظغط هنا '
+    }
+  },
+  {
+    attachTo: { element: '#c-serech' },
+    content: {
+      title: 'البحث في الحجوزات',
+      description: ' و من هنا تقوم بألغاء كل أختيارات البحث  '
+    },
+    on: {
+      afterStep: function () {
+        searchToggle()
+        TourAlert.value = true
+      }
+    }
+  }
+]
+const enabelTours = () => {
+  if (localStorage.getItem('HallTour') != 'true') {
+    start()
+  }
+}
+const stopTour = () => {
+  localStorage.setItem('HallTour', 'true')
+  TourAlert.value = false
+}
+onMounted(enabelTours)
 const headers: any = [
   { title: 'أسم القاعة', align: 'start', sortable: false, value: 'hall_ManagementName' },
   { title: ' أسم الزبون', value: 'customerManegentName', align: 'end' },
@@ -300,6 +498,7 @@ const showDeleteMessage = ref(false)
 const HallDeleteId = ref<string>('')
 const popDetials = ref(false)
 const popRestPrice = ref(false)
+const TourAlert = ref(false)
 const idToEdit = ref('')
 const idToPrint = ref('')
 
@@ -308,10 +507,7 @@ const idToPrint = ref('')
 const searchHall = ref<Hall>()
 const searchCustomer = ref<Customer>()
 
-
 //------------------------
-
-
 
 const hallData = ref<Hall[]>([])
 const customerData = ref<Customer[]>([])
@@ -357,8 +553,6 @@ const EditMessage = () => {
   showEditMessage.value = !showEditMessage.value
 }
 
-
-
 const openPrint = (item: ReservationTable) => {
   idToPrint.value = item.id
   toggelReceipt()
@@ -396,8 +590,8 @@ const onGetHallsRes = (paginations: PaginationParamas) => {
 
 const onOptionsChange = ({ page, itemsPerPage }: { page: number; itemsPerPage: number }) => {
   // Set size to a very large number if itemsPerPage is -1
-  const size = itemsPerPage === -1 ? totalHalls.value : itemsPerPage;
-  
+  const size = itemsPerPage === -1 ? totalHalls.value : itemsPerPage
+
   paginations.value = {
     page: page,
     size: size,
@@ -408,7 +602,6 @@ const onOptionsChange = ({ page, itemsPerPage }: { page: number; itemsPerPage: n
     phoneNumber: ''
   }
   onGetHallsRes(paginations.value)
-
 }
 
 const onSearchFilter = () => {

@@ -270,11 +270,19 @@ const submit = () => {
 const closeForm = () => {
   router.replace({ name: 'coureses-list' })
 }
-const formatDate = (dateString: string) => {
-  const [day, month, year] = dateString.split('/')
+const formatDate = (dateString: Date) => {
+  // تحويل النص إلى كائن تاريخ
+  const date = new Date(dateString)
 
-  return new Date(`${month}/${day}/${year}`)
+  // الحصول على اليوم والشهر والسنة
+  const day = String(date.getDate()).padStart(2, '0')
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const year = date.getFullYear()
+
+  // إعادة التنسيق إلى الشكل المطلوب
+  return `${year}/${month}/${day}`
 }
+
 const getCurrentData = () => {
   getCourseByID(receivedID.value).then((response) => {
     coures.value.couresManagementId = response.couresManagementId

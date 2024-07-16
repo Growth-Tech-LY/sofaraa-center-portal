@@ -24,8 +24,8 @@ type CouressByID = {
   hall_managementName: string
   serviceManagementName: string[]
   reservationsTypeId: number
-  startDate: string
-  endDate: string
+  startDate: Date
+  endDate: Date
   numberOfRquiredHours: number
   studentName: string[]
   price: number
@@ -44,8 +44,8 @@ type PostCoures = {
   numberOfMaximumIndividuals: number | undefined
   fromTime: number | undefined
   toTime: number | undefined
-  startDate: Date | undefined
-  endDate: Date | undefined
+  startDate: string | undefined
+  endDate: string | undefined
   reservationsTypeId: number | undefined
 }
 
