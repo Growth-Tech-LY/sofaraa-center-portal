@@ -117,14 +117,15 @@
         </v-date-input>
 
         <v-date-input
-        
           v-model="toDate"
           label="التاريخ الى"
           placeholder="ادخل التاريخ الى ..."
           :hide-actions="true"
           variant="outlined"
         ></v-date-input>
-        <p v-show="dateError" class="text-red-500 text-sm absolute left-8 bottom-0 ">القيمة أصغر من تاريخ البدء</p>
+        <p v-show="dateError" class="text-red-500 text-sm absolute left-8 bottom-0">
+          القيمة أصغر من تاريخ البدء
+        </p>
       </div>
 
       <div class="flex item-center justify-center gap-4 mb-2">
@@ -145,7 +146,7 @@
           item-value="value"
           placeholder="الوقيت إلي"
           variant="outlined"
-           :rules="[Rules.time ,Rules.timeDiffrence]"
+          :rules="[Rules.time, Rules.timeDiffrence]"
           :prepend-icon="mdiTimerOutline"
         ></v-text-field>
         <div class="relative flex">
@@ -278,14 +279,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import {
-  mdiPlus,
-  mdiTimerOutline,
-  mdiCalendarRange,
-  mdiArrowRightTop,
-  mdiCheckCircle,
-  mdiBookVariant
-} from '@mdi/js'
+import { mdiPlus, mdiTimerOutline, mdiArrowRightTop, mdiCheckCircle, mdiBookVariant } from '@mdi/js'
 import AddCustomerRes from './AddCustomerRes.vue'
 import { VDateInput } from 'vuetify/labs/components'
 import { onMounted, ref, watchEffect } from 'vue'
@@ -293,10 +287,10 @@ import { getHalls, getCustomers, getServices } from '@/core/services/mainService
 import { CheckHallReserved, Postreservation } from '../hallReserve-services'
 import type { Hall, Service, Customer } from '@/core/models/Mainmodels'
 import router from '@/router'
-import type { AxiosError } from 'axios'
 import ServiceDetials from './ServiceDetials.vue'
+import { format } from 'date-fns'
 
-const form = ref(false)
+// const form = ref(false)
 
 //date-fns function
 // watchEffect( () => {
@@ -317,7 +311,8 @@ const Rules = {
     return toDate >= fromDate || 'تاريخ النهاية يجب أن يكون أكبر من تاريخ البداية'
   },
   paymentCount: (value: number) => value <= totalPayment.value || 'قيمة المدخلة اكبر من الإجمالي ',
-  timeDiffrence: (value : number) => value > fromTime.value || 'يجب ان يكون وقت النهاية اكبر من الوقت البداية '
+  timeDiffrence: (value: number) =>
+    value > fromTime.value || 'يجب ان يكون وقت النهاية اكبر من الوقت البداية '
 }
 
 const closeModel = () => {
@@ -325,7 +320,7 @@ const closeModel = () => {
 }
 
 const hallName = ref<Hall>()
-const hallId = ref('')
+// const hallId = ref('')
 const oldHallName = ref<Hall>()
 const hallData = ref<Hall[]>([])
 const customerData = ref<Customer[]>([])
@@ -333,8 +328,8 @@ const ServicesData = ref<Service[]>([])
 const customer = ref<Customer>()
 const Payment = ref(1)
 const reserveType = ref(1)
-const idToEdit = ref('')
-const subscription = ref(1)
+// const idToEdit = ref('')
+// const subscription = ref(1)
 const packagePrice = ref<PaymentMethod | null>(null)
 
 //popUps
@@ -374,7 +369,7 @@ const individualNumber = ref<number>(1)
 const showAddMessage = ref(false)
 const fromTime = ref(0)
 const toTime = ref(0)
-const totalTime = ref(0)
+// const totalTime = ref(0)
 const formDate = ref<Date>()
 const toDate = ref<Date>()
 const placeHolderNumber = ref('')
@@ -484,8 +479,10 @@ const submitHallData = () => {
       restPrice: remainingPayment.value,
       fromTime: fromTime.value,
       toTime: toTime.value,
-      startDate: formDate.value,
-      endDate: toDate.value,
+      startDate: formDate.value
+        ? new Date(format(new Date(formDate.value), 'yyyy-MM-dd'))
+        : undefined,
+      endDate: toDate.value ? new Date(format(new Date(toDate.value), 'yyyy-MM-dd')) : undefined,
       reservationsTypeId: reserveType.value,
       paymentMethodId: Payment.value,
       numberOfRquiredHours: countOfrequiedTime.value,
@@ -591,8 +588,10 @@ const checkTime = () => {
       hall_ManagementId: hallName.value.id,
       fromTime: fromTime.value,
       toTime: toTime.value,
-      startDate: formDate.value,
-      endDate: toDate.value
+      startDate: formDate.value
+        ? new Date(format(new Date(formDate.value), 'yyyy-MM-dd'))
+        : undefined,
+      endDate: toDate.value ? new Date(format(new Date(toDate.value), 'yyyy-MM-dd')) : undefined
     }
     CheckHallReserved(body)
       .then((response) => {
@@ -639,14 +638,16 @@ watchEffect(() => {
 const dateError = ref(false)
 watchEffect(() => {
   if (formDate.value && toDate.value) {
-    if (toDate.value < formDate.value ) {
-      dateError.value=true
-      
+    if (toDate.value < formDate.value) {
+      dateError.value = true
     } else if (toDate.value >= formDate.value) {
-      dateError.value= false
-    } 
+      dateError.value = false
+    }
   }
 })
 
-
+watchEffect(() => {
+  console.log('start Date', formDate.value)
+  console.log('end Date', toDate.value)
+})
 </script>

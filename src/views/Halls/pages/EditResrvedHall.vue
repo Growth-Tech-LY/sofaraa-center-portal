@@ -28,7 +28,6 @@
           variant="outlined"
           :return-object="true"
         ></v-autocomplete>
-       
       </div>
 
       <div class="flex item-center justify-center gap-8">
@@ -94,7 +93,7 @@
           variant="outlined"
           placeholder="ادخل التاريخ من ..."
           :rules="[rules.required]"
-           :hide-actions="true"
+          :hide-actions="true"
         >
         </v-date-input>
 
@@ -106,7 +105,9 @@
           variant="outlined"
           :hide-actions="true"
         ></v-date-input>
-        <p v-show="dateError" class="text-red-500 text-sm absolute left-8 bottom-0 ">القيمة أصغر من تاريخ البدء</p>
+        <p v-show="dateError" class="text-red-500 text-sm absolute left-8 bottom-0">
+          القيمة أصغر من تاريخ البدء
+        </p>
       </div>
 
       <div class="flex item-center justify-center gap-8">
@@ -229,23 +230,17 @@
   </div>
 </template>
 <script setup lang="ts">
-import {
-  mdiPlus,
-  mdiTimerOutline,
-  mdiCalendarRange,
-  mdiArrowRightTop,
-  mdiCheckCircle
-} from '@mdi/js'
+import { mdiTimerOutline, mdiArrowRightTop, mdiCheckCircle } from '@mdi/js'
 import { onMounted, ref, watchEffect } from 'vue'
 import { getHalls, getCustomers, getServices } from '@/core/services/mainServices'
-import { CheckHallReserved, Postreservation } from '../hallReserve-services'
+import { CheckHallReserved } from '../hallReserve-services'
 import { putResHall, getResHallByID } from '../hallReserve-services'
 import type { Hall, Service, Customer } from '@/core/models/Mainmodels'
 import router from '@/router'
 import { useRoute } from 'vue-router'
 import type { ReservationTable } from '../models/reserveModels'
 import { VDateInput } from 'vuetify/labs/components'
-
+import { format } from 'date-fns'
 const rules = {
   required: (v: string) => !!v || 'الحقل اجباري'
 }
@@ -268,10 +263,10 @@ const snackbar = ref({
 
 const Rules = {
   time: (value: number) => (value > 0 && value <= 24) || 'يجب أن تكون القيمة بين 1 إلى 24',
-  timeDifference: (value: number) => value > fromTime.value || 'يجب أن تكون قيمة الحقل أكبر من الوقت من',
-  paymentCount: (value: number) => value <= totalPayment.value || 'القيمة المدخلة أكبر من الإجمالي',
-};
-
+  timeDifference: (value: number) =>
+    value > fromTime.value || 'يجب أن تكون قيمة الحقل أكبر من الوقت من',
+  paymentCount: (value: number) => value <= totalPayment.value || 'القيمة المدخلة أكبر من الإجمالي'
+}
 
 const closeModel = () => {
   router.replace({ name: 'reservations-list' })
@@ -388,7 +383,6 @@ watchEffect(() => {
 
 watchEffect(() => {
   console.log('the hallname value is ', hallName.value)
-
 })
 
 const onGetData = () => {
@@ -432,8 +426,10 @@ const submit = () => {
       customerManegentId: customer.value.id,
       fromTime: fromTime.value,
       toTime: toTime.value,
-      startDate: startDate.value,
-      endDate: endDate.value,
+      startDate: startDate.value
+        ? new Date(format(new Date(startDate.value), 'yyyy-MM-dd'))
+        : undefined,
+      endDate: endDate.value ? new Date(format(new Date(endDate.value), 'yyyy-MM-dd')) : undefined,
       reservationsTypeId: reserveType.value,
       paymentMethodId: Payment.value,
       serviceManagementId: servicesId.value,
@@ -520,7 +516,7 @@ watchEffect(() => {
     hallData.value.forEach((item) => {
       if (item.id == resToEdit.value?.hall_ManagementId) {
         hallName.value = item
-        console.log( 'haaall', hallName.value);
+        console.log('haaall', hallName.value)
         return
       }
     })
@@ -606,12 +602,11 @@ watchEffect(() => {
 
 watchEffect(() => {
   if (startDate.value && endDate.value) {
-    if (endDate.value < startDate.value ) {
-      dateError.value=true
-      
+    if (endDate.value < startDate.value) {
+      dateError.value = true
     } else if (endDate.value >= startDate.value) {
-      dateError.value= false
-    } 
+      dateError.value = false
+    }
   }
 })
 
@@ -628,8 +623,10 @@ const checkTime = () => {
       hall_ManagementId: hallName.value.id,
       fromTime: fromTime.value,
       toTime: toTime.value,
-      startDate: startDate.value,
-      endDate: endDate.value
+      startDate: startDate.value
+        ? new Date(format(new Date(startDate.value), 'yyyy-MM-dd'))
+        : undefined,
+      endDate: endDate.value ? new Date(format(new Date(endDate.value), 'yyyy-MM-dd')) : undefined
     }
     CheckHallReserved(body)
       .then((response) => {
@@ -667,5 +664,4 @@ const checkTime = () => {
       })
   }
 }
-
 </script>
