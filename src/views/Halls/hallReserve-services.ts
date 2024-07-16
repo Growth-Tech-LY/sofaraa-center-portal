@@ -23,7 +23,7 @@ const getResHallTaple = (paginationParams : PaginationParamas) => {
 
 
 const deleteResHall = (id: string) => {
-  return apiClient.delete<string>(`HallReservations?Id=${id}`)
+  return apiClient.delete<string>(`HallReservations/${id}`)
 }
 
 const putResHall = (body: PutReservation) => {
