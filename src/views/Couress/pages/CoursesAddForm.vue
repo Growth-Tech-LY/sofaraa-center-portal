@@ -104,7 +104,7 @@
         v-model="timeTo"
         class=""
         :prepend-icon="mdiTimerEditOutline"
-        :rules="[rules.required]"
+        :rules="[rules.required, rules.timeDiffrence]"
         clearable
         label=" الوقت الى  "
         placeholder="ادخل عدد الافراد  ..."
@@ -238,7 +238,8 @@ const AllService = ref<Service[]>()
 
 // **********************
 const rules = {
-  required: (v: string) => !!v || 'الحقل اجباري'
+  required: (v: string) => !!v || 'الحقل اجباري',
+  timeDiffrence: (value : number) => value > timeFrom.value|| 'يجب ان يكون وقت النهاية اكبر من الوقت البداية '
 }
 
 // Vars using for body request
