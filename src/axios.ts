@@ -1,8 +1,8 @@
 import axios from 'axios'
 
 const apiClient = axios.create({
- // baseURL: 'https://sofaraa-portal-backend.growthtech.ly/api/',
- baseURL: 'http://localhost:5127/api/',
+  baseURL: 'https://sofaraa-portal-backend.growthtech.ly/api/',
+  //  baseURL: 'http://localhost:5127/api/',
 
   headers: {
     accept: '*/*',
