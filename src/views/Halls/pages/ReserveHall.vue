@@ -599,7 +599,7 @@ const checkTime = () => {
         console.log(response)
         loadingbtn.value = false
 
-        if (response.message === 'Hall is available for the requested time.') {
+        if (response.message === 'القاعة متاحة للوقت المطلوب.') {
           snackbar.value.message = 'الحجز متاح'
           reservationsChecked.value = true
         } else {
@@ -616,7 +616,7 @@ const checkTime = () => {
         if (error.response && error.response.data && error.response.data.message) {
           const errorMessage = error.response.data.message
 
-          if (errorMessage === 'Hall is already reserved during the requested time.') {
+          if (errorMessage === 'القاعة محجوزة بالفعل خلال الوقت المطلوب.') {
             snackbar.value.message = 'الحجز غير متاح'
             reservationsChecked.value = false
           } else {
