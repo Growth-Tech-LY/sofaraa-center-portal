@@ -7,6 +7,7 @@
     <v-form class="grid grid-cols-2 gap-3 p-4 items-center justify-center">
       <div>
         <v-autocomplete
+          :prepend-icon="mdiOfficeBuildingMarker"
           transition="slide-y-transition"
           v-model="hallName"
           :items="hallData"
@@ -20,6 +21,7 @@
       </div>
       <div class="flex items-center justify-center">
         <v-autocomplete
+          :prepend-icon="mdiAccount"
           v-model="customer"
           transition="slide-y-transition"
           :items="customerData"
@@ -31,7 +33,7 @@
           :return-object="true"
         ></v-autocomplete>
         <v-btn
-          class="text-white mb-4"
+          class="text-white mr-4 mb-4"
           color="green-accent-4"
           density="comfortable"
           :icon="mdiPlus"
@@ -40,6 +42,7 @@
       </div>
       <div class="flex item-center justify-center gap-8">
         <v-autocomplete
+          :prepend-icon="mdiTimetable"
           v-model="packagePrice"
           transition="slide-y-transition"
           :items="paymentMethods"
@@ -67,6 +70,7 @@
       </div>
       <div class="flex item-center justify-center gap-4">
         <v-autocomplete
+          :prepend-icon="mdiRoomServiceOutline"
           v-model="servicesPrice"
           transition="slide-y-transition"
           :items="ServicesData"
@@ -138,7 +142,11 @@
           placeholder="الوقيت من"
           variant="outlined"
           :rules="[Rules.time]"
-        ></v-text-field>
+        >
+          <v-tooltip activator="parent" location="bottom">
+            التوقيت بنظام ال 24 ساعة</v-tooltip
+          ></v-text-field
+        >
         <v-text-field
           v-model="toTime"
           label="الوقيت إلي"
@@ -148,7 +156,11 @@
           variant="outlined"
           :rules="[Rules.time, Rules.timeDiffrence]"
           :prepend-icon="mdiTimerOutline"
-        ></v-text-field>
+        >
+          <v-tooltip activator="parent" location="bottom">
+            التوقيت بنظام ال 24 ساعة</v-tooltip
+          ></v-text-field
+        >
         <div class="relative flex">
           <v-btn
             color="blue accent-4"
@@ -176,6 +188,7 @@
       </div>
       <div class="flex item-center justify-center gap-8">
         <v-autocomplete
+          :prepend-icon="mdiCreditCardSettingsOutline"
           v-model="Payment"
           transition="slide-y-transition"
           :items="PaymentMethods"
@@ -206,6 +219,7 @@
           placeholder="المدفوع"
           variant="outlined"
           type="number"
+          :prepend-icon="mdiCash"
           :rules="[Rules.paymentCount]"
         ></v-text-field>
         <p class="ms-3 text-lg font-bold text-gray-900 text-center mt-4">
@@ -246,13 +260,13 @@
     </v-form>
   </div>
   <div>
-    <v-snackbar v-model="showAddMessage" :timeout="2000" color="success" :location="'top left'">
+    <v-snackbar v-model="showAddMessage" :timeout="3000" color="success" :location="'top left'">
       تمت الإضافة بنجاح
     </v-snackbar>
 
     <v-snackbar
       v-model="snackbar.show"
-      :timeout="2000"
+      :timeout="3000"
       color="blue-darken-2"
       :location="'top center'"
     >
@@ -279,7 +293,19 @@
   </div>
 </template>
 <script setup lang="ts">
-import { mdiPlus, mdiTimerOutline, mdiArrowRightTop, mdiCheckCircle, mdiBookVariant } from '@mdi/js'
+import {
+  mdiPlus,
+  mdiTimerOutline,
+  mdiArrowRightTop,
+  mdiCheckCircle,
+  mdiBookVariant,
+  mdiCash,
+  mdiOfficeBuildingMarker,
+  mdiAccount,
+  mdiRoomServiceOutline,
+  mdiCreditCardSettingsOutline,
+  mdiTimetable
+} from '@mdi/js'
 import AddCustomerRes from './AddCustomerRes.vue'
 import { VDateInput } from 'vuetify/labs/components'
 import { onMounted, ref, watchEffect } from 'vue'

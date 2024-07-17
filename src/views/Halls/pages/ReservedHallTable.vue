@@ -114,12 +114,12 @@
           id="serechBtn"
           size="large"
           class="mx-3"
-          color="pink-darken-2"
+          color="light-blue-accent-4"
           @click="onSearchFilter"
         >
           بحث
         </v-btn>
-        <v-btn id="c-serech" size="large" class="mx-3" color="pink-darken-1" @click="clearFilter">
+        <v-btn id="c-serech" size="large" class="mx-3"    color="light-blue-accent-4" variant="outlined" @click="clearFilter">
           إلغاء البحث
         </v-btn>
 
@@ -237,7 +237,7 @@
   <div>
     <v-snackbar
       v-model="showDeleteMessage"
-      :timeout="2000"
+      :timeout="3000"
       color="red-darken-4"
       :location="'top left'"
     >
@@ -245,7 +245,7 @@
     </v-snackbar>
   </div>
   <div>
-    <v-snackbar v-model="showEditMessage" :timeout="2000" color="success" :location="'top left'">
+    <v-snackbar v-model="showEditMessage" :timeout="3000" color="success" :location="'top left'">
       تم التعديل بنجاح
     </v-snackbar>
   </div>

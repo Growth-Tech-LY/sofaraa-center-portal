@@ -94,24 +94,30 @@
         v-model="timeFrom"
         class=""
         :prepend-icon="mdiTimerEditOutline"
-        :rules="[rules.required]"
+        :rules="[rules.required, rules.time]"
         clearable
         label=" الوقت من "
         placeholder="ادخل عدد الافراد  ..."
         variant="outlined"
         type="number"
-      ></v-text-field>
+      >
+        <v-tooltip activator="parent" location="bottom"> التوقيت بنظام ال 24 ساعة</v-tooltip>
+      </v-text-field>
+
       <v-text-field
         v-model="timeTo"
         class=""
         :prepend-icon="mdiTimerEditOutline"
-        :rules="[rules.required, rules.timeDiffrence]"
+        :rules="[rules.required, rules.timeDiffrence, rules.time]"
         clearable
         label=" الوقت الى  "
         placeholder="ادخل عدد الافراد  ..."
         variant="outlined"
         type="number"
-      ></v-text-field>
+      >
+        <v-tooltip activator="parent" location="bottom"> التوقيت بنظام ال 24 ساعة</v-tooltip>
+      </v-text-field>
+
       <v-text-field
         v-model="numOfstudents"
         class="col-span-1"
@@ -240,6 +246,7 @@ const AllService = ref<Service[]>()
 // **********************
 const rules = {
   required: (v: string) => !!v || 'الحقل اجباري',
+  time: (value: number) => (value > 0 && value <= 24) || 'يجب التكون القيمة بين ال 1 إلي 24 ',
   timeDiffrence: (value: number) =>
     value > timeFrom.value || 'يجب ان يكون وقت النهاية اكبر من الوقت البداية '
 }
